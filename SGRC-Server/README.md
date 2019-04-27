@@ -10,8 +10,9 @@ Client side communication : Json ( Jackson ) <br />
 Extras : Spring mail <br />
 
 
-###### Authors : **Chihab hajji** [GitHub Page]: (https://pages.github.com/)
-######           **Ramy Saidi** [GitHub Page]: (https://pages.github.com/)
+###### Authors : <br />
+###### **Chihab hajji** [GitHub Page]: (https://github.com/chihabhajji) <br />
+###### **Ramy Saidi** [GitHub Page]: (https://pages.github.com/)
 
 
 - [x] Authentication , Registration
