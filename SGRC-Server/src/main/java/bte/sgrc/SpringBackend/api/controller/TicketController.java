@@ -165,8 +165,13 @@ public class TicketController{
             response.getErrors().add("Register not found id: " + id);
             return ResponseEntity.badRequest().body(response);
         }
+        if(ticket.getStatus()==StatusEnum.New){
         ticketService.delete(ticket); 
         return ResponseEntity.ok(new Response<String>());
+        }else{
+        response.getErrors().add("Cannot delete claim unless its not yet being processed, if you made an irrelevant ticket, Technicians will reject it : " + id);
+        return ResponseEntity.badRequest().body(new Response<String>());
+        }
     }
 
     @GetMapping(value = "{page}/{count}")
@@ -277,7 +282,7 @@ public class TicketController{
     }
 
     @GetMapping(value = "/summary")
-    // TODO : limit to admin only, implement Archived count 
+    // TODO : limit to admin only, implement Archived count , make a CurrentUser version for technicians and their OWN stats
     public ResponseEntity<Response<Summary>> findSummary(){
         Response<Summary> response = new Response<Summary>();
         Summary summary = new Summary();

@@ -10,8 +10,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import bte.sgrc.SpringBackend.api.entity.Util.VerificationToken;
 import bte.sgrc.SpringBackend.api.enums.ProfileEnum;
-import bte.sgrc.SpringBackend.api.security.model.VerificationToken;
 import io.github.kaiso.relmongo.annotation.CascadeType;
 import io.github.kaiso.relmongo.annotation.FetchType;
 import io.github.kaiso.relmongo.annotation.OneToOne;

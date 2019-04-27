@@ -5,10 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import bte.sgrc.SpringBackend.api.entity.User;
+import bte.sgrc.SpringBackend.api.entity.Util.VerificationToken;
 import bte.sgrc.SpringBackend.api.repository.UserRepository;
 import bte.sgrc.SpringBackend.api.repository.VerificationTokenRepository;
-import bte.sgrc.SpringBackend.api.security.model.VerificationToken;
-import bte.sgrc.SpringBackend.api.service.implement.SendingMailService;
+import bte.sgrc.SpringBackend.api.service.SendingMailService;
 
 import java.time.LocalDateTime;
 import java.util.List;

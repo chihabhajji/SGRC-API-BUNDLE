@@ -1,10 +1,10 @@
 package bte.sgrc.SpringBackend.api.repository;
 
-import bte.sgrc.SpringBackend.api.security.model.VerificationToken;
-
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import bte.sgrc.SpringBackend.api.entity.Util.VerificationToken;
 
 public interface VerificationTokenRepository extends MongoRepository<VerificationToken, String> {
     List<VerificationToken> findByUserEmail(String email);

@@ -1,4 +1,4 @@
-package bte.sgrc.SpringBackend.api.security.model;
+package bte.sgrc.SpringBackend.api.entity.Util;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

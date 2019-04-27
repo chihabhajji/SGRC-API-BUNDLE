@@ -1,11 +1,12 @@
-package bte.sgrc.SpringBackend.api.service.implement;
+package bte.sgrc.SpringBackend.api.service;
 
-import bte.sgrc.SpringBackend.api.security.model.MailProperties;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+
+import bte.sgrc.SpringBackend.api.entity.Util.MailProperties;
 
 import javax.mail.Message;
 import javax.mail.Session;

@@ -1,5 +1,4 @@
-package bte.sgrc.SpringBackend.api.security.model;
-
+package bte.sgrc.SpringBackend.api.entity.Util;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.data.annotation.Id;
