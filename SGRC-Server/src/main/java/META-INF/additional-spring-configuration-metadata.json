@@ -1,0 +1,52 @@
+{"properties": [
+  {
+    "name": "mail.verificationapi",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.verificationapi'"
+  },
+  {
+    "name": "mail.from-name",
+    "type": "java.lang.String",
+    "description": "Email display name"
+  },
+  {
+    "name": "mail.smtp.password",
+    "type": "java.lang.String",
+    "description": "SMTP Password you dummy, SMH"
+  },
+  {
+    "name": "mail.smtp.password",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.smtp.password'"
+  },
+  {
+    "name": "jwt.expiration",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.expiration'"
+  },
+  {
+    "name": "jwt.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.secret'"
+  },
+  {
+    "name": "mail.smtp.port",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.smtp.port'"
+  },
+  {
+    "name": "mail.smtp.host",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.smtp.host'"
+  },
+  {
+    "name": "mail.smtp.username",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.smtp.username'"
+  },
+  {
+    "name": "mail.from",
+    "type": "java.lang.String",
+    "description": "SMTP Sender email adress"
+  }
+]}

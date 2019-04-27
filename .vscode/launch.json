@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-HelpDeskApplication<HelpDesk>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "br.com.udemy.HelpDeskApplication",
+            "projectName": "HelpDesk",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ClaimsApplication<HelpDesk>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "bte.sgrc.SpringBackend.ClaimsApplication",
+            "projectName": "HelpDesk",
+            "args": ""
+        }
+    ]
+}
