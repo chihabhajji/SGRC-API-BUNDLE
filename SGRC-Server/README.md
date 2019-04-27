@@ -1,11 +1,11 @@
 # SGRC-Claim HelpDesk API ( Spring ) 
 ## Technologies used :
-Java Version : 1.9
-JJWT Version : 0.9.0
-Build : Maven 
-Persistance : MongoDB , Spring Data REST
-Security : JWT , Role authentication 
-Client side communication : Json ( Jackson )
+Java Version : 1.9 <br />
+JJWT Version : 0.9.0 <br />
+Build : Maven  <br />
+Persistance : MongoDB , Spring Data REST <br />
+Security : JWT , Role authentication  <br />
+Client side communication : Json ( Jackson ) <br />
 
 Extras : Spring mail
 

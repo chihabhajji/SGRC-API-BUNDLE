@@ -19,6 +19,16 @@
             "mainClass": "bte.sgrc.SpringBackend.ClaimsApplication",
             "projectName": "HelpDesk",
             "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ClaimsApplication<claims>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "bte.sgrc.SpringBackend.ClaimsApplication",
+            "projectName": "claims",
+            "args": ""
         }
     ]
 }

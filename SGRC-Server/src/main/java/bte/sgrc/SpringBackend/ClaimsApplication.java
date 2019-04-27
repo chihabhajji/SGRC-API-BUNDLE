@@ -24,11 +24,8 @@ public class ClaimsApplication {
 	}
 
 	@Bean
-	CommandLineRunner init(UserRepository userRepository, PasswordEncoder passwordEncoder,
-			VerificationTokenService verificationTokenService) {
-		return args -> {
-			initUsers(userRepository, passwordEncoder,verificationTokenService);
-		};
+	CommandLineRunner init(UserRepository userRepository, PasswordEncoder passwordEncoder,VerificationTokenService verificationTokenService) {
+		return args -> {initUsers(userRepository, passwordEncoder,verificationTokenService);};
 	}
 
 	private void initUsers(UserRepository userRepository, PasswordEncoder passwordEncoder,
@@ -40,7 +37,6 @@ public class ClaimsApplication {
 			admin.setEmail("admin@sgrc.bte");
 			admin.setPassword(passwordEncoder.encode("123456"));
 			admin.setProfile(ProfileEnum.ROLE_ADMIN);
-			admin.setIsActive(true);
 			verificationTokenService.createVerification(admin);
 			userRepository.save(admin);
 			log.info("Admin initiated : please change the password !");
