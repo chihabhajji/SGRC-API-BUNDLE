@@ -1,4 +1,5 @@
 package bte.sgrc.SpringBackend.api.entity.Util;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.data.annotation.Id;
@@ -9,6 +10,8 @@ import io.github.kaiso.relmongo.annotation.CascadeType;
 import io.github.kaiso.relmongo.annotation.JoinProperty;
 import io.github.kaiso.relmongo.annotation.OneToOne;
 import io.github.kaiso.relmongo.config.EnableRelMongo;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -19,18 +22,17 @@ import java.util.UUID;
 public class VerificationToken {
     public static final String STATUS_PENDING = "PENDING";
     public static final String STATUS_VERIFIED = "VERIFIED";
-    @Id
-    private BigInteger id; 
-    private String token;
-    private String status;
-    private LocalDateTime expiredDateTime;
-    private LocalDateTime issuedDateTime;
-    private LocalDateTime confirmedDateTime;
     
-    @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinProperty(name = "user_id")
-    private User user;
+    @Getter @Setter @Id private BigInteger id; 
+    @Getter @Setter private String token;
+    @Getter @Setter private String status;
+    @Getter @Setter private LocalDateTime expiredDateTime;
+    @Getter @Setter private LocalDateTime issuedDateTime;
+    @Getter @Setter private LocalDateTime confirmedDateTime;
+    
+    
+    @OneToOne(cascade = CascadeType.ALL) @JoinProperty(name = "user_id")
+    @Getter @Setter @JsonIgnore private User user;
     
     
     public VerificationToken() {
@@ -38,63 +40,5 @@ public class VerificationToken {
         this.issuedDateTime = LocalDateTime.now();
         this.expiredDateTime = this.issuedDateTime.plusDays(1);
         this.status = STATUS_PENDING;
-    }
-
-    
-    public BigInteger getId() {
-        return id;
-    }
-
-    public void setId(BigInteger id) {
-        this.id = id;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getExpiredDateTime() {
-        return expiredDateTime;
-    }
-
-    public void setExpiredDateTime(LocalDateTime expiredDateTime) {
-        this.expiredDateTime = expiredDateTime;
-    }
-
-    public LocalDateTime getIssuedDateTime() {
-        return issuedDateTime;
-    }
-
-    public void setIssuedDateTime(LocalDateTime issuedDateTime) {
-        this.issuedDateTime = issuedDateTime;
-    }
-
-    public LocalDateTime getConfirmedDateTime() {
-        return confirmedDateTime;
-    }
-
-    public void setConfirmedDateTime(LocalDateTime confirmedDateTime) {
-        this.confirmedDateTime = confirmedDateTime;
-    }
-    
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

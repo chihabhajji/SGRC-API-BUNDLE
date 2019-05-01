@@ -15,7 +15,6 @@ import bte.sgrc.SpringBackend.api.service.UserService;
 
 @Service
 public class UserServiceImplement implements UserService{
-
     @Autowired
     private UserRepository userRepository;
 

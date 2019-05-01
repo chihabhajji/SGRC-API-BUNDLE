@@ -26,7 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 import bte.sgrc.SpringBackend.api.response.Response;
 import bte.sgrc.SpringBackend.api.security.service.VerificationTokenService;
 import bte.sgrc.SpringBackend.api.entity.User;
-
+import bte.sgrc.SpringBackend.api.enums.ProfileEnum;
+import bte.sgrc.SpringBackend.api.service.SendingMailService;
 import bte.sgrc.SpringBackend.api.service.UserService;
 
 @RestController
@@ -43,12 +44,14 @@ public class UserController{
     @Autowired
     private PasswordEncoder passwordEnconder;
     
+    @Autowired
+    SendingMailService mailSender;
+    
     private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
     @GetMapping("/verify-email")
     @ResponseBody
     public String verifyEmail(String code) {
-        log.info("Got Request");
         return verificationTokenService.verifyEmail(code).getBody();
     }
 
@@ -64,10 +67,10 @@ public class UserController{
                 return ResponseEntity.badRequest().body(response);
             }
             user.setPassword(passwordEnconder.encode(user.getPassword()));
-            verificationTokenService.createVerification(user);
+            
             User userPersisted = userService.createOrUpdate(user);
+            log.info(userPersisted.toString());      
             response.setData(userPersisted);
-            log.info("New user created with role "+user.getProfile().toString());
         } catch (DuplicateKeyException dE) {
             response.getErrors().add("E-mail already registered");
             return ResponseEntity.badRequest().body(response);
@@ -75,6 +78,7 @@ public class UserController{
             response.getErrors().add(e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
+        verificationTokenService.createVerification(user);
         return ResponseEntity.ok(response);
     }
     
@@ -94,9 +98,12 @@ public class UserController{
                 result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
                 return ResponseEntity.badRequest().body(response);
             }
+            String passPreEncode = user.getPassword();
             user.setPassword(passwordEnconder.encode(user.getPassword()));
             User userPesistente = userService.createOrUpdate(user);
             response.setData(userPesistente);
+            if(user.getProfile()==ProfileEnum.ROLE_ADMIN)
+            mailSender.sendMail(user.getEmail(), "BTE : SGRC - Password Change","Your password has been changed to : "+passPreEncode+" by the system admin.");
         } catch (Exception e) {
             response.getErrors().add(e.getMessage());
             return ResponseEntity.badRequest().body(response);
@@ -118,7 +125,7 @@ public class UserController{
     public ResponseEntity<Response<User>> findById(@PathVariable("id") String id){
         Response<User> response = new Response<User>();
         User user = userService.findById(id);
-
+        
         if (user == null){
             response.getErrors().add("Register not fount id: " + id);
             return ResponseEntity.badRequest().body(response);
@@ -137,6 +144,7 @@ public class UserController{
             response.getErrors().add("Register not fount id: " + id);
             return ResponseEntity.badRequest().body(response);
         }
+        mailSender.sendMail(user.getEmail(), "BTE: SGRC - Account removed", "Your account has been deleted!");
         userService.delete(id);
         return ResponseEntity.ok(new Response<String>());
     }
@@ -153,4 +161,5 @@ public class UserController{
             return ResponseEntity.ok(response);
         }
     }
+    // TODO: implement Archived count for users, make a CurrentUser version of TicketController summary for technician and their OWN stats
 }

@@ -43,7 +43,7 @@ public class SendingMailService {
         }
         return sendMail(toEmail, subject, body);
     }
-    private boolean sendMail(String toEmail, String subject, String body) {
+    public boolean sendMail(String toEmail, String subject, String body) {
         try {
             Properties props = System.getProperties();
             props.put("mail.transport.protocol", "smtp");

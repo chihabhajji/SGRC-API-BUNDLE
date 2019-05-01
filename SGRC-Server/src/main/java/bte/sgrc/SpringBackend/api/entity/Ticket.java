@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import bte.sgrc.SpringBackend.api.enums.PriorityEnum;
 import bte.sgrc.SpringBackend.api.enums.StatusEnum;
@@ -16,6 +17,7 @@ import lombok.Setter;
 
 
 // TODO : Work on adding an archive interface client side
+@Document
 public class Ticket{
      
 	@Getter @Setter @Id private String id;
