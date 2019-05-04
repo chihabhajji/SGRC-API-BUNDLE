@@ -100,7 +100,7 @@ export class TicketDetailComponent implements OnInit {
       this.ticket.image = '';
       const reader = new FileReader();
       reader.onloadend = (e: Event) => {
-          this.ticket.image = reader.result;
+        this.ticket.image = reader.result as string;;
       };
       reader.readAsDataURL(event.target.files[0]);
     }
@@ -121,5 +121,7 @@ export class TicketDetailComponent implements OnInit {
       });
     });
   }
+
+  
 }
 

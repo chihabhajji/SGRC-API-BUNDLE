@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import {ListboxModule} from 'primeng/listbox';
 import { TicketDetailComponent } from './ticket-detail.component';
 
 describe('TicketDetailComponent', () => {

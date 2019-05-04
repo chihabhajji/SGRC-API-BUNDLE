@@ -34,10 +34,12 @@ public class UserNotificationService {
             notification = userNotificationRepository.save(new UserNotification(user, new Notification(message)));
         else
             notification.addNotification(new Notification(message));
-        //this.purgeFromDB(notification);
-        return userNotificationRepository.save(notification);
+        notification = userNotificationRepository.save(notification);
+        this.purgeFromDB(notification);
+        return notification;
     }
-    // Doesnt work, who cares anyway
+
+
     @Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}")
     private void purgeFromDB(UserNotification notification){
             userNotificationRepository.delete(notification);

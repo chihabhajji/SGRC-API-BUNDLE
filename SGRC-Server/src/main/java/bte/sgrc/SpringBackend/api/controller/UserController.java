@@ -1,5 +1,7 @@
 package bte.sgrc.SpringBackend.api.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import bte.sgrc.SpringBackend.api.response.Response;
+import bte.sgrc.SpringBackend.api.security.jwt.JwtTokenUtil;
 import bte.sgrc.SpringBackend.api.security.service.VerificationTokenService;
 import bte.sgrc.SpringBackend.api.entity.User;
 import bte.sgrc.SpringBackend.api.enums.ProfileEnum;
@@ -34,6 +37,12 @@ import bte.sgrc.SpringBackend.api.service.UserService;
 @RequestMapping("/api/user")
 @CrossOrigin(origins = "*")
 public class UserController{
+    
+    @Autowired
+    protected JwtTokenUtil jwbTokenUtil;
+
+    @Autowired 
+    private SendingMailService mailSender;
 
     @Autowired
     private UserService userService;
@@ -44,14 +53,11 @@ public class UserController{
     @Autowired
     private PasswordEncoder passwordEnconder;
     
-    @Autowired
-    SendingMailService mailSender;
-    
     private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
-
     @GetMapping("/verify-email")
     @ResponseBody
     public String verifyEmail(String code) {
+        log.info("Got Request");
         return verificationTokenService.verifyEmail(code).getBody();
     }
 
@@ -98,12 +104,17 @@ public class UserController{
                 result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
                 return ResponseEntity.badRequest().body(response);
             }
-            String passPreEncode = user.getPassword();
+            String passPre = user.getPassword();
+            String passO = userService.findByEmail(user.getEmail()).getPassword();
             user.setPassword(passwordEnconder.encode(user.getPassword()));
+            if (userFromRequest(request).getProfile() == ProfileEnum.ROLE_ADMIN||!user.getPassword().matches(passO)){
+                mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account updated","Your account has been updated by the system administrator, your new password is now :" + passPre);
+                // notify him to check email
+            }
             User userPesistente = userService.createOrUpdate(user);
             response.setData(userPesistente);
-            if(user.getProfile()==ProfileEnum.ROLE_ADMIN)
-            mailSender.sendMail(user.getEmail(), "BTE : SGRC - Password Change","Your password has been changed to : "+passPreEncode+" by the system admin.");
+
+
         } catch (Exception e) {
             response.getErrors().add(e.getMessage());
             return ResponseEntity.badRequest().body(response);
@@ -125,7 +136,7 @@ public class UserController{
     public ResponseEntity<Response<User>> findById(@PathVariable("id") String id){
         Response<User> response = new Response<User>();
         User user = userService.findById(id);
-        
+
         if (user == null){
             response.getErrors().add("Register not fount id: " + id);
             return ResponseEntity.badRequest().body(response);
@@ -144,7 +155,7 @@ public class UserController{
             response.getErrors().add("Register not fount id: " + id);
             return ResponseEntity.badRequest().body(response);
         }
-        mailSender.sendMail(user.getEmail(), "BTE: SGRC - Account removed", "Your account has been deleted!");
+        mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account deleted", "Your account has been deleted");
         userService.delete(id);
         return ResponseEntity.ok(new Response<String>());
     }
@@ -161,5 +172,17 @@ public class UserController{
             return ResponseEntity.ok(response);
         }
     }
+    
     // TODO: implement Archived count for users, make a CurrentUser version of TicketController summary for technician and their OWN stats
+    public User userFromRequest(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        String email = jwbTokenUtil.getUsernameFromToken(token);
+        return userService.findByEmail(email);
+    }
+    
+    @GetMapping(value = "techlist")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public List<User> getAllTechnicians(){
+        return userService.findByRole("ROLE_TECHNICIAN");
+    }
 }

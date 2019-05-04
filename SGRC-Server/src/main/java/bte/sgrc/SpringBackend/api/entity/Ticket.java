@@ -16,7 +16,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 
-// TODO : Work on adding an archive interface client side
 @Document
 public class Ticket{
      

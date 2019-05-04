@@ -15,7 +15,7 @@ import bte.sgrc.SpringBackend.api.entity.Util.Notification;
 import bte.sgrc.SpringBackend.api.enums.ProfileEnum;
 import lombok.Getter;
 import lombok.Setter;
-// TODO : add name property here and in angular client
+
 @Document
 public class User{
 	

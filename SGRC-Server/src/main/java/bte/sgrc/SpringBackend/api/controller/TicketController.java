@@ -11,8 +11,6 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -65,8 +63,6 @@ public class TicketController{
     
     private String adminMail="admin@sgrc.bte";
 
-    private static Logger logger = LoggerFactory.getLogger(NotificationController.class);
-
     
     @PostMapping
     @PreAuthorize("hasAnyRole('ROLE_CUSTOMER')")
@@ -89,8 +85,7 @@ public class TicketController{
             response.setData(ticketPersisted);
             
             notificationService.notifyUser(userRepository.findByEmail(adminMail),
-                    "Ticket number " + ticket.getNumber() + " has been created by " + ticket.getUser()
-                    + " please refer to ticket list to assign it to a technician");
+                    "Ticket number " + ticket.getNumber() + " has been created by " + ticket.getUser().getEmail()+ " please refer to ticket list to assign it to a technician");
         } catch(Exception e){
             response.getErrors().add(e.getMessage());
             return ResponseEntity.badRequest().body(response);
@@ -193,7 +188,6 @@ public class TicketController{
         response.setData(tickets);
         return ResponseEntity.ok(response);
     }
-
     @PutMapping(value = "{id}/{status}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN')")
     public ResponseEntity<Response<Ticket>> changeStatus(HttpServletRequest request, 
@@ -217,6 +211,7 @@ public class TicketController{
                 ticketCurrent.setAssignedUser(userFromRequest(request));
 
             }
+            
             Ticket ticketPersisted = ticketService.createOrUpdate(ticketCurrent);
             ChangeStatus changeStatus = new ChangeStatus();
             changeStatus.setUserChange(userFromRequest(request));
@@ -225,7 +220,7 @@ public class TicketController{
             changeStatus.setTicket(ticketPersisted);
             ticketService.createChangeStatus(changeStatus);
             response.setData(ticketPersisted);
-
+            if (ticket.getStatus()!=changeStatus.getStatus())
             switch (changeStatus.getStatus()) {
                 case Assigned: {
                     notificationService.notifyUser(userRepository.findByEmail(ticketCurrent.getAssignedUser().getEmail()),
@@ -252,9 +247,16 @@ public class TicketController{
                     break;
                 }
                 case Resolved: {
-                    String message = "Ticket number : "+ticket.getNumber() + " is now resolved, please refer to it to confirm or dissaprove it! ";
-                    notificationService.notifyUser(userRepository.findByEmail(ticket.getUser().getEmail()),message);
+
+                    try{
+                        String message = "Ticket number : " + ticket.getNumber()
+                                + " is now resolved, please refer to it to confirm or dissaprove it! ";
+                        notificationService.notifyUser(userRepository.findByEmail(ticket.getUser().getEmail()),
+                                message);
                     mailSender.sendMail(ticket.getUser().getEmail(), "Ticket number "+ticket.getNumber(),message);
+                    } catch (Exception e){
+                    e.printStackTrace();
+                    }
                     break;
                 }
             }

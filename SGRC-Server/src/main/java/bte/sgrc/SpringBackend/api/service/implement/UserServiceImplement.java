@@ -49,5 +49,9 @@ public class UserServiceImplement implements UserService{
 	public List<User> findTudo() {
 		return this.userRepository.findAll();
 	}
-
+	
+	@Override
+	public List<User> findByRole(String role){
+		return this.userRepository.findAllByRole(role);
+	}
 }

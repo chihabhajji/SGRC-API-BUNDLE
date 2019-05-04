@@ -25,6 +25,10 @@ export class UserService {
     return this.http.get(`${HELP_DESK_API}/api/user/${page}/${count}`);
   }
 
+  findAllTechnicians(){
+    return this.http.get(`${HELP_DESK_API}/api/user/techlist`);
+  }
+
   findById(id: String) {
     return this.http.get(`${HELP_DESK_API}/api/user/${id}`);
   }

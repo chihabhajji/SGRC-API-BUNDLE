@@ -13,7 +13,7 @@
           <li><a [routerLink]="['/user-new']"><i class="fa fa-circle-o"></i> New User</a></li>
         </ul>
       </li>
-      <li class="treeview" *ngIf="shared.user.profile != 'ADMIN'">
+      <li class="treeview">
         <a href="#">
           <i class="fa fa-edit"></i> <span>Ticket</span>
           <span class="pull-right-container">
@@ -25,7 +25,7 @@
           <li *ngIf="shared.user.profile == 'CUSTOMER'"><a [routerLink]="['/ticket-new']"><i class="fa fa-circle-o"></i> New Ticket</a></li>
         </ul>
       </li>
-      <li class="treeview">
+      <li class="treeview" *ngIf="shared.user.profile == 'ADMIN'">
           <a href="#">
             <i class="fa fa-edit"></i> <span>Summary</span>
             <span class="pull-right-container">
