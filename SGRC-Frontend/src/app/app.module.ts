@@ -23,7 +23,8 @@ import { TicketNewComponent } from './components/ticket-new/ticket-new.component
 import { TicketListComponent } from './components/ticket-list/ticket-list.component';
 import { TicketDetailComponent } from './components/ticket-detail/ticket-detail.component';
 import { SummaryComponent } from './components/summary/summary.component';
-
+import { ChartModule } from 'primeng/primeng';
+import { AvatarModule } from 'ng2-avatar';
 @NgModule({
   declarations: [
     AppComponent,
@@ -43,6 +44,8 @@ import { SummaryComponent } from './components/summary/summary.component';
     BrowserModule,
     HttpClientModule,
     FormsModule,
+    ChartModule,
+    AvatarModule,
     routes
   ],
   providers: [

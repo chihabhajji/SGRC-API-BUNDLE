@@ -45,12 +45,13 @@
                         <td>{{ change?.dateChangeStatus | date:'dd/MM/yyyy HH:mm:ss'}}</td>
                         <td>{{ change?.status }}</td>
                     </tr>
-
                 </table>
               </span>
           </li>
         </ul>
       </div>
+
+      
       <div class="box-footer">
         <button *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'"
                 (click)="changeStatus('Assigned')"

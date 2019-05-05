@@ -8,7 +8,17 @@
       <span class="sr-only">Toggle navigation</span>
     </a>
     <div class="navbar-custom-menu">
-        <p style="color:white">{{ shared.user.email }} - {{ shared.user.profile }} |  <button class="btn btn-link" (click)="signOut()"><font style="color:white">Sign out</font></button></p>
+      <div class="btn-group dropleft">
+          <avatar [email]="shared.user.email" [displayType]="'circle'" [size]="28"
+            type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false"></avatar>
+        
+        <ul class="dropdown-menu dropleft" >
+           <li class="dropleft" role=" presentation"><a role="menuitem" tabindex="-1" href="#">{{ shared.user.email }} -{{ shared.user.profile }}</a></li>
+           <li ><a href="#">Profile</a></li>
+           <li><button class="btn btn-link" (click)="signOut()">Sign out</button></li>
+        </ul>
+      </div>
     </div>
   </nav>
 </header>
