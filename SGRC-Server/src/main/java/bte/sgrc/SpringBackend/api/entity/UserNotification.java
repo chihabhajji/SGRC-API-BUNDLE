@@ -3,6 +3,7 @@ package bte.sgrc.SpringBackend.api.entity;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import bte.sgrc.SpringBackend.api.entity.Util.Notification;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.Setter;
 
 public class UserNotification {
     @Getter @Setter @Id private String notificationId;
-    @Getter @Setter private User user;
+    @Getter @Setter @DBRef private User user;
     //@OrderBy("createdAt")
     @Getter @Setter private Collection<Notification> notification = new ArrayList<Notification>();;
     

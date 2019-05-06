@@ -25,6 +25,8 @@ import { TicketDetailComponent } from './components/ticket-detail/ticket-detail.
 import { SummaryComponent } from './components/summary/summary.component';
 import { ChartModule } from 'primeng/primeng';
 import { AvatarModule } from 'ng2-avatar';
+import { CarouselModule } from 'primeng/carousel';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
   declarations: [
     AppComponent,
@@ -46,6 +48,8 @@ import { AvatarModule } from 'ng2-avatar';
     FormsModule,
     ChartModule,
     AvatarModule,
+    CarouselModule,
+    NgbModule,
     routes
   ],
   providers: [

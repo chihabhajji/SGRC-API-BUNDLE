@@ -171,7 +171,7 @@ public class TicketController{
     }
     // TODO : Archive claim
     @GetMapping(value = "{page}/{count}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN', 'ADMIN')")
     public ResponseEntity<Response<Page<Ticket>>> findAll(HttpServletRequest request, 
                 @PathVariable("page") Integer page, 
                 @PathVariable("count") Integer count){
@@ -179,12 +179,13 @@ public class TicketController{
         Page<Ticket> tickets = null;
         User userRequest = userFromRequest(request);
 
-        if (userRequest.getProfile().equals(ProfileEnum.ROLE_TECHNICIAN)){
+        if (userRequest.getProfile().equals(ProfileEnum.ROLE_ADMIN)){
             tickets = ticketService.listTicket(page, count);
         } else if (userRequest.getProfile().equals(ProfileEnum.ROLE_CUSTOMER)){
             tickets = ticketService.findByCurrentUser(page, count, userRequest.getId());
+        } else if (userRequest.getProfile().equals(ProfileEnum.ROLE_TECHNICIAN)){
+            tickets = ticketService.findByAssignedUser(page, count, userRequest.getId());
         }
-
         response.setData(tickets);
         return ResponseEntity.ok(response);
     }
@@ -337,7 +338,7 @@ public class TicketController{
     }
     
     @GetMapping(value = "{page}/{count}/{number}/{title}/{status}/{priority}/{assigned}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN', 'ADMIN')")
     public ResponseEntity<Response<Page<Ticket>>> findByParams(HttpServletRequest request,
             @PathVariable("page") Integer page, @PathVariable("count") Integer count,
             @PathVariable("number") Integer number, @PathVariable("title") String title,
@@ -367,6 +368,8 @@ public class TicketController{
             } else if (userRequest.getProfile().equals(ProfileEnum.ROLE_CUSTOMER)) {
                 tickets = ticketService.findByParametersAndCurrentUser(page, count, title, status, priority,
                         userRequest.getId());
+            } else if (userRequest.getProfile().equals(ProfileEnum.ROLE_ADMIN)){
+                tickets = ticketService.findByParameters(page, count, title, status, priority);
             }
         }
         response.setData(tickets);

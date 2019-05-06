@@ -20,4 +20,6 @@ public interface TicketRepository extends MongoRepository<Ticket, String>{
         (String title, String status, String priority, String userId, Pageable pages); 
 
     Page<Ticket> findByNumber(Integer number, Pageable pages);
+
+	Page<Ticket> findByAssignedUserId(String assignedUserId , Pageable pages);
 }

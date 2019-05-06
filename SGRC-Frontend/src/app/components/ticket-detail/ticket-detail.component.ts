@@ -6,7 +6,8 @@ import { SharedService } from './../../services/shared.service';
 import { NgForm } from '@angular/forms';
 import { TicketService } from './../../services/ticket/ticket.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-
+import { CarouselModule } from 'primeng/carousel';
+import { User } from '../../model/user';
 @Component({
   selector: 'app-ticket-detail',
   templateUrl: './ticket-detail.component.html',
@@ -21,7 +22,7 @@ export class TicketDetailComponent implements OnInit {
   shared: SharedService;
   message: {};
   classCss: {};
-
+  agents : User[];
   constructor(
     private ticketService: TicketService,
     private route: ActivatedRoute) {
@@ -33,6 +34,12 @@ export class TicketDetailComponent implements OnInit {
     if (id !== undefined) {
       this.findById(id);
     }
+    
+    this.agents = [
+      {id : '0', email : 'mail@mail.mail' , password:'123456' , profile :'TECHNICIAN'},
+      { id: '10', email: 'azeazeil@mail.mail', password: '123456', profile: 'TECHNICIAN' }
+    ];
+    
   }
 
   findById(id: string) {
@@ -122,6 +129,10 @@ export class TicketDetailComponent implements OnInit {
     });
   }
 
+  selectAgent(agent : User) {
+    this.showMessage({type : 'success', text : 'Agent selected :'+ agent.email});
+    // this.ticket.assignedUser = agent ;
+  }
   
 }
 

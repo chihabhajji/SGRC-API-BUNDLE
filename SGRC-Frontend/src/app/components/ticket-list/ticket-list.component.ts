@@ -49,7 +49,6 @@ export class TicketListComponent implements OnInit {
   }
 
   filter(): void {
-    console.log(' this.assignedToMe --> ', this.assignedToMe);
     this.page = 0;
     this.count = 5;
     this.ticketService.findByParams(this.page, this.count, this.assignedToMe, this.ticketFilter)

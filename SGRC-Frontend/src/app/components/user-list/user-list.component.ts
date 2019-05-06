@@ -27,7 +27,7 @@ export class UserListComponent implements OnInit {
     private router: Router
   ) {
     this.page = 0;
-    this.count = 2;
+    this.count = 10;
   }
 
   ngOnInit() {

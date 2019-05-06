@@ -51,7 +51,27 @@
         </ul>
       </div>
 
-      
+            <p-carousel headerText="Agents" [value]="agents" >
+              <ng-template let-agent pTemplate="item">
+                <div class="ui-grid ui-grid-responsive">
+                              <div class="ui-grid-row">
+                                <div class="ui-grid-col-6">Email :</div>
+                                <div class="ui-grid-col-6">{{agent.email}}</div>
+                              </div>
+                              <div class="ui-grid-row">
+                                <div class="ui-grid-col-6">Profile :</div>
+                                <div class="ui-grid-col-6">{{agent.profile}}</div>
+                              </div>
+                              <div class="ui-grid-row">
+                                <div class="ui-grid-col-12">
+                                  <button type="button" pButton icon="pi pi-search" (click)="selectAgent(agent)"></button>
+                                </div>
+                              </div>
+                </div>
+              </ng-template>
+            </p-carousel>
+
+
       <div class="box-footer">
         <button *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'"
                 (click)="changeStatus('Assigned')"

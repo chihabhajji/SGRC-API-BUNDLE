@@ -182,7 +182,9 @@ public class UserController{
     
     @GetMapping(value = "techlist")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<User> getAllTechnicians(){
-        return userService.findByRole("ROLE_TECHNICIAN");
+    public Response<List<User>> getAllTechnicians(){
+        Response<List<User>> response = new Response<List<User>>();
+        response.setData(userService.findByRole(ProfileEnum.ROLE_TECHNICIAN.name()));
+        return response;
     }
 }

@@ -90,5 +90,11 @@ public class TicketServiceImplement implements TicketService{
 			String priority, String assignedUserId) {
         Pageable pages = PageRequest.of(page, count);
         return this.ticketRepository.findByTitleIgnoreCaseContainingAndStatusContainingAndPriorityContainingAndAssignedUserIdOrderByDateDesc(title, status, priority, assignedUserId, pages);
-    }
+	}
+
+	@Override
+	public Page<Ticket> findByAssignedUser(Integer page, Integer count,String assignedUserId){
+		Pageable pages = PageRequest.of(page, count);
+		return this.ticketRepository.findByAssignedUserId(assignedUserId,pages);
+	}
 }
