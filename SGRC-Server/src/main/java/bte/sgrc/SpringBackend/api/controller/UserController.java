@@ -180,11 +180,16 @@ public class UserController{
         return userService.findByEmail(email);
     }
     
-    @GetMapping(value = "techlist")
+    @GetMapping(value = "techlist/{page}/{count}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public Response<List<User>> getAllTechnicians(){
-        Response<List<User>> response = new Response<List<User>>();
-        response.setData(userService.findByRole(ProfileEnum.ROLE_TECHNICIAN.name()));
-        return response;
+    public ResponseEntity<Response<Page<User>>> getAllTechnicians(@PathVariable("page") Integer page,
+            @PathVariable("count") Integer count){
+        Response<Page<User>> response = new Response<Page<User>>();
+        Page<User> agents = userService.findByRole(ProfileEnum.ROLE_TECHNICIAN.name(),page,count);
+        if (agents==null)
+            return ResponseEntity.badRequest().body(response);
+        else
+        response.setData(agents);
+        return ResponseEntity.ok(response);
     }
 }

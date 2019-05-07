@@ -129,7 +129,7 @@ public class TicketController{
     }
 
     @GetMapping(value = "{id}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN','ADMIN')")
     public ResponseEntity<Response<Ticket>> findById(@PathVariable("id") String id){
         Response<Ticket> response = new Response<Ticket>();
         Ticket ticket = ticketService.findById(id);
@@ -190,7 +190,7 @@ public class TicketController{
         return ResponseEntity.ok(response);
     }
     @PutMapping(value = "{id}/{status}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN','ADMIN')")
     public ResponseEntity<Response<Ticket>> changeStatus(HttpServletRequest request, 
                     @PathVariable("id") String id, 
                     @PathVariable("status") String status,
@@ -208,11 +208,15 @@ public class TicketController{
             ticketCurrent.setStatus(StatusEnum.getStatus(status));
             
             if (status.equals("Assigned")){
-                // TODO : Find a workaround for when admin is gonna asign ticket technicians, aka ticket.getAssignedUser() but implement it client side first
-                ticketCurrent.setAssignedUser(userFromRequest(request));
+                if(ticket.getAssignedUser()==null){
+                response.getErrors().add("Please select an agent to assign");
+                return ResponseEntity.badRequest().body(response);
+                }
+                ticketCurrent.setAssignedUser(ticket.getAssignedUser());
 
             }
-            
+            // TODO : when status == solved, add a solve message
+
             Ticket ticketPersisted = ticketService.createOrUpdate(ticketCurrent);
             ChangeStatus changeStatus = new ChangeStatus();
             changeStatus.setUserChange(userFromRequest(request));

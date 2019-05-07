@@ -19,26 +19,24 @@ export class SummaryComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.getSummary();
-    this.defineDatasets();
-  }
-  getSummary() {
-    this.ticketService.summary().subscribe((responseApi: ResponseApi) => {
-    this.summary = responseApi.data;
-      this.stats[0] = this.summary.amountApproved;
-      console.log(this.stats[0]);
-    }, err => { this.showMessage({ type: 'error', text: err['error']['errors'][0] }); });
-    return this.summary;
-  }
-  defineDatasets() {
+
     this.data = {
       labels: ['Newly created tickets', 'Assigned tickets', 'Closed tickets', 'Resolved tickets', 'Approved tickets', 'Dissaproved tickets'],
       datasets: [{
-        data: [this.summary.amountApproved, 60, 70, 80, 90, 100],
+        data: [0, 0, 0, 0, 0, 0],
         backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#FA02FC", "#BACC25", "#69FACD"],
         hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#000000", "#FFFFFF", "#ABD25D"]
       }]
     };
+
+    this.ticketService.summary().subscribe((responseApi: ResponseApi) => {
+        this.summary = responseApi.data;
+        this.data.datasets[0].data = [this.summary.amountNew, this.summary.amountAssigned, this.summary.amountClosed, this.summary.amountResolved, this.summary.amountApproved, this.summary.amountDisapproved]
+      },
+      err => { 
+        this.showMessage({ type: 'error', text: err['error']['errors'][0] 
+        }); 
+    });
   }
 
   private showMessage(message: {type: string, text: string}): void {

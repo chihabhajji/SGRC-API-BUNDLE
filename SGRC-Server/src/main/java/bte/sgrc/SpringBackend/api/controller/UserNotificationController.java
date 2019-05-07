@@ -39,7 +39,7 @@ public class UserNotificationController {
     private static Logger logger = LoggerFactory.getLogger(UserNotificationController.class);
 
     @GetMapping(value = "{page}/{count}")
-	public ResponseEntity<Response<Page<UserNotification>>> getNotificationsByUser(HttpServletRequest request,
+	public ResponseEntity<Response<Page<UserNotification>>> findAll(HttpServletRequest request,
             @PathVariable("page") Integer page, @PathVariable("count") Integer count){
         Response<Page<UserNotification>> response = new Response<Page<UserNotification>>();
         User userRequest = userFromRequest(request);

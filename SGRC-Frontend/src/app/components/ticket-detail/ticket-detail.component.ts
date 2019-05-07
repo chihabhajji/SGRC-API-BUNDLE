@@ -8,16 +8,30 @@ import { TicketService } from './../../services/ticket/ticket.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CarouselModule } from 'primeng/carousel';
 import { User } from '../../model/user';
+import { UserService } from './../../services/user/user.service';
 @Component({
   selector: 'app-ticket-detail',
   templateUrl: './ticket-detail.component.html',
-  styleUrls: ['./ticket-detail.component.css']
+  styleUrls: ['./ticket-detail.component.css'],
+  styles: [`
+        .ui-grid-row {
+            text-align: center;
+        }
+        .ui-grid {
+            margin: 10px 0px;
+        }
+        .ui-grid-row > div {
+            padding: 4px 10px;
+        }
+    `]
 })
 export class TicketDetailComponent implements OnInit {
 
   @ViewChild('form')
   form: NgForm;
-
+  page: number;
+  count: number;
+  pages: Array<Number>;
   ticket = new Ticket('', 0, '', '', '', '', null, null, '', null);
   shared: SharedService;
   message: {};
@@ -25,8 +39,11 @@ export class TicketDetailComponent implements OnInit {
   agents : User[];
   constructor(
     private ticketService: TicketService,
+    private userService: UserService,
     private route: ActivatedRoute) {
-      this.shared = SharedService.getInstance();
+    this.page = 0;
+    this.count = 3;
+    this.shared = SharedService.getInstance();
   }
 
   ngOnInit() {
@@ -34,12 +51,21 @@ export class TicketDetailComponent implements OnInit {
     if (id !== undefined) {
       this.findById(id);
     }
-    
-    this.agents = [
-      {id : '0', email : 'mail@mail.mail' , password:'123456' , profile :'TECHNICIAN'},
-      { id: '10', email: 'azeazeil@mail.mail', password: '123456', profile: 'TECHNICIAN' }
-    ];
-    
+    this.findAllTechnicians(this.page, this.count);
+  }
+
+  findAllTechnicians(page: Number, count: Number) {
+    this.userService.findAllTechnicians(page, count).subscribe((responseApi: ResponseApi) => {
+      console.log('Querying');
+      this.agents = responseApi['data']['content'];
+      this.pages = new Array(responseApi['data']['totalPages']);
+      console.log(this.agents[0].email);
+    }, err => {
+      this.showMessage({
+        type: 'error',
+        text: ['error']['errors'][0]
+      });
+    });
   }
 
   findById(id: string) {
@@ -131,8 +157,32 @@ export class TicketDetailComponent implements OnInit {
 
   selectAgent(agent : User) {
     this.showMessage({type : 'success', text : 'Agent selected :'+ agent.email});
-    // this.ticket.assignedUser = agent ;
+    this.ticket.assignedUser = agent ;
   }
   
+
+  setNextPage(event: any) {
+    event.preventDefault();
+    if (this.page + 1 < this.pages.length) {
+      this.page = this.page + 1;
+      this.findAllTechnicians(this.page, this.count);
+    }
+  }
+
+  setPreviousPage(event: any) {
+    event.preventDefault();
+    if (this.page > 0) {
+      this.page = this.page - 1;
+      this.findAllTechnicians(this.page, this.count);
+    }
+  }
+
+  setPage(i, event: any) {
+    event.preventDefault();
+    this.page = i;
+    this.findAllTechnicians(this.page, this.count);
+  }
+
+
 }
 

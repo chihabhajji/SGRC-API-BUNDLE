@@ -12,8 +12,7 @@
           <avatar [email]="shared.user.email" [displayType]="'circle'" [size]="28"
             type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
             aria-expanded="false"></avatar>
-        
-        <ul class="dropdown-menu dropleft" >
+        <ul class="dropdown-menu dropdown-left-manual">
            <li class="dropleft" role=" presentation"><a role="menuitem" tabindex="-1" href="#">{{ shared.user.email }} -{{ shared.user.profile }}</a></li>
            <li ><a href="#">Profile</a></li>
            <li><button class="btn btn-link" (click)="signOut()">Sign out</button></li>

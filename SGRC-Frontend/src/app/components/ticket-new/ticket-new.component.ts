@@ -104,7 +104,7 @@ export class TicketNewComponent implements OnInit {
           } else {
           this.ticket.image = reader.result as string;
           } 
-        //this.ticket.image = reader.result as string;;
+        //this.ticket.image = reader.result as string;
       };
       reader.readAsDataURL(event.target.files[0]);
     }

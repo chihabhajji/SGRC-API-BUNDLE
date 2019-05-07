@@ -29,7 +29,6 @@ export class UserListComponent implements OnInit {
     this.page = 0;
     this.count = 10;
   }
-
   ngOnInit() {
     this.findAll(this.page, this.count);
   }

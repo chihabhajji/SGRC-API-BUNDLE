@@ -45,7 +45,7 @@ public class SendingMailService {
         return sendMail(toEmail, subject, body);
     }
 
-    @Async
+    //@Async
     public boolean sendMail(String toEmail, String subject, String body) {
         try {
             Thread.sleep(100);

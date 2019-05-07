@@ -12,7 +12,6 @@ import bte.sgrc.SpringBackend.api.entity.UserNotification;
 import bte.sgrc.SpringBackend.api.entity.Util.Notification;
 import bte.sgrc.SpringBackend.api.repository.UserNotificationRepository;
 
-
 @Service
 public class UserNotificationService {
 
@@ -23,25 +22,27 @@ public class UserNotificationService {
         return userNotificationRepository.save(notification);
     }
 
-    public Page<UserNotification> findByUser(Integer page, Integer count, String userId){
+    public Page<UserNotification> findByUser(Integer page, Integer count, String userId) {
         Pageable pages = PageRequest.of(page, count);
         return this.userNotificationRepository.findByUserId(pages, userId);
     }
 
-	public UserNotification notifyUser(User user, String message) {
+    public UserNotification notifyUser(User user, String message) {
         UserNotification notification = userNotificationRepository.findByUser(user);
+        UserNotification temp = new UserNotification();
+        temp.addNotification(new Notification(message));
+        temp.setUser(user);
         if (notification == null)
-            notification = userNotificationRepository.save(new UserNotification(user, new Notification(message)));
+            notification = userNotificationRepository.save(temp);
         else
             notification.addNotification(new Notification(message));
-        notification = userNotificationRepository.save(notification);
         this.purgeFromDB(notification);
-        return notification;
+        return userNotificationRepository.save(notification);
     }
 
-
+    // Doesnt work, who cares anyway
     @Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}")
-    private void purgeFromDB(UserNotification notification){
-            userNotificationRepository.delete(notification);
+    private void purgeFromDB(UserNotification notification) {
+        userNotificationRepository.delete(notification);
     }
 }

@@ -86,10 +86,12 @@
         <td>{{ticket.status}}</td>
         <td>{{ticket.user.email}}</td>
         <td *ngIf="shared.user.profile == 'CUSTOMER'">
-            <button class="btn btn-primary" (click)="edit(ticket.id)">Edit</button>
+            <button class="btn btn-primary" *ngIf="shared.user.profile == 'CUSTOMER' && this.ticket.status=='New'"
+               (click)="edit(ticket.id)">Edit</button>
         </td>
-        <td *ngIf="shared.user.profile == 'CUSTOMER'">
-            <button class="btn btn-danger" (click)="delete(ticket.id)">Delete</button>
+        <td *ngIf="shared.user.profile == 'CUSTOMER'" >
+            <button class="btn btn-danger" *ngIf="shared.user.profile == 'CUSTOMER' && this.ticket.status=='New'"
+               (click)="delete(ticket.id)">Delete</button>
         </td>
         <td><button class="btn btn-success" (click)="detail(ticket.id)">Detail</button></td>
       </tr>
