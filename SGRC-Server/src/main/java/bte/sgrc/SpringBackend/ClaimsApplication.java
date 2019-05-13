@@ -36,6 +36,7 @@ public class ClaimsApplication {
 		if (find == null) {
 			User admin = new User();
 			admin.setEmail("admin@sgrc.bte");
+			admin.setName("Admin ben admin");
 			admin.setPassword(passwordEncoder.encode("123456"));
 			admin.setProfile(ProfileEnum.ROLE_ADMIN);
 			// verificationTokenService.createVerification(admin);
@@ -45,6 +46,7 @@ public class ClaimsApplication {
 			
 			User agent = new User();
 			agent.setEmail("agent@sgrc.bte");
+			agent.setName("Agent ben agent");
 			agent.setPassword(passwordEncoder.encode("123456"));
 			agent.setProfile(ProfileEnum.ROLE_TECHNICIAN);
 			// verificationTokenService.createVerification(agent);
@@ -53,6 +55,7 @@ public class ClaimsApplication {
 
 			User client = new User();
 			client.setEmail("client1@sgrc.bte");
+			client.setName("Foulen ben falten");
 			client.setPassword(passwordEncoder.encode("123456"));
 			client.setProfile(ProfileEnum.ROLE_CUSTOMER);
 			// verificationTokenService.createVerification(client);

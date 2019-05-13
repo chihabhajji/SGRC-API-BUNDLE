@@ -3,7 +3,7 @@ package bte.sgrc.SpringBackend.api.service;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
+// import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -48,12 +48,7 @@ public class SendingMailService {
     //@Async
     public boolean sendMail(String toEmail, String subject, String body) {
         try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        try {
+            
             Properties props = System.getProperties();
             props.put("mail.transport.protocol", "smtp");
             props.put("mail.smtp.port", mailProperties.getSmtp().getPort());

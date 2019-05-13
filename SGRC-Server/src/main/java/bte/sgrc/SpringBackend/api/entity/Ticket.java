@@ -24,7 +24,7 @@ public class Ticket{
 	@Getter @Setter @DBRef(lazy = true) private User assignedUser;
 	@Getter @Setter @Transient  List<ChangeStatus> changes;
     @Getter @Setter private Date date;
-    @Getter @Setter private Boolean isArchived = false ;
+    
     @Getter @Setter @Size(min = 6, max = 60)private String title;
     @Getter @Setter @Size(min = 10, max = 255) private String description;
     @Getter @Setter private String image;
@@ -33,4 +33,6 @@ public class Ticket{
     @Getter @Setter private StatusEnum status;
     @Getter @Setter private PriorityEnum priority;
    
+    @Getter @Setter private Boolean archived = false;
+    @Getter @Setter private Boolean deleted = false;
 }

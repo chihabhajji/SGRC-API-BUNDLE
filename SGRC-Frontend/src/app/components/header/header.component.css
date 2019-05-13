@@ -11,3 +11,8 @@
   padding-left: 1px;
   padding-right: 1px;
 }
+
+.disabled {
+  pointer-events: none;
+  cursor: default;
+}

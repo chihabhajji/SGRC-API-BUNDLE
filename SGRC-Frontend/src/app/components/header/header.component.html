@@ -1,21 +1,51 @@
 <header class="main-header">
   <a [routerLink]="['/']" class="logo">
-    <span class="logo-mini"><b>SGRC</b></span>
-    <span class="logo-lg"><b>BTE : SGRC</b></span>
+    <span class="logo-mini"><img src="./../../../favicon.ico" alt="Smiley face" height="42" width="42"></span>
+    <span class="logo-lg"><b>BTE : Helpdesk</b></span>
   </a>
   <nav class="navbar navbar-static-top">
     <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
       <span class="sr-only">Toggle navigation</span>
     </a>
     <div class="navbar-custom-menu">
+      <!-- Notification dropdown -->
       <div class="btn-group dropleft">
-          <avatar [email]="shared.user.email" [displayType]="'circle'" [size]="28"
+        <i type="button" (click)="findAllNotifications(shared.user.id)" size="5x"
+          class="far fa-flag btn btn-secondary dropdown-toggle"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+        <ul class="dropdown-menu dropdown-left-manual" style="overflow-y:scroll; height:200px;">
+          <li class="dropleft" role=" presentation"><a role="menuitem" tabindex="-1" href="#"> <i
+                class="fas fa-arrow-alt-circle-right" (click)="detail(ticket.id)">
+              </i> {{Notifications.message}}<small>24/14/1997 24</small></a></li>
+        </ul>
+      </div>
+      <!-- User icon dropdown ya hajj-->
+      <div class="btn-group dropleft">
+          <avatar [name]="shared.user.name" [displayType]="'circle'" [size]="28"
             type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-            aria-expanded="false"></avatar>
+            aria-expanded="false"></avatar> 
         <ul class="dropdown-menu dropdown-left-manual">
-           <li class="dropleft" role=" presentation"><a role="menuitem" tabindex="-1" href="#">{{ shared.user.email }} -{{ shared.user.profile }}</a></li>
-           <li ><a href="#">Profile</a></li>
-           <li><button class="btn btn-link" (click)="signOut()">Sign out</button></li>
+           <li class="dropleft" role=" presentation" style="color: #fff300;">
+             <a role="menuitem" tabindex="-1" class="disabled">
+                      <i *ngIf="shared.user.profile == 'CUSTOMER'" class="fas fa-users"></i>
+                      <i *ngIf="shared.user.profile == 'TECHNICIAN'" class="fas fa-users-cog"> </i>
+                      <i *ngIf="shared.user.profile == 'ADMIN'" class="fas fa-user-shield"> </i> |
+                      {{ shared.user.email }} 
+             </a>
+           </li>
+        
+           <li *ngIf="shared.user.profile == 'CUSTOMER'">
+             
+             <a [routerLink]="['/archived']"> <i class="fas fa-inbox"></i> | Archived tickets </a>
+          </li>
+           <li >
+             <a [routerLink]="['/profile']"> <i class="far fa-user-circle"></i> | Profile</a>
+           </li>
+           <li>
+             <a role="button" (click)="signOut()" style="color:#41c7f4;">
+               <i class="fas fa-sign-out-alt" ></i>
+               | Sign out</a>
+            </li>
         </ul>
       </div>
     </div>

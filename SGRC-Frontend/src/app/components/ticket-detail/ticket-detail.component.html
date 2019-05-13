@@ -50,61 +50,57 @@
           </li>
         </ul>
       </div>
+      <div>
 
-            <p-carousel *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'"  headerText="Agents"
-              [value]="agents" circular="circular" autoplayInterval="3000">
-              <ng-template let-agent pTemplate="agent">
-                <div class="ui-grid ui-grid-responsive">
-                              <div class="ui-grid-row">
-                                <div class="ui-grid-col-6">
-                                  <avatar [email]="agent.email" [displayType]="'circle'" [size]="28"></avatar>
-                                </div>
-                              </div>
-                              <div class="ui-grid-row">
-                                <div class="ui-grid-col-6">Email :</div>
-                                <div class="ui-grid-col-6">{{agent.email}}</div>
-                              </div>
-                              <div class="ui-grid-row">
-                                <div class="ui-grid-col-6">Profile :</div>
-                                <div class="ui-grid-col-6">{{agent.profile}}</div>
-                              </div>
-                              <div class="ui-grid-row">
-                                <div class="ui-grid-col-12">
-                                  <button type="button" pButton icon="pi pi-search" (click)="selectAgent(agent)" >Pick</button>
-                                </div>
-                              </div>
 
+      <p-carousel *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'" headerText="Pick an agent to assign to this ticket : " [value]="agents" circular="circular" autoplayInterval="3000" class="ui-carousel">
+        <ng-template let-agent pTemplate="agent">
+          <p-card header="Agent" [style]="{width: '360px'}">
+            <div class="ui-grid ui-grid-responsive">
+              <div class="ui-grid-row">
+                <div class="ui-grid-col-6">
+                  <avatar [email]="agent.email" [displayType]="'circle'" [size]="28"></avatar>
                 </div>
-
-              </ng-template>
-
-            </p-carousel>
+                </div>
+                <div class="ui-grid-row">
+                  <div class="ui-grid-col-6">Email :</div>
+                  <div class="ui-grid-col-6">{{agent.email}}</div>
+                </div>
+                <div class="ui-grid-row">
+                  <div class="ui-grid-col-6">Profile :</div>
+                  <div class="ui-grid-col-6">{{agent.profile}}</div>
+                </div>
+                <div class="ui-grid-row">
+                  <div class="ui-grid-col-12">
+                    <button type="button" pButton icon="pi pi-search" (click)="selectAgent(agent)">Pick</button>
+                  </div>
+                </div>
+              </div>
+             </p-card>
+            </ng-template>
+            <hr>
+        </p-carousel>
+          
+          <ul *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'" class=" pagination pagination-sm no-margin pull-right">
+              <li>
+                <a href="" (click)="setPreviousPage($event)">&laquo;</a>
+              </li>
+              <li *ngFor="let p of pages; let i=index">
+                <a [ngClass]="{'pagination-focus':i==page}" href="" (click)="setPage(i,$event)">{{i+1}}</a>
+              </li>
+              <li>
+                <a href="" (click)="setNextPage($event)">&raquo;</a>
+              </li>
+          </ul>
+      </div>
 
       <div class="box-footer">
-        <ul *ngIf="shared.user.profile == 'ADMIN'" class=" pagination pagination-sm no-margin pull-right">
-          <li><a href="" (click)="setPreviousPage($event)">&laquo;</a>
-          </li>
-          <li *ngFor="let p of pages; let i=index">
-            <a [ngClass]="{'pagination-focus':i==page}" href="" (click)="setPage(i,$event)">{{i+1}}</a>
-          </li>
-          <li><a href="" (click)="setNextPage($event)">&raquo;</a>
-          </li>
-        </ul>
-        <button *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'"
-                (click)="changeStatus('Assigned')"
-                class="btn btn-primary">Assign</button>
-        <button *ngIf="shared.user.profile == 'TECHNICIAN' && (ticket.status == 'Assigned' || ticket.status == 'Disapproved')"
-                (click)="changeStatus('Resolved')"
-                class="btn btn-primary">Solve</button>
-        <button *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved'"
-                (click)="changeStatus('Approved')"
-                class="btn btn-primary">Approve</button>
-        <button *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved'"
-                (click)="changeStatus('Disapproved')"
-                class="btn btn-primary">Disapprove</button>
-        <button *ngIf="shared.user.profile == 'TECHNICIAN' && ticket.status == 'Approved'"
-                (click)="changeStatus('Closed')"
-                class="btn btn-primary">Close</button>
+        <button *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'" (click)="changeStatus('Assigned')" class="btn btn-primary">Assign</button>
+        <button *ngIf="shared.user.profile == 'TECHNICIAN' && (ticket.status == 'Assigned' || ticket.status == 'Disapproved')" (click)="changeStatus('Resolved')" class="btn btn-primary">Solve</button>
+        <button *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'" (click)="delete(ticket.id)" class="btn btn-danger">Reject</button>
+        <button *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved'" (click)="changeStatus('Approved')" class="btn btn-primary">Approve</button>
+        <button *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved'" (click)="changeStatus('Disapproved')" class="btn btn-primary">Disapprove</button>
+        <button *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'Approved'" (click)="changeStatus('Closed')" class="btn btn-primary">Close</button>
       </div>
     </form>
   </div>

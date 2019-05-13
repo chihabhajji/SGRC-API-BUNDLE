@@ -1,8 +1,8 @@
+import { Component, OnInit } from '@angular/core';
 import { Ticket } from './../../model/ticket';
 import { ResponseApi } from './../../model/response-api';
 import { SharedService } from './../../services/shared.service';
 import { Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
 import { DialogService } from '../../dialog.service';
 import { TicketService } from '../../services/ticket/ticket.service';
 
@@ -21,7 +21,7 @@ export class TicketListComponent implements OnInit {
   message: {};
   classCss: {};
   listTicket = [];
-  ticketFilter = new Ticket('', null, '', '', '', '', null, null, '', null);
+  ticketFilter = new Ticket('', null, '', '', '', '', null, null, '', null,false,false);
 
   constructor(
     private dialogService: DialogService,
@@ -49,6 +49,10 @@ export class TicketListComponent implements OnInit {
   }
 
   filter(): void {
+    if(this.ticketFilter==null){
+      this.cleanFilter();
+      return;
+    }
     this.page = 0;
     this.count = 5;
     this.ticketService.findByParams(this.page, this.count, this.assignedToMe, this.ticketFilter)
@@ -69,7 +73,7 @@ export class TicketListComponent implements OnInit {
     this.assignedToMe = false;
     this.page = 0;
     this.count = 5;
-    this.ticketFilter = new Ticket('', null, '', '', '', '', null, null, '', null);
+    this.ticketFilter = new Ticket('', null, '', '', '', '', null, null, '', null,false,false);
     this.findAll(this.page, this.count);
   }
 
@@ -102,6 +106,23 @@ export class TicketListComponent implements OnInit {
           }
       });
   }
+  
+  archive(id: string) {
+          this.message = {};
+          this.ticketService.archive(id).subscribe((responseApi: ResponseApi) => {
+            this.showMessage({
+              type: 'success',
+              text: `Record archived`
+            });
+            this.findAll(this.page, this.count);
+          }, err => {
+            this.showMessage({
+              type: 'error',
+              text: err['error']['errors'][0]
+            });
+          });
+        }
+
 
   setNextPage(event: any) {
     event.preventDefault();

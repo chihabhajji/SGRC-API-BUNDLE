@@ -26,6 +26,7 @@
     "chart.js": "^2.8.0",
     "core-js": "^2.4.1",
     "ng2-avatar": "^2.3.1",
+    "ngx-toastr": "^10.0.2",
     "primeicons": "^1.0.0",
     "primeng": "^7.1.2",
     "rxjs": "^6.5.1",

@@ -10,20 +10,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class UserNotification {
-    @Getter
-    @Setter
-    @Id
-    private String notificationId;
-    @Getter
-    @Setter
-    @DBRef(lazy = true)
-    private User user;
-    // @OrderBy("createdAt")
-    @Getter
-    @Setter
-    private Collection<Notification> notification = new ArrayList<Notification>();;
-
- 
+    @Getter @Setter @Id private String notificationId;
+    @Getter @Setter @DBRef(lazy = true) private User user;
+    @Getter @Setter private Collection<Notification> notification = new ArrayList<Notification>();
 
     public void addNotification(Notification notification) {
         this.notification.add(notification);

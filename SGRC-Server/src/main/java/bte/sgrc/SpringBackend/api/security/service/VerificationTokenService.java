@@ -9,13 +9,19 @@ import bte.sgrc.SpringBackend.api.entity.Util.VerificationToken;
 import bte.sgrc.SpringBackend.api.repository.UserRepository;
 import bte.sgrc.SpringBackend.api.repository.VerificationTokenRepository;
 import bte.sgrc.SpringBackend.api.service.SendingMailService;
+import bte.sgrc.SpringBackend.api.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class VerificationTokenService {
+
+    @Autowired
     private VerificationTokenRepository verificationTokenRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
     private SendingMailService sendingMailService;
 
     @Autowired
@@ -49,12 +55,15 @@ public class VerificationTokenService {
         if (verificationToken.getExpiredDateTime().isBefore(LocalDateTime.now())) {
             return ResponseEntity.unprocessableEntity().body("Expired token.");
         }
-
+        
         verificationToken.setConfirmedDateTime(LocalDateTime.now());
         verificationToken.setStatus(VerificationToken.STATUS_VERIFIED);
-        verificationToken.getUser().setIsActive(true);
         verificationTokenRepository.save(verificationToken);
 
+        User user = userService.findByEmail(verificationToken.getUser().getEmail());
+        user.setIsActive((true));
+        userService.createOrUpdate(user);
+        
         return ResponseEntity.ok("You have successfully verified your email address.");
     }
 }

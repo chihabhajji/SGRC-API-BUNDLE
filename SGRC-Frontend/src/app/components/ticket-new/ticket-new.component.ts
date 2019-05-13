@@ -16,7 +16,7 @@ export class TicketNewComponent implements OnInit {
   @ViewChild('form')
   form: NgForm;
 
-  ticket = new Ticket('', null, '', '', '', '', null, null, '', null);
+  ticket = new Ticket('', null, '', '', '', '', null, null, '', null, false, false);
   shared: SharedService;
   message: {};
   classCss: {};
@@ -30,7 +30,6 @@ export class TicketNewComponent implements OnInit {
 
   ngOnInit() {
     const id: String = this.route.snapshot.params['id'];
-
     if (id !== undefined) {
       this.findById(id);
     }
@@ -50,7 +49,7 @@ export class TicketNewComponent implements OnInit {
   register() {
     this.message = {};
     this.ticketService.createOrUpdate(this.ticket).subscribe((responseApi: ResponseApi) => {
-        this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null);
+        this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, false, false);
         const ticket: Ticket = responseApi.data;
         this.form.resetForm();
         this.showMessage({

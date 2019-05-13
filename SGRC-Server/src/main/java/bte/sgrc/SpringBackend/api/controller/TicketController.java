@@ -84,7 +84,9 @@ public class TicketController{
 			Ticket ticketPersisted = ticketService.createOrUpdate(ticket);
             response.setData(ticketPersisted);
             
-            notificationService.notifyUser(userRepository.findByEmail(adminMail),
+            notificationService.notifyUser(
+                    userRepository.findByEmail(adminMail),
+                    ticketPersisted,
                     "Ticket number " + ticket.getNumber() + " has been created by " + ticket.getUser().getEmail()+ " please refer to ticket list to assign it to a technician");
         } catch(Exception e){
             response.getErrors().add(e.getMessage());
@@ -106,7 +108,6 @@ public class TicketController{
                 return ResponseEntity.badRequest().body(response);
             }
             Ticket ticketCurrent = ticketService.findById(ticket.getId());
-            if(ticketCurrent.getStatus()==StatusEnum.New){
                 ticket.setStatus(ticketCurrent.getStatus());
                 ticket.setUser(ticketCurrent.getUser());
                 ticket.setDate(ticketCurrent.getDate());
@@ -116,11 +117,10 @@ public class TicketController{
                     }
                 Ticket ticketPersisted = ticketService.createOrUpdate(ticket);
                 response.setData(ticketPersisted);
-                notificationService.notifyUser(userRepository.findByEmail(ticketPersisted.getUser().getEmail()), "Ticket number :"+ticket.getNumber()+" has been updated");
-            }else{
-                response.getErrors().add("Cannot update ticket unless it hasnt been assigned yet, if you made an irrelevant claim, technicians will delete it");
-                return ResponseEntity.badRequest().body(response);
-            }
+                notificationService.notifyUser(
+                    userRepository.findByEmail(ticketPersisted.getUser().getEmail()), 
+                    ticketPersisted,
+                    "Ticket number :"+ticket.getNumber()+" has been updated");
         } catch (Exception e){
             response.getErrors().add(e.getMessage());
             return ResponseEntity.badRequest().body(response);
@@ -160,35 +160,70 @@ public class TicketController{
             response.getErrors().add("Register not found id: " + id);
             return ResponseEntity.badRequest().body(response);
         }
-        if(ticket.getStatus().equals(StatusEnum.New)){
-            notificationService.notifyUser(user,"Your ticket number :" + ticket.getNumber() + " has been deleted!");
-            ticketService.delete(ticket);
+        ticket.setDeleted(true);
+        // Delete if new, soft delete if closed
+        if(ticket.getStatus().equals(StatusEnum.New))
+        ticketService.delete(ticket);
+        if(ticket.getStatus().equals(StatusEnum.Closed))
+        ticketService.createOrUpdate(ticket);
+        notificationService.notifyUser( user,
+                                        ticketService.findById(id),
+                                        "Your ticket number :" + ticket.getNumber() + " has been deleted!");
+        
         return ResponseEntity.ok(response);
-        }else{
-        response.getErrors().add("Cannot ticket claim unless its not yet being processed, if you made an irrelevant ticket, Technicians will automatically reject it ");
-        return ResponseEntity.badRequest().body(response);
-        }
     }
-    // TODO : Archive claim
+    
+
+    @RequestMapping(value = "archive/{id}")
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
+    public ResponseEntity<Response<String>> archive(@PathVariable("id") String id) {
+        Response<String> response = new Response<String>();
+        Ticket ticket = ticketService.findById(id);
+        User user = userRepository.findByEmail(ticket.getUser().getEmail());
+
+        if (ticket.getId() == null) {
+            response.getErrors().add("Register not found id: " + id);
+            return ResponseEntity.badRequest().body(response);
+        }
+        ticket.setArchived(true);
+        ticketService.createOrUpdate(ticket);
+        notificationService.notifyUser(user,ticket, "Your ticket number :" + ticket.getNumber() + " has been archived!");
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping(value = "{page}/{count}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN', 'ADMIN')")
-    public ResponseEntity<Response<Page<Ticket>>> findAll(HttpServletRequest request, 
-                @PathVariable("page") Integer page, 
-                @PathVariable("count") Integer count){
+    public ResponseEntity<Response<Page<Ticket>>> findAll(HttpServletRequest request,
+            @PathVariable("page") Integer page, @PathVariable("count") Integer count) {
         Response<Page<Ticket>> response = new Response<Page<Ticket>>();
         Page<Ticket> tickets = null;
         User userRequest = userFromRequest(request);
 
-        if (userRequest.getProfile().equals(ProfileEnum.ROLE_ADMIN)){
+        if (userRequest.getProfile().equals(ProfileEnum.ROLE_ADMIN)) {
             tickets = ticketService.listTicket(page, count);
-        } else if (userRequest.getProfile().equals(ProfileEnum.ROLE_CUSTOMER)){
-            tickets = ticketService.findByCurrentUser(page, count, userRequest.getId());
-        } else if (userRequest.getProfile().equals(ProfileEnum.ROLE_TECHNICIAN)){
+        } else if (userRequest.getProfile().equals(ProfileEnum.ROLE_CUSTOMER)) {
+            tickets = ticketService.findByCurrentUser(page, count, userRequest.getId()); // Returns list of non archived and non soft deleted
+        } else if (userRequest.getProfile().equals(ProfileEnum.ROLE_TECHNICIAN)) {
             tickets = ticketService.findByAssignedUser(page, count, userRequest.getId());
         }
         response.setData(tickets);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping(value = "archived/{page}/{count}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN', 'ADMIN')")
+    public ResponseEntity<Response<Page<Ticket>>> findAllArchived(HttpServletRequest request,
+            @PathVariable("page") Integer page, @PathVariable("count") Integer count) {
+        Response<Page<Ticket>> response = new Response<Page<Ticket>>();
+        Page<Ticket> tickets = null;
+        User userRequest = userFromRequest(request);
+        
+        tickets = ticketService.findByCurrentUserArchived(page, count, userRequest.getId()); // Returns list of archived
+        
+        response.setData(tickets);
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping(value = "{id}/{status}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN','ADMIN')")
     public ResponseEntity<Response<Ticket>> changeStatus(HttpServletRequest request, 
@@ -215,8 +250,6 @@ public class TicketController{
                 ticketCurrent.setAssignedUser(ticket.getAssignedUser());
 
             }
-            // TODO : when status == solved, add a solve message
-
             Ticket ticketPersisted = ticketService.createOrUpdate(ticketCurrent);
             ChangeStatus changeStatus = new ChangeStatus();
             changeStatus.setUserChange(userFromRequest(request));
@@ -229,6 +262,7 @@ public class TicketController{
             switch (changeStatus.getStatus()) {
                 case Assigned: {
                     notificationService.notifyUser(userRepository.findByEmail(ticketCurrent.getAssignedUser().getEmail()),
+                            ticketCurrent,
                             "You have been assigned with ticket number " + ticketCurrent.getNumber());
                     break;
                 }
@@ -236,36 +270,30 @@ public class TicketController{
                     break;
                 }
                 case Approved: {
-                    notificationService.notifyUser(userRepository.findByEmail(ticketCurrent.getAssignedUser().getEmail()),
+                    notificationService.notifyUser(userRepository.findByEmail(ticketCurrent.getAssignedUser().getEmail()), ticketCurrent,
                     " Ticket number "+ticket.getNumber()+" has been approved");
                     break;
                 }
                 case Disapproved: {
-                    notificationService.notifyUser(userRepository.findByEmail(ticketCurrent.getAssignedUser().getEmail()),
+                    notificationService.notifyUser(userRepository.findByEmail(ticketCurrent.getAssignedUser().getEmail()), ticketCurrent,
                     " Ticket number : "+ticket.getNumber()+" has been dissaproved ,please review it again");
                     
                     break;
                 }
                 case Closed: {
                     notificationService.notifyUser(userRepository.findByEmail(ticket.getUser().getEmail()),
+                            ticketCurrent,
                             "Ticket number : " + ticket.getNumber() + " is now closed");
                     break;
                 }
-                case Resolved: {
-
-                    try{
-                        String message = "Ticket number : " + ticket.getNumber()
-                                + " is now resolved, please refer to it to confirm or dissaprove it! ";
-                        notificationService.notifyUser(userRepository.findByEmail(ticket.getUser().getEmail()),
-                                message);
+                case Resolved:{
+                    String message = "Ticket number : " + ticket.getNumber() + " is now resolved, please refer to it to confirm or dissaprove it! ";
+                    notificationService.notifyUser(userRepository.findByEmail(ticket.getUser().getEmail()),
+                            ticketCurrent,message);
                     mailSender.sendMail(ticket.getUser().getEmail(), "Ticket number "+ticket.getNumber(),message);
-                    } catch (Exception e){
-                    e.printStackTrace();
-                    }
                     break;
                 }
             }
-            // TODO : Add reject ticket
 
         } catch (Exception e) {
             response.getErrors().add(e.getMessage());
@@ -372,7 +400,7 @@ public class TicketController{
             } else if (userRequest.getProfile().equals(ProfileEnum.ROLE_CUSTOMER)) {
                 tickets = ticketService.findByParametersAndCurrentUser(page, count, title, status, priority,
                         userRequest.getId());
-            } else if (userRequest.getProfile().equals(ProfileEnum.ROLE_ADMIN)){
+            } else if (userRequest.getProfile().equals(ProfileEnum.ROLE_ADMIN)) {
                 tickets = ticketService.findByParameters(page, count, title, status, priority);
             }
         }

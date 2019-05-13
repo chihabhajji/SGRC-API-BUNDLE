@@ -1,12 +1,10 @@
 package bte.sgrc.SpringBackend.api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import bte.sgrc.SpringBackend.api.entity.Ticket;
 import bte.sgrc.SpringBackend.api.entity.User;
 import bte.sgrc.SpringBackend.api.entity.UserNotification;
 import bte.sgrc.SpringBackend.api.entity.Util.Notification;
@@ -22,20 +20,19 @@ public class UserNotificationService {
         return userNotificationRepository.save(notification);
     }
 
-    public Page<UserNotification> findByUser(Integer page, Integer count, String userId) {
-        Pageable pages = PageRequest.of(page, count);
-        return this.userNotificationRepository.findByUserId(pages, userId);
+    public UserNotification findByUser(User user) {
+        return this.userNotificationRepository.findByUser(user);
     }
 
-    public UserNotification notifyUser(User user, String message) {
+    public UserNotification notifyUser(User user, Ticket ticket, String message) {
         UserNotification notification = userNotificationRepository.findByUser(user);
         UserNotification temp = new UserNotification();
-        temp.addNotification(new Notification(message));
+        temp.addNotification(new Notification(ticket,message));
         temp.setUser(user);
         if (notification == null)
             notification = userNotificationRepository.save(temp);
         else
-            notification.addNotification(new Notification(message));
+            notification.addNotification(new Notification(ticket,message));
         this.purgeFromDB(notification);
         return userNotificationRepository.save(notification);
     }

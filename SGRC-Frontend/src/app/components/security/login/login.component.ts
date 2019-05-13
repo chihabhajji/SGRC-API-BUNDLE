@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { User } from '../../../model/user';
 import { SharedService } from '../../../services/shared.service';
 import { UserService } from '../../../services/user/user.service';
@@ -12,7 +12,7 @@ import { CurrentUser } from '../../../model/currentUser';
 })
 export class LoginComponent implements OnInit {
 
-  user = new User('', '', '', '');
+  user = new User('', '', '', '','');
   shared: SharedService;
   message: String;
 
@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
 
   cancelLogin() {
     this.message = '';
-    this.user = new User('', '', '', '');
+    this.user = new User('', '', '', '','');
     window.location.href = '/login';
     window.location.reload();
   }

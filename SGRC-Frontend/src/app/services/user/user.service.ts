@@ -21,6 +21,15 @@ export class UserService {
     }
   }
 
+  register(user: User) {
+    if (user.id != null && user.id !== '') {
+      return this.http.put(`${HELP_DESK_API}/api/user`, user);
+    } else {
+      user.id = null;
+      return this.http.post(`${HELP_DESK_API}/api/user`, user);
+    }
+  }
+
   findAll(page: Number, count: Number) {
     return this.http.get(`${HELP_DESK_API}/api/user/${page}/${count}`);
   }

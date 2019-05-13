@@ -22,12 +22,20 @@ export class TicketService {
     return this.http.get(`${HELP_DESK_API}/api/ticket/${page}/${count}`);
   }
 
+  findAllArchived(page: Number, count: Number) {
+    return this.http.get(`${HELP_DESK_API}/api/ticket/archived/${page}/${count}`);
+  }
+
   findById(id: String) {
     return this.http.get(`${HELP_DESK_API}/api/ticket/${id}`);
   }
 
   delete(id: String) {
     return this.http.delete(`${HELP_DESK_API}/api/ticket/${id}`);
+  }
+  
+  archive(id: String) {
+    return this.http.delete(`${HELP_DESK_API}/api/ticket/archive/${id}`);
   }
 
   findByParams(page: Number, count: Number, assignedToMe: Boolean, t: Ticket) {

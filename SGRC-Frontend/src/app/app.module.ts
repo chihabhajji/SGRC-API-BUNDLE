@@ -1,6 +1,7 @@
 import { TicketService } from './services/ticket/ticket.service';
 import { SharedService } from './services/shared.service';
 import { UserService } from './services/user/user.service';
+import { NotificationService } from './services/notification/notification.service'
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
@@ -9,7 +10,6 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/security/login/login.component';
 import { routes } from './app.routes';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -26,21 +26,28 @@ import { SummaryComponent } from './components/summary/summary.component';
 import { ChartModule } from 'primeng/primeng';
 import { AvatarModule } from 'ng2-avatar';
 import { CarouselModule } from 'primeng/carousel';
+import { CardModule } from 'primeng/card';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ProfileComponent } from './components/profile/profile.component';
+import { RegisterComponent } from './components/security/register/register.component';
+import { TicketArchivedListComponent } from './components/ticket-archived-list/ticket-archived-list.component';
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     MenuComponent,
     FooterComponent,
-    HomeComponent,
     LoginComponent,
     UserNewComponent,
     UserListComponent,
     TicketNewComponent,
     TicketListComponent,
     TicketDetailComponent,
-    SummaryComponent
+    SummaryComponent,
+    ProfileComponent,
+    RegisterComponent,
+    TicketArchivedListComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,6 +56,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     ChartModule,
     AvatarModule,
     CarouselModule,
+    CardModule,
+    DynamicDialogModule,
     NgbModule,
     routes
   ],
@@ -56,6 +65,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     UserService,
     TicketService,
     SharedService,
+    NotificationService,
     AuthGuard,
     DialogService,
     {

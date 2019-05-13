@@ -1,11 +1,7 @@
 package bte.sgrc.SpringBackend.api.controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
@@ -22,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import bte.sgrc.SpringBackend.api.response.Response;
@@ -52,14 +47,6 @@ public class UserController{
 
     @Autowired
     private PasswordEncoder passwordEnconder;
-    
-    private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
-    @GetMapping("/verify-email")
-    @ResponseBody
-    public String verifyEmail(String code) {
-        log.info("Got Request");
-        return verificationTokenService.verifyEmail(code).getBody();
-    }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN')")
@@ -73,9 +60,7 @@ public class UserController{
                 return ResponseEntity.badRequest().body(response);
             }
             user.setPassword(passwordEnconder.encode(user.getPassword()));
-            
             User userPersisted = userService.createOrUpdate(user);
-            log.info(userPersisted.toString());      
             response.setData(userPersisted);
         } catch (DuplicateKeyException dE) {
             response.getErrors().add("E-mail already registered");
@@ -92,6 +77,9 @@ public class UserController{
         if (user.getEmail() == null) {
             result.addError(new ObjectError("User", "Email no informed"));
         }
+        if (user.getName() == null){
+            result.addError(new ObjectError("User", "Name not set"));
+        }
     }
 
     @PutMapping
@@ -104,13 +92,14 @@ public class UserController{
                 result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
                 return ResponseEntity.badRequest().body(response);
             }
-            String passPre = user.getPassword();
-            String passO = userService.findByEmail(user.getEmail()).getPassword();
+            
+            String passPre = user.getPassword();  String passO = userService.findByEmail(user.getEmail()).getPassword();
+
             user.setPassword(passwordEnconder.encode(user.getPassword()));
             if (userFromRequest(request).getProfile() == ProfileEnum.ROLE_ADMIN||!user.getPassword().matches(passO)){
                 mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account updated","Your account has been updated by the system administrator, your new password is now :" + passPre);
-                // notify him to check email
             }
+            
             User userPesistente = userService.createOrUpdate(user);
             response.setData(userPesistente);
 
@@ -173,7 +162,7 @@ public class UserController{
         }
     }
     
-    // TODO: implement Archived count for users, make a CurrentUser version of TicketController summary for technician and their OWN stats
+    // TODO: CurrentUser version of TicketController summary for technician and their OWN stats
     public User userFromRequest(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         String email = jwbTokenUtil.getUsernameFromToken(token);

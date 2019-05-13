@@ -3,14 +3,14 @@
     <ul class="sidebar-menu" data-widget="tree">
       <li class="treeview" *ngIf="shared.user.profile == 'ADMIN'">
         <a href="#">
-          <i class="fa fa-edit"></i> <span>Users</span>
+          <i class="fas fa-users"></i> <span>Users</span>
           <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a [routerLink]="['/user-list']"><i class="fa fa-circle-o"></i> List</a></li>
-          <li><a [routerLink]="['/user-new']"><i class="fa fa-circle-o"></i> New User</a></li>
+          <li><a [routerLink]="['/user-list']"><i class="fas fa-list-ul"></i> List</a></li>
+          <li><a [routerLink]="['/user-new']"><i class="fas fa-plus"></i> New User</a></li>
         </ul>
       </li>
       <li class="treeview">
@@ -21,19 +21,19 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a [routerLink]="['/ticket-list']"><i class="fa fa-circle-o"></i> List</a></li>
-          <li *ngIf="shared.user.profile == 'CUSTOMER'"><a [routerLink]="['/ticket-new']"><i class="fa fa-circle-o"></i> New Ticket</a></li>
+          <li><a [routerLink]="['/ticket-list']"><i class="fas fa-list-ul"></i> List</a></li>
+          <li *ngIf="shared.user.profile == 'CUSTOMER'"><a [routerLink]="['/ticket-new']"><i class="fas fa-plus"></i> New Ticket</a></li>
         </ul>
       </li>
       <li class="treeview" *ngIf="shared.user.profile == 'ADMIN'">
           <a href="#">
-            <i class="fa fa-edit"></i> <span>Summary</span>
+            <i class="fas fa-poll"></i> <span>  Summary </span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a [routerLink]="['/summary']"><i class="fa fa-circle-o"></i>To view </a></li>
+            <li><a [routerLink]="['/summary']"><i class="fab fa-servicestack"></i>To view </a></li>
           </ul>
         </li>
     </ul>

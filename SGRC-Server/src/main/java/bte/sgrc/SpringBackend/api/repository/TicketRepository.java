@@ -8,12 +8,13 @@ import bte.sgrc.SpringBackend.api.entity.Ticket;
 
 public interface TicketRepository extends MongoRepository<Ticket, String>{
 
-    Page<Ticket> findByUserIdOrderByDateDesc(Pageable pages, String userId);
+    Page<Ticket> findByUserIdAndArchivedFalseAndDeletedFalseOrderByDateDesc(Pageable pages, String userId);
+    Page<Ticket> findByUserIdAndArchivedTrueAndDeletedFalseOrderByDateDesc(Pageable pages, String userId);
     
     Page<Ticket> findByTitleIgnoreCaseContainingAndStatusContainingAndPriorityContainingOrderByDateDesc
         (String title, String status, String priority, Pageable pages);
 
-    Page<Ticket> findByTitleIgnoreCaseContainingAndStatusContainingAndPriorityContainingAndUserIdOrderByDateDesc
+    Page<Ticket> findByTitleIgnoreCaseContainingAndStatusContainingAndPriorityContainingAndUserIdAndArchivedFalseAndDeletedFalseOrderByDateDesc
         (String title, String status, String priority, String userId, Pageable pages);    
 
     Page<Ticket> findByTitleIgnoreCaseContainingAndStatusContainingAndPriorityContainingAndAssignedUserIdOrderByDateDesc
@@ -22,4 +23,6 @@ public interface TicketRepository extends MongoRepository<Ticket, String>{
     Page<Ticket> findByNumber(Integer number, Pageable pages);
 
 	Page<Ticket> findByAssignedUserId(String assignedUserId , Pageable pages);
+
+
 }

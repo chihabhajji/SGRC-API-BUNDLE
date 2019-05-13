@@ -10,14 +10,22 @@
   <div class="box-body">
     <table class="table table-bordered">
       <tr>
+        <th>  </th>
         <th>Email</th>
+        <th>Full Name</th>
         <th>Profile</th>
         <th style="width: 10px">&nbsp;</th>
         <th style="width: 10px">&nbsp;</th>
       </tr>
       <tr *ngFor="let user of listUser">
+        <td> <avatar [name]="user.name" [displayType]="'circle'" [size]="28"></avatar></td>
         <td>{{user.email}}</td>
-        <td>{{user.profile}}</td>
+        <td>{{user.name}}</td>
+        <td>
+          <div *ngIf="user.profile == 'ROLE_CUSTOMER'" >  <i class="fas fa-users">      </i> Client</div>
+          <div *ngIf="user.profile == 'ROLE_TECHNICIAN'"> <i  class="fas fa-users-cog"> </i> Technician</div>
+          <div *ngIf="user.profile == 'ROLE_ADMIN'"     > <i class="fas fa-user-shield"></i> Admin </div>
+        </td>
         <td><button class="btn btn-primary" (click)="edit(user.id)">Edit</button></td>
         <td><button class="btn btn-danger" (click)="delete(user.id)">Delete</button></td>
       </tr>

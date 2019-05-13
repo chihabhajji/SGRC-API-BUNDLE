@@ -10,6 +10,8 @@ export class Ticket {
     public user: User,
     public assignedUser: User,
     public data: string,
-    public changes: Array<String>
+    public changes: Array<String>,
+    public deleted : Boolean ,
+    public archived : Boolean
   ) {}
 }

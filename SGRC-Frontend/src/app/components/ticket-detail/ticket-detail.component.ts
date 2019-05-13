@@ -9,6 +9,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CarouselModule } from 'primeng/carousel';
 import { User } from '../../model/user';
 import { UserService } from './../../services/user/user.service';
+import {CardModule} from 'primeng/card';
+
 @Component({
   selector: 'app-ticket-detail',
   templateUrl: './ticket-detail.component.html',
@@ -32,7 +34,7 @@ export class TicketDetailComponent implements OnInit {
   page: number;
   count: number;
   pages: Array<Number>;
-  ticket = new Ticket('', 0, '', '', '', '', null, null, '', null);
+  ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, false, false);
   shared: SharedService;
   message: {};
   classCss: {};
@@ -85,7 +87,7 @@ export class TicketDetailComponent implements OnInit {
   register() {
     this.message = {};
     this.ticketService.createOrUpdate(this.ticket).subscribe((responseApi: ResponseApi) => {
-        this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null);
+        this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, false, false);
         const ticket: Ticket = responseApi.data;
         this.form.resetForm();
         this.showMessage({

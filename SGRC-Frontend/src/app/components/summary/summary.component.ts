@@ -32,6 +32,7 @@ export class SummaryComponent implements OnInit {
     this.ticketService.summary().subscribe((responseApi: ResponseApi) => {
         this.summary = responseApi.data;
         this.data.datasets[0].data = [this.summary.amountNew, this.summary.amountAssigned, this.summary.amountClosed, this.summary.amountResolved, this.summary.amountApproved, this.summary.amountDisapproved]
+        
       },
       err => { 
         this.showMessage({ type: 'error', text: err['error']['errors'][0] 
