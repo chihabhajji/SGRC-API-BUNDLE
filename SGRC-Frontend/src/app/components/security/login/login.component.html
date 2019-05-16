@@ -25,14 +25,17 @@
         <div [ngClass]="getFormGroupClass(password.invalid,password.dirty)">
           <label for="inputPassword" class="col-sm-2 control-label">Password</label>
           <div class="col-sm-10">
-            <input type="password"
+            <input _ngcontent-qmo-c5="" _ngcontent-kxh-c5="" type="password"
                    [(ngModel)]="user.password"
                    name="password"
-                   class="form-control"
+                   class="form-control ng-untouched ng-pristine ng-invalid"
                    id="inputPassword"
                    placeholder="Password"
                    #password="ngModel"
-                   required>
+                   ng-reflect-required=""
+                   ng-reflect-model=""
+                   ng-reflect-name="password"
+                   required="">
             <span class="help-block" *ngIf="password.invalid && password.dirty">Password is required</span>
           </div>
         </div>

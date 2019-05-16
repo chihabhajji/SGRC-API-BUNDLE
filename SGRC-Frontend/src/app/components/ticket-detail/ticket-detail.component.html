@@ -1,7 +1,7 @@
-<div class="col-md-10" style="margin-left:0%">
+<div class="col-md-14" style="margin-left:0%">
   <div class="box box-info">
     <div class="box-header with-border">
-      <h3 class="box-title">Detail Ticket</h3>
+      <h3 class="box-title">Ticket number : {{ticket.number}}</h3>
     </div>
     <form class="form-horizontal" #form="ngForm" (ngSubmit)="register()" novalidate>
       <div [ngClass]="classCss" role="alert" *ngIf="message">
@@ -10,96 +10,86 @@
       <div class="box-body">
         <ul class="list-group list-group-unbordered">
           <li class="list-group-item">
-                <b>Number :</b> <span>{{ticket.number}}</span>
-                <span class="pull-right"><b>Title :</b> <span>{{ticket.title}}</span></span>
+                <b>Title :</b> <span>{{ticket.title}}</span>
+                <span class="pull-right" *ngIf="shared.user.email != ticket.user.email">
+                   <b>Created by :</b> <span>{{ticket?.user?.email}}</span>
+                </span>
           </li>
           <li class="list-group-item">
             <b>Priority :</b> <span>{{ticket.priority}}</span>
-            <span class="pull-right">
-              <b>Create by  :</b> <span>{{ticket?.user?.email}}</span>
+            <span class="pull-right" *ngIf="shared.user.profile == 'ADMIN' || shared.user.profile == 'TECHNICIAN'">
+              <b>Assigned To :</b>
+              <span *ngIf="ticket.status != 'New'">{{ticket?.assignedUser?.email}}</span>
+              <span *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'">
+                <select (change)="selectAgent($event.target.value)">
+                  <option disabled>----------------</option>
+                  <option [value]="agent.id" *ngFor="let agent of agents">{{agent.email}}</option>
+                </select>
+              </span>
             </span>
           </li>
           <li class="list-group-item">
               <b>Status :</b> <span>{{ticket.status}}</span>
-              <span class="pull-right">
-                <b>Assigned To :</b> <span>{{ticket?.assignedUser?.email}}</span>
-              </span>
+
+              
           </li>
           <li class="list-group-item">
               <b>Date :</b> <span>{{ticket.date | date:'dd/MM/yyyy'}}</span>
+
             </li>
           <li class="list-group-item">
             <b>Description :</b> <span>{{ticket.description}}</span>
+            <span class="pull-right" *ngIf="ticket.reminded==true">
+                <span><i class="fas fa-user-shield"></i></span> Reminder sent
+            </span>
           </li>
           <li class="list-group-item">
-             <span><img [src]="ticket.image" width="450px" height="370px"></span>
-             <span class="pull-right">
-                <table class="table table-bordered">
-                    <tr>
-                      <th>User Change</th>
-                      <th>Date Change Status</th>
-                      <th>Status</th>
-                    </tr>
-                    <tr *ngFor="let change of ticket.changes">
-                        <td>{{ change?.userChange.email}}</td>
-                        <td>{{ change?.dateChangeStatus | date:'dd/MM/yyyy HH:mm:ss'}}</td>
-                        <td>{{ change?.status }}</td>
-                    </tr>
-                </table>
-              </span>
+             <span><img [src]="ticket.image" width="500px" height="400px"></span>
+                  <span class="pull-right" *ngIf="ticket.reminded==true">
+                    <table class="table table-bordered">
+                      <tr>
+                        <th>Date </th>
+                        <th>Message</th>
+                      </tr>
+                      <tr *ngFor="let reminder of ticket.reminders">
+                        <td>{{ reminder?.date | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+                        <td>{{ reminder?.message }}</td>
+                      </tr>
+                    </table>
+                  </span>
           </li>
         </ul>
       </div>
+      <span>
+        <table class="table table-bordered" *ngIf="ticket.status != 'New'">
+          <tr>
+            <th *ngIf="shared.user.profile == 'ADMIN'">User Change</th>
+            <th>Date Change Status</th>
+            <th>Status</th>
+            <th>Message</th>
+          </tr>
+          <tr *ngFor="let change of ticket.changes" >
+            <td *ngIf="shared.user.profile == 'ADMIN'">{{ change?.userChange.email}}</td>
+            <td>{{ change?.dateChangeStatus | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+            <td>{{ change?.status }}</td>
+            <td *ngIf="shared.user.profile == 'CUSTOMER' && change.status != 'Flagged'" >{{ change?.message }}</td>
+          </tr>
+        </table>
+      </span>
+      <span *ngIf="((shared.user.profile == 'TECHNICIAN' && ticket.status == 'Assigned') || (shared.user.profile =='CUSTOMER' && ticket.status == 'Resolved')) || (shared.user.profile == 'CUSTOMER' && (ticket.status == 'New'||ticket.status == 'Assigned')) && ticket.overdue && ticket.reminded==false ">
+        <label for="comment">Comment:</label>
+        <textarea class="form-control" rows="4" id="comment" [(ngModel)]="msg" (input)="msg = $event.target.value"></textarea>
+      </span>
       <div>
-
-
-      <p-carousel *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'" headerText="Pick an agent to assign to this ticket : " [value]="agents" circular="circular" autoplayInterval="3000" class="ui-carousel">
-        <ng-template let-agent pTemplate="agent">
-          <p-card header="Agent" [style]="{width: '360px'}">
-            <div class="ui-grid ui-grid-responsive">
-              <div class="ui-grid-row">
-                <div class="ui-grid-col-6">
-                  <avatar [email]="agent.email" [displayType]="'circle'" [size]="28"></avatar>
-                </div>
-                </div>
-                <div class="ui-grid-row">
-                  <div class="ui-grid-col-6">Email :</div>
-                  <div class="ui-grid-col-6">{{agent.email}}</div>
-                </div>
-                <div class="ui-grid-row">
-                  <div class="ui-grid-col-6">Profile :</div>
-                  <div class="ui-grid-col-6">{{agent.profile}}</div>
-                </div>
-                <div class="ui-grid-row">
-                  <div class="ui-grid-col-12">
-                    <button type="button" pButton icon="pi pi-search" (click)="selectAgent(agent)">Pick</button>
-                  </div>
-                </div>
-              </div>
-             </p-card>
-            </ng-template>
-            <hr>
-        </p-carousel>
-          
-          <ul *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'" class=" pagination pagination-sm no-margin pull-right">
-              <li>
-                <a href="" (click)="setPreviousPage($event)">&laquo;</a>
-              </li>
-              <li *ngFor="let p of pages; let i=index">
-                <a [ngClass]="{'pagination-focus':i==page}" href="" (click)="setPage(i,$event)">{{i+1}}</a>
-              </li>
-              <li>
-                <a href="" (click)="setNextPage($event)">&raquo;</a>
-              </li>
-          </ul>
       </div>
-
       <div class="box-footer">
-        <button *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'" (click)="changeStatus('Assigned')" class="btn btn-primary">Assign</button>
+        <button *ngIf="(shared.user.profile == 'CUSTOMER' && (ticket.status == 'New'||ticket.status == 'Assigned')) && ticket.overdue == true && ticket.reminded == false" (click)="remind()" class="btn btn-primary">Send reminder</button>
+        <button *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'" (click)="changeStatus('Assigned')" class="btn btn-primary" >Assign</button>
         <button *ngIf="shared.user.profile == 'TECHNICIAN' && (ticket.status == 'Assigned' || ticket.status == 'Disapproved')" (click)="changeStatus('Resolved')" class="btn btn-primary">Solve</button>
-        <button *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'" (click)="delete(ticket.id)" class="btn btn-danger">Reject</button>
-        <button *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved'" (click)="changeStatus('Approved')" class="btn btn-primary">Approve</button>
-        <button *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved'" (click)="changeStatus('Disapproved')" class="btn btn-primary">Disapprove</button>
+        <button *ngIf="shared.user.profile=='TECHNICIAN' && ticket.status == 'Assigned'" (click)="changeStatus('Flagged')" class="btn btn-danger" >Flag</button>
+        <button *ngIf="shared.user.profile == 'ADMIN' && (ticket.status == 'New' || ticket.status == 'Flagged')" (click)="changeStatus('Rejected')" class="btn btn-danger">Reject</button>
+        <button *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved'" (click)="changeStatus('Approved')" class="btn btn-success" >Approve</button>
+        <button *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved'" (click)="changeStatus('Disapproved')" class="btn btn-danger">Disapprove</button>
         <button *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'Approved'" (click)="changeStatus('Closed')" class="btn btn-primary">Close</button>
       </div>
     </form>

@@ -11,7 +11,10 @@ export class Ticket {
     public assignedUser: User,
     public data: string,
     public changes: Array<String>,
+    public reminders: Array<String>,
     public deleted : Boolean ,
-    public archived : Boolean
+    public reminded : Boolean,
+    public archived : Boolean,
+    public overdue : Boolean
   ) {}
 }

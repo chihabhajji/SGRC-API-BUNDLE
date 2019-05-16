@@ -13,10 +13,14 @@
         <i type="button" (click)="findAllNotifications(shared.user.id)" size="5x"
           class="far fa-flag btn btn-secondary dropdown-toggle"
           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-        <ul class="dropdown-menu dropdown-left-manual" style="overflow-y:scroll; height:200px;">
-          <li class="dropleft" role=" presentation"><a role="menuitem" tabindex="-1" href="#"> <i
-                class="fas fa-arrow-alt-circle-right" (click)="detail(ticket.id)">
-              </i> {{Notifications.message}}<small>24/14/1997 24</small></a></li>
+        <ul class="dropdown-menu dropdown-left-manual" style="overflow-y:scroll; height:200px;" href="#">
+          <li class="dropleft" role=" presentation" *ngFor="let notification of Notifications;let i=index">
+            <a role="menuitem" tabindex="{{i}}" (click)="detail(notification.ticket)">
+               <i class="fas fa-arrow-alt-circle-right">
+              </i> {{notification.message}} <br><small>||
+                {{notification.createdAt | date:'dd/MM/yyyy HH:mm'}}</small>
+            </a>
+          </li>
         </ul>
       </div>
       <!-- User icon dropdown ya hajj-->
@@ -25,7 +29,7 @@
             type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
             aria-expanded="false"></avatar> 
         <ul class="dropdown-menu dropdown-left-manual">
-           <li class="dropleft" role=" presentation" style="color: #fff300;">
+           <li class="dropleft" role=" presentation">
              <a role="menuitem" tabindex="-1" class="disabled">
                       <i *ngIf="shared.user.profile == 'CUSTOMER'" class="fas fa-users"></i>
                       <i *ngIf="shared.user.profile == 'TECHNICIAN'" class="fas fa-users-cog"> </i>

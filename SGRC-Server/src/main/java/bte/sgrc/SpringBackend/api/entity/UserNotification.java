@@ -1,9 +1,8 @@
 package bte.sgrc.SpringBackend.api.entity;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Stack;
+
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import bte.sgrc.SpringBackend.api.entity.Util.Notification;
 import lombok.Getter;
@@ -11,11 +10,11 @@ import lombok.Setter;
 
 public class UserNotification {
     @Getter @Setter @Id private String notificationId;
-    @Getter @Setter @DBRef(lazy = true) private User user;
-    @Getter @Setter private Collection<Notification> notification = new ArrayList<Notification>();
+    @Getter @Setter private String userId;
+    @Getter @Setter private Stack<Notification> notification = new Stack<Notification>();
 
     public void addNotification(Notification notification) {
-        this.notification.add(notification);
+        this.notification.push(notification);
     }
 
     public void deleteNotification(Notification notification) {

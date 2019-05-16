@@ -21,7 +21,7 @@ export class TicketListComponent implements OnInit {
   message: {};
   classCss: {};
   listTicket = [];
-  ticketFilter = new Ticket('', null, '', '', '', '', null, null, '', null,false,false);
+  ticketFilter = new Ticket('', null, '', '', '', '', null, null, '', null, null,false,false,false,false);
 
   constructor(
     private dialogService: DialogService,
@@ -73,7 +73,7 @@ export class TicketListComponent implements OnInit {
     this.assignedToMe = false;
     this.page = 0;
     this.count = 5;
-    this.ticketFilter = new Ticket('', null, '', '', '', '', null, null, '', null,false,false);
+    this.ticketFilter = new Ticket('', null, '', '', '', '', null, null, '', null, null,false,false,false,false);
     this.findAll(this.page, this.count);
   }
 
@@ -105,6 +105,7 @@ export class TicketListComponent implements OnInit {
             });
           }
       });
+      
   }
   
   archive(id: string) {

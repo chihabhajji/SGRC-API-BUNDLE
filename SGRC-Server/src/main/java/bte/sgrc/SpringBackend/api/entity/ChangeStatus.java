@@ -1,6 +1,8 @@
 package bte.sgrc.SpringBackend.api.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
+import javax.validation.constraints.Max;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -16,7 +18,8 @@ public class ChangeStatus{
 	@Getter @Setter @Id private String id;
 	@Getter @Setter @DBRef private Ticket ticket;
 	@Getter @Setter @DBRef private User userChange;
-    @Getter @Setter private Date dateChangeStatus;
+	@Getter @Setter private LocalDateTime dateChangeStatus;
+	@Getter @Setter @Max(255) private String message;
 	@Getter @Setter private StatusEnum status;
 
 }

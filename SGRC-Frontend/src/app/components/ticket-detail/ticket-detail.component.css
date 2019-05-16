@@ -1,0 +1,29 @@
+.ui-grid {
+  color: #333;
+}
+
+.ui-grid-header {
+  border-bottom-width: 2px;
+}
+
+.ui-grid-menu .ui-grid-menu-inner ul li:not(:last-child)>button {
+  border: none;
+}
+
+.ui-grid-menu .ui-grid-menu-inner ul li button.ui-grid-menu-item-active {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+.ui-grid-menu .ui-grid-menu-inner ul li button:hover,
+.ui-grid-menu .ui-grid-menu-inner ul li button:focus {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  background-color: #ddd;
+}
+
+.ui-card {
+  background-color: lightblue !important;
+}

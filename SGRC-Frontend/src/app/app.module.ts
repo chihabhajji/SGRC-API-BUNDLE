@@ -4,12 +4,9 @@ import { UserService } from './services/user/user.service';
 import { NotificationService } from './services/notification/notification.service'
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
-
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { MenuComponent } from './components/menu/menu.component';
-import { FooterComponent } from './components/footer/footer.component';
 import { LoginComponent } from './components/security/login/login.component';
 import { routes } from './app.routes';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -32,12 +29,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProfileComponent } from './components/profile/profile.component';
 import { RegisterComponent } from './components/security/register/register.component';
 import { TicketArchivedListComponent } from './components/ticket-archived-list/ticket-archived-list.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     MenuComponent,
-    FooterComponent,
     LoginComponent,
     UserNewComponent,
     UserListComponent,
@@ -59,6 +56,7 @@ import { TicketArchivedListComponent } from './components/ticket-archived-list/t
     CardModule,
     DynamicDialogModule,
     NgbModule,
+    NgSelectModule,
     routes
   ],
   providers: [

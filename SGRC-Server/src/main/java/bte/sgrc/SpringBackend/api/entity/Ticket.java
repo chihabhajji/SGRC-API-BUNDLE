@@ -1,6 +1,6 @@
 package bte.sgrc.SpringBackend.api.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.validation.constraints.Size;
@@ -10,6 +10,7 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import bte.sgrc.SpringBackend.api.entity.Util.Reminder;
 import bte.sgrc.SpringBackend.api.enums.PriorityEnum;
 import bte.sgrc.SpringBackend.api.enums.StatusEnum;
 import lombok.Getter;
@@ -22,8 +23,9 @@ public class Ticket{
 	@Getter @Setter @Id private String id;
 	@Getter @Setter @DBRef(lazy = true) private User user;
 	@Getter @Setter @DBRef(lazy = true) private User assignedUser;
-	@Getter @Setter @Transient  List<ChangeStatus> changes;
-    @Getter @Setter private Date date;
+    @Getter @Setter @Transient  List<ChangeStatus> changes;
+    @Getter @Setter @Transient List<Reminder> reminders;
+    @Getter @Setter private LocalDateTime date;
     
     @Getter @Setter @Size(min = 6, max = 60)private String title;
     @Getter @Setter @Size(min = 10, max = 255) private String description;
@@ -35,4 +37,7 @@ public class Ticket{
    
     @Getter @Setter private Boolean archived = false;
     @Getter @Setter private Boolean deleted = false;
+    @Getter @Setter private Boolean reminded = false;
+    @Getter @Setter private Boolean overdue = false;
+
 }

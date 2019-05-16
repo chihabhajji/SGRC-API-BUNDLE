@@ -1,15 +1,14 @@
 import { ResponseApi } from './../../model/response-api';
 import { ActivatedRoute } from '@angular/router';
-import { DatePipe } from '@angular/common';
 import { Ticket } from './../../model/ticket';
 import { SharedService } from './../../services/shared.service';
 import { NgForm } from '@angular/forms';
 import { TicketService } from './../../services/ticket/ticket.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CarouselModule } from 'primeng/carousel';
+import { NotificationService } from '../../services/notification/notification.service';
 import { User } from '../../model/user';
 import { UserService } from './../../services/user/user.service';
-import {CardModule} from 'primeng/card';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ticket-detail',
@@ -34,17 +33,18 @@ export class TicketDetailComponent implements OnInit {
   page: number;
   count: number;
   pages: Array<Number>;
-  ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, false, false);
+  ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, null, false, false,false,false);
   shared: SharedService;
   message: {};
   classCss: {};
   agents : User[];
+  msg: String;
   constructor(
     private ticketService: TicketService,
     private userService: UserService,
-    private route: ActivatedRoute) {
-    this.page = 0;
-    this.count = 3;
+    private route: ActivatedRoute,
+    private notificationService: NotificationService,
+    private router: Router) {
     this.shared = SharedService.getInstance();
   }
 
@@ -53,15 +53,13 @@ export class TicketDetailComponent implements OnInit {
     if (id !== undefined) {
       this.findById(id);
     }
-    this.findAllTechnicians(this.page, this.count);
+    this.findAllTechnicians();
   }
 
-  findAllTechnicians(page: Number, count: Number) {
-    this.userService.findAllTechnicians(page, count).subscribe((responseApi: ResponseApi) => {
-      console.log('Querying');
-      this.agents = responseApi['data']['content'];
-      this.pages = new Array(responseApi['data']['totalPages']);
-      console.log(this.agents[0].email);
+  findAllTechnicians() {
+    this.userService.findAllTechnicians().subscribe((responseApi: ResponseApi) => {  
+      this.agents = responseApi.data;
+      console.log(this.agents)
     }, err => {
       this.showMessage({
         type: 'error',
@@ -71,11 +69,10 @@ export class TicketDetailComponent implements OnInit {
   }
 
   findById(id: string) {
-    console.log('id --> ', id);
     this.ticketService.findById(id).subscribe((responseApi: ResponseApi) => {
-      console.log('responseApi -->  ', responseApi);
       this.ticket = responseApi.data;
       this.ticket.data = new Date(this.ticket.data).toISOString();
+      console.log(this.ticket);
   } , err => {
     this.showMessage({
       type: 'error',
@@ -87,13 +84,14 @@ export class TicketDetailComponent implements OnInit {
   register() {
     this.message = {};
     this.ticketService.createOrUpdate(this.ticket).subscribe((responseApi: ResponseApi) => {
-        this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, false, false);
+        this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null , null, false, false,false,false);
         const ticket: Ticket = responseApi.data;
         this.form.resetForm();
         this.showMessage({
           type: 'success',
           text: `Registered ${ticket.title} successfully`
         });
+        this.router.navigate(['']);
     } , err => {
       this.showMessage({
         type: 'error',
@@ -142,13 +140,16 @@ export class TicketDetailComponent implements OnInit {
   }
 
   changeStatus(status: string): void {
-    this.ticketService.changeStatus(status, this.ticket).subscribe((responseApi: ResponseApi) => {
+    if (status =="Assigned")
+    this.ticket.reminded = false;
+    this.ticketService.changeStatus(status, this.ticket,this.msg).subscribe((responseApi: ResponseApi) => {
         this.ticket = responseApi.data;
         this.ticket.data = new Date(this.ticket.data).toISOString();
         this.showMessage({
           type: 'success',
           text: 'Successfully changed status'
         });
+        this.router.navigate(['']);
     } , err => {
       this.showMessage({
         type: 'error',
@@ -157,34 +158,36 @@ export class TicketDetailComponent implements OnInit {
     });
   }
 
-  selectAgent(agent : User) {
-    this.showMessage({type : 'success', text : 'Agent selected :'+ agent.email});
-    this.ticket.assignedUser = agent ;
-  }
-  
 
-  setNextPage(event: any) {
-    event.preventDefault();
-    if (this.page + 1 < this.pages.length) {
-      this.page = this.page + 1;
-      this.findAllTechnicians(this.page, this.count);
-    }
-  }
-
-  setPreviousPage(event: any) {
-    event.preventDefault();
-    if (this.page > 0) {
-      this.page = this.page - 1;
-      this.findAllTechnicians(this.page, this.count);
-    }
+  selectAgent(id : String) {
+    this.userService.findById(id).subscribe((responseApi: ResponseApi) => {
+      this.ticket.assignedUser = responseApi.data;
+      this.ticket.assignedUser.password = '';
+    }, err => {
+      this.showMessage({
+        type: 'error',
+        text: err['error']['errors'][0]
+      });
+    });
   }
 
-  setPage(i, event: any) {
-    event.preventDefault();
-    this.page = i;
-    this.findAllTechnicians(this.page, this.count);
+  delete() {
+    this.ticketService.delete(this.ticket.id);
+    this.router.navigate(['']);
   }
 
-
+  remind(){
+    this.notificationService.remind(this.ticket, this.msg).subscribe((responseApi: ResponseApi) => {
+      this.showMessage({
+        type: 'success',
+        text: 'Succesfully notified technicians'
+      });
+    }, err => {
+      this.showMessage({
+        type: 'error',
+        text: err['error']['errors'][0]
+      });
+    });
+  }
 }
 

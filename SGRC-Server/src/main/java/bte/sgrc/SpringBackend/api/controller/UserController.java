@@ -1,5 +1,7 @@
 package bte.sgrc.SpringBackend.api.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,15 +171,12 @@ public class UserController{
         return userService.findByEmail(email);
     }
     
-    @GetMapping(value = "techlist/{page}/{count}")
+    @GetMapping(value = "techlist")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<Response<Page<User>>> getAllTechnicians(@PathVariable("page") Integer page,
-            @PathVariable("count") Integer count){
-        Response<Page<User>> response = new Response<Page<User>>();
-        Page<User> agents = userService.findByRole(ProfileEnum.ROLE_TECHNICIAN.name(),page,count);
-        if (agents==null)
-            return ResponseEntity.badRequest().body(response);
-        else
+    public ResponseEntity<Response<List<User>>> getAllTechnicians(){
+        Response<List<User>> response = new Response<List<User>>();
+        List<User> agents = userService.findByRole(ProfileEnum.ROLE_TECHNICIAN.name());
+
         response.setData(agents);
         return ResponseEntity.ok(response);
     }

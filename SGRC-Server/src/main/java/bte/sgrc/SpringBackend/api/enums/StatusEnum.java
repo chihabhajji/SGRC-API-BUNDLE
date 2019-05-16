@@ -7,7 +7,9 @@ public enum StatusEnum{
     Resolved,
     Approved,
     Disapproved,
-    Closed;
+    Closed,
+    Flagged,
+    Rejected;
 
     public static StatusEnum getStatus(String status){
         switch(status){
@@ -17,6 +19,8 @@ public enum StatusEnum{
             case "Approved": return Approved;
             case "Disapproved": return Disapproved;
             case "Closed": return Closed;
+            case "Rejected" : return Rejected;
+            case "Flagged" : return Flagged;
             default: return New;
         }
     }

@@ -13,5 +13,5 @@ public interface UserService{
     public void delete(String id);
     public Page<User> findAll(Integer page, Integer count);
     public List<User> findTudo();
-    public Page<User> findByRole(String role, Integer page, Integer count);
+    public List<User> findByRole(String role);
 }

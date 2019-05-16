@@ -64,7 +64,7 @@ public class ClaimsApplication {
 			
 
 		}else{
-            log.info("Initial users already initiated !");
+            log.info("Initial users already created !");
 		}
 	}
 }

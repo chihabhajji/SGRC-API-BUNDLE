@@ -46,8 +46,8 @@ export class TicketService {
     return this.http.get(`${HELP_DESK_API}/api/ticket/${page}/${count}/${t.number}/${t.title}/${t.status}/${t.priority}/${assignedToMe}`);
   }
 
-  changeStatus(status: String, ticket: Ticket) {
-    return this.http.put(`${HELP_DESK_API}/api/ticket/${ticket.id}/${status}`, ticket);
+  changeStatus(status: String, ticket: Ticket, message : String) {
+    return this.http.put(`${HELP_DESK_API}/api/ticket/${ticket.id}/${status}/${message}`, ticket);
   }
 
   summary() {

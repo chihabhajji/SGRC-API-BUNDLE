@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import bte.sgrc.SpringBackend.api.entity.ChangeStatus;
 import bte.sgrc.SpringBackend.api.entity.Ticket;
+import bte.sgrc.SpringBackend.api.entity.Util.Reminder;
 import bte.sgrc.SpringBackend.api.repository.ChangeStatusRepository;
+import bte.sgrc.SpringBackend.api.repository.ReminderRepository;
 import bte.sgrc.SpringBackend.api.repository.TicketRepository;
 import bte.sgrc.SpringBackend.api.service.TicketService;
 
@@ -21,7 +23,10 @@ public class TicketServiceImplement implements TicketService{
     private TicketRepository ticketRepository;
 
     @Autowired
-    private ChangeStatusRepository changeStatusReposiroty;
+	private ChangeStatusRepository changeStatusReposiroty;
+	
+	@Autowired 
+	ReminderRepository reminderRepository;
 
 	@Override
 	public Ticket createOrUpdate(Ticket ticket) {
@@ -51,8 +56,18 @@ public class TicketServiceImplement implements TicketService{
 	}
 
 	@Override
+	public Reminder createReminder(Reminder reminder) {
+		return this.reminderRepository.save(reminder);
+	}
+
+	@Override
 	public Iterable<ChangeStatus> listaChangeStatus(String ticketId) {
 		return this.changeStatusReposiroty.findByTicketIdOrderByDateChangeStatusDesc(ticketId);
+	}
+
+	@Override
+	public Iterable<Reminder> listReminders(String ticketId){
+		return this.reminderRepository.findByTicketIdOrderByDateAsc(ticketId);
 	}
 
 	@Override
@@ -103,4 +118,5 @@ public class TicketServiceImplement implements TicketService{
 		Pageable pages = PageRequest.of(page, count);
 		return this.ticketRepository.findByAssignedUserId(assignedUserId,pages);
 	}
+
 }

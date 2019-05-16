@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import bte.sgrc.SpringBackend.api.entity.Ticket;
-import bte.sgrc.SpringBackend.api.entity.User;
 import bte.sgrc.SpringBackend.api.entity.UserNotification;
 import bte.sgrc.SpringBackend.api.entity.Util.Notification;
 import bte.sgrc.SpringBackend.api.repository.UserNotificationRepository;
@@ -20,19 +18,19 @@ public class UserNotificationService {
         return userNotificationRepository.save(notification);
     }
 
-    public UserNotification findByUser(User user) {
-        return this.userNotificationRepository.findByUser(user);
+    public UserNotification findByUser(String userId) {
+        return this.userNotificationRepository.findByUserId(userId);
     }
 
-    public UserNotification notifyUser(User user, Ticket ticket, String message) {
-        UserNotification notification = userNotificationRepository.findByUser(user);
+    public UserNotification notifyUser(String userId, String ticketId, String message) {
+        UserNotification notification = userNotificationRepository.findByUserId(userId);
         UserNotification temp = new UserNotification();
-        temp.addNotification(new Notification(ticket,message));
-        temp.setUser(user);
+        temp.addNotification(new Notification(ticketId,message));
+        temp.setUserId(userId);
         if (notification == null)
             notification = userNotificationRepository.save(temp);
         else
-            notification.addNotification(new Notification(ticket,message));
+            notification.addNotification(new Notification(ticketId,message));
         this.purgeFromDB(notification);
         return userNotificationRepository.save(notification);
     }

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user/user.service';
-import { NotificationService } from '../../services/notification/notification.service'
+import { NotificationService } from '../../services/notification/notification.service';
 import { SharedService } from '../../services/shared.service';
 import { Router } from '@angular/router';
 import { ResponseApi } from './../../model/response-api';
+import { User } from '../../model/user';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -21,6 +22,7 @@ export class HeaderComponent implements OnInit {
               private router: Router,
               private notificationService: NotificationService) {
     this.shared = SharedService.getInstance();
+    this.shared.user = new User('', '', '', '','');
   }
 
   ngOnInit() {
@@ -39,7 +41,8 @@ export class HeaderComponent implements OnInit {
   findAllNotifications(userId:String) {
     this.notificationService.findAll(userId).subscribe((responseApi: ResponseApi) => {
       this.Notifications = responseApi.data;
-      console.log(this.Notifications)
+      
+      console.log(this.Notifications);
     }, err => {
       this.showMessage({
         type: 'error',

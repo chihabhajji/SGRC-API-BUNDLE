@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import bte.sgrc.SpringBackend.api.entity.User;
 import bte.sgrc.SpringBackend.api.entity.UserNotification;
 
 @Repository
@@ -14,7 +13,7 @@ public interface UserNotificationRepository extends MongoRepository<UserNotifica
     
     Page<UserNotification> findByUserId(Pageable pages, String userId);
    
-    UserNotification findByUser(User user);
+    UserNotification findByUserId(String userId);
 
 
 }

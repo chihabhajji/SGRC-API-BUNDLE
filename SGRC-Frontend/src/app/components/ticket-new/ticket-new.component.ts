@@ -16,14 +16,15 @@ export class TicketNewComponent implements OnInit {
   @ViewChild('form')
   form: NgForm;
 
-  ticket = new Ticket('', null, '', '', '', '', null, null, '', null, false, false);
+  ticket = new Ticket('', null, '', '', '', '', null, null, '', null,null, false, false,false,false);
   shared: SharedService;
   message: {};
   classCss: {};
 
   constructor(
     private ticketService: TicketService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.shared = SharedService.getInstance();
   }
@@ -49,13 +50,15 @@ export class TicketNewComponent implements OnInit {
   register() {
     this.message = {};
     this.ticketService.createOrUpdate(this.ticket).subscribe((responseApi: ResponseApi) => {
-        this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, false, false);
+        this.form.resetForm
+        this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, null, false, false,false,false);
         const ticket: Ticket = responseApi.data;
         this.form.resetForm();
         this.showMessage({
           type: 'success',
           text: `Registered ${ticket.title} successfully`
         });
+        this.router.navigate(['']);
     } , err => {
       this.showMessage({
         type: 'error',
