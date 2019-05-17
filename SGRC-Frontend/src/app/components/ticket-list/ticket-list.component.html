@@ -1,5 +1,5 @@
 <div class="row">
-<div class="col-md-10">
+<div class="col-md-12">
 <div class="box">
   <div class="box-header with-border">
     <h3 class="box-title">Ticket List</h3>
@@ -76,9 +76,8 @@
         <th>Priority</th>
         <th>Status</th>
         <th>Owner</th>
-        <th style="width: 10px" *ngIf="shared.user.profile == 'ADMIN' || shared.user.profile == 'TECHNICIAN'">Archived</th>
-        <th style="width: 10px" *ngIf="shared.user.profile == 'CUSTOMER'" style='display:none;'></th>
-        <th style="width: 10px" *ngIf="shared.user.profile == 'CUSTOMER'" style='display:none;'></th>
+        <th style="width: 10px" *ngIf="shared.user.profile == 'CUSTOMER'"></th>
+        <th style="width: 10px" *ngIf="shared.user.profile == 'CUSTOMER'"></th>
         <th style="width: 10px"></th>
       </tr>
       <tr *ngFor="let ticket of listTicket">
@@ -87,16 +86,12 @@
         <td>{{ticket.priority}}</td>
         <td>{{ticket.status}}</td>
         <td>{{ticket.user.email}}</td>
-        <td *ngIf="shared.user.profile == 'ADMIN' || shared.user.profile == 'TECHNICIAN'">
-           <i *ngIf="this.ticket.deleted==true" class="far fa-trash-alt" title="Deleted by user"></i>
-           <i *ngIf="this.ticket.archived==true" class="fas fa-archive" title="Archived by user"></i>
-        </td>
         <td *ngIf="shared.user.profile == 'CUSTOMER'">
             <button class="btn btn-primary" *ngIf="shared.user.profile == 'CUSTOMER' && this.ticket.status=='New'" (click)="edit(ticket.id)">Edit</button>
-            <button class="btn btn-primary" *ngIf="shared.user.profile == 'CUSTOMER' && (this.ticket.status=='Closed' || this.ticket.status=='Rejected')" (click)="archive(ticket.id)">Archive</button>
+            <button class="btn btn-primary" *ngIf="shared.user.profile == 'CUSTOMER' && (this.ticket.status=='Closed' || this.ticket.status=='Rejected' || this.ticket.status=='Approved')" (click)="archive(ticket.id)">Archive</button>
         </td>
         <td *ngIf="shared.user.profile == 'CUSTOMER'" >
-            <button class="btn btn-danger" *ngIf="shared.user.profile == 'CUSTOMER' && (this.ticket.status=='New' || this.ticket.status=='Rejected' || this.ticket.status=='Closed')" (click)="delete(ticket.id)">Delete</button>
+            <button class="btn btn-danger" *ngIf="shared.user.profile == 'CUSTOMER' && (this.ticket.status=='New' || this.ticket.status=='Rejected' || this.ticket.status=='Approved' || this.ticket.status=='Closed')" (click)="delete(ticket.id)">Delete</button>
         </td>
         <td><button class="btn btn-success" (click)="detail(ticket.id)">Detail</button></td>
       </tr>

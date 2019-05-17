@@ -30,22 +30,21 @@
           </li>
           <li class="list-group-item">
               <b>Status :</b> <span>{{ticket.status}}</span>
-
-              
           </li>
           <li class="list-group-item">
               <b>Date :</b> <span>{{ticket.date | date:'dd/MM/yyyy'}}</span>
-
             </li>
           <li class="list-group-item">
             <b>Description :</b> <span>{{ticket.description}}</span>
-            <span class="pull-right" *ngIf="ticket.reminded==true">
-                <span><i class="fas fa-user-shield"></i></span> Reminder sent
-            </span>
+              <span class="pull-right">
+                <span *ngIf="this.ticket.deleted==true"><i  class="far fa-trash-alt" title="Deleted by user"></i>Deleted by user</span>
+                <span *ngIf="this.ticket.archived==true"><i class="fas fa-archive" title="Archived by user"></i>Archived by user</span>
+              </span>
           </li>
           <li class="list-group-item">
              <span><img [src]="ticket.image" width="500px" height="400px"></span>
-                  <span class="pull-right" *ngIf="ticket.reminded==true">
+                  <span class="pull-right">
+                    <span *ngIf="ticket.reminded==true"><i class="fas fa-user-shield"></i></span> Reminder sent
                     <table class="table table-bordered">
                       <tr>
                         <th>Date </th>
@@ -66,17 +65,17 @@
             <th *ngIf="shared.user.profile == 'ADMIN'">User Change</th>
             <th>Date Change Status</th>
             <th>Status</th>
-            <th>Message</th>
+            <th *ngIf="shared.user.profile=='ADMIN' || shared.user.profile=='TECHNICIAN'">Message</th>
           </tr>
           <tr *ngFor="let change of ticket.changes" >
             <td *ngIf="shared.user.profile == 'ADMIN'">{{ change?.userChange.email}}</td>
             <td>{{ change?.dateChangeStatus | date:'dd/MM/yyyy HH:mm:ss'}}</td>
             <td>{{ change?.status }}</td>
-            <td *ngIf="shared.user.profile == 'CUSTOMER' && change.status != 'Flagged'" >{{ change?.message }}</td>
+            <td *ngIf="shared.user.profile=='ADMIN' || shared.user.profile=='TECHNICIAN'">{{ change?.message }}</td>
           </tr>
         </table>
       </span>
-      <span *ngIf="((shared.user.profile == 'TECHNICIAN' && ticket.status == 'Assigned') || (shared.user.profile =='CUSTOMER' && ticket.status == 'Resolved')) || (shared.user.profile == 'CUSTOMER' && (ticket.status == 'New'||ticket.status == 'Assigned')) && ticket.overdue && ticket.reminded==false ">
+      <span *ngIf="((shared.user.profile == 'TECHNICIAN' && (ticket.status == 'Assigned' || ticket.status == 'Disapproved')) || (shared.user.profile =='CUSTOMER' && ticket.status == 'Resolved')) || (shared.user.profile == 'CUSTOMER' && (ticket.status == 'New'||ticket.status == 'Assigned')) && ticket.overdue && ticket.reminded==false || (shared.user.profile=='ADMIN'&&ticket.status=='Flagged')">
         <label for="comment">Comment:</label>
         <textarea class="form-control" rows="4" id="comment" [(ngModel)]="msg" (input)="msg = $event.target.value"></textarea>
       </span>
@@ -84,7 +83,7 @@
       </div>
       <div class="box-footer">
         <button *ngIf="(shared.user.profile == 'CUSTOMER' && (ticket.status == 'New'||ticket.status == 'Assigned')) && ticket.overdue == true && ticket.reminded == false" (click)="remind()" class="btn btn-primary">Send reminder</button>
-        <button *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'New'" (click)="changeStatus('Assigned')" class="btn btn-primary" >Assign</button>
+        <button *ngIf="shared.user.profile == 'ADMIN' && (ticket.status == 'New'||ticket.status == 'Flagged')" (click)="changeStatus('Assigned')" class="btn btn-primary" >Assign</button>
         <button *ngIf="shared.user.profile == 'TECHNICIAN' && (ticket.status == 'Assigned' || ticket.status == 'Disapproved')" (click)="changeStatus('Resolved')" class="btn btn-primary">Solve</button>
         <button *ngIf="shared.user.profile=='TECHNICIAN' && ticket.status == 'Assigned'" (click)="changeStatus('Flagged')" class="btn btn-danger" >Flag</button>
         <button *ngIf="shared.user.profile == 'ADMIN' && (ticket.status == 'New' || ticket.status == 'Flagged')" (click)="changeStatus('Rejected')" class="btn btn-danger">Reject</button>

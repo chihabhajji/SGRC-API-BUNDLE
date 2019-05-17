@@ -183,7 +183,7 @@ public class TicketController{
     }
 
     @DeleteMapping(value = "{id}")
-    @PreAuthorize("hasAnyRole('CUSTOMER')")
+    @PreAuthorize("hasAnyRole('CUSTOMER','ADMIN')")
     public ResponseEntity<Response<String>> delete(@PathVariable("id") String id){
         Response<String> response = new Response<String>();
         Ticket ticket = ticketService.findById(id);
@@ -197,9 +197,12 @@ public class TicketController{
         // Delete if new, soft delete if closed
         if(ticket.getStatus().equals(StatusEnum.New))
         ticketService.delete(ticket);
-        if(ticket.getStatus().equals(StatusEnum.Closed)||ticket.getStatus().equals(StatusEnum.Rejected))
+        else if(ticket.getStatus().equals(StatusEnum.Closed)||ticket.getStatus().equals(StatusEnum.Rejected)||ticket.getStatus().equals(StatusEnum.Approved))
         ticketService.createOrUpdate(ticket);
-
+        else{
+            response.getErrors().add("Record not eligable to be deleted");
+            return ResponseEntity.badRequest().body(response);
+        }
         notificationService.notifyUser( user.getId(),
                                         ticket.getId(),
                                         "You have deleted ticket number :" + ticket.getNumber());
