@@ -41,7 +41,11 @@ export class UserService {
   findById(id: String) {
     return this.http.get(`${HELP_DESK_API}/api/user/${id}`);
   }
-
+  
+  verify(code: String){
+    return this.http.get(`${HELP_DESK_API}/api/auth/verify-email/${code}`);
+  }
+  
   delete(id: String) {
     return this.http.delete(`${HELP_DESK_API}/api/user/${id}`);
   }

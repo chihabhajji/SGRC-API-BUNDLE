@@ -36,16 +36,16 @@
             </li>
           <li class="list-group-item">
             <b>Description :</b> <span>{{ticket.description}}</span>
-              <span class="pull-right">
-                <span *ngIf="this.ticket.deleted==true"><i  class="far fa-trash-alt" title="Deleted by user"></i>Deleted by user</span>
-                <span *ngIf="this.ticket.archived==true"><i class="fas fa-archive" title="Archived by user"></i>Archived by user</span>
+              <span class="pull-right" *ngIf="shared.user.profile != 'CUSTOMER'">
+                <span *ngIf="this.ticket.deleted==true"><i  class="far fa-trash-alt" title="Deleted by user"></i>Deleted</span>
+                <span *ngIf="this.ticket.archived==true"><i class="fas fa-archive" title="Archived by user"></i>Archived</span>
               </span>
           </li>
           <li class="list-group-item">
              <span><img [src]="ticket.image" width="500px" height="400px"></span>
-                  <span class="pull-right">
-                    <span *ngIf="ticket.reminded==true"><i class="fas fa-user-shield"></i></span> Reminder sent
-                    <table class="table table-bordered">
+                  <span class="pull-right" *ngIf="ticket.remindersEmpty==false">
+                    <span *ngIf="ticket.reminded==true"><i class="fas fa-user-shield"></i></span> Previous Reminders :
+                    <table class="table table-bordered" >
                       <tr>
                         <th>Date </th>
                         <th>Message</th>
@@ -60,7 +60,7 @@
         </ul>
       </div>
       <span>
-        <table class="table table-bordered" *ngIf="ticket.status != 'New'">
+        <table class="table table-bordered" *ngIf="ticket.changesEmpty==false">
           <tr>
             <th *ngIf="shared.user.profile == 'ADMIN'">User Change</th>
             <th>Date Change Status</th>
@@ -85,7 +85,7 @@
         <button *ngIf="(shared.user.profile == 'CUSTOMER' && (ticket.status == 'New'||ticket.status == 'Assigned')) && ticket.overdue == true && ticket.reminded == false" (click)="remind()" class="btn btn-primary">Send reminder</button>
         <button *ngIf="shared.user.profile == 'ADMIN' && (ticket.status == 'New'||ticket.status == 'Flagged')" (click)="changeStatus('Assigned')" class="btn btn-primary" >Assign</button>
         <button *ngIf="shared.user.profile == 'TECHNICIAN' && (ticket.status == 'Assigned' || ticket.status == 'Disapproved')" (click)="changeStatus('Resolved')" class="btn btn-primary">Solve</button>
-        <button *ngIf="shared.user.profile=='TECHNICIAN' && ticket.status == 'Assigned'" (click)="changeStatus('Flagged')" class="btn btn-danger" >Flag</button>
+        <button *ngIf="shared.user.profile=='TECHNICIAN' && ticket.status == 'Assigned' && ticket.flagged==false" (click)="changeStatus('Flagged')" class="btn btn-danger" >Flag</button>
         <button *ngIf="shared.user.profile == 'ADMIN' && (ticket.status == 'New' || ticket.status == 'Flagged')" (click)="changeStatus('Rejected')" class="btn btn-danger">Reject</button>
         <button *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved'" (click)="changeStatus('Approved')" class="btn btn-success" >Approve</button>
         <button *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved'" (click)="changeStatus('Disapproved')" class="btn btn-danger">Disapprove</button>

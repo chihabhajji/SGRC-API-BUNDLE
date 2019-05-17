@@ -21,10 +21,11 @@ public class User{
 	
 	@Id @Getter @Setter private String id;
 	@Getter @Setter @NotBlank(message = "Display name required") @Size(min = 10) private String name;
-	@Indexed(unique = true) @NotBlank(message = "E-mail required") @Email(message = "E-mail invalid") 
-	@Getter @Setter private String email;
+	@Indexed(unique = true) @NotBlank(message = "E-mail required") @Email(message = "E-mail invalid") @Getter @Setter private String email;
 	@NotBlank(message = "Password required") @Size(min = 6) @Getter @Setter private  String password;
 	@Getter @Setter private  ProfileEnum profile;
 	@Getter @Setter private  Boolean isActive = false;
-    @Getter @Setter @Transient List<Notification> notifications;
+	@Getter @Setter @Transient List<Notification> notifications;
+	@Getter @Setter private  Boolean isDue = false;
+
 } 

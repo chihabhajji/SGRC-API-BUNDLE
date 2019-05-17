@@ -3,6 +3,7 @@ package bte.sgrc.SpringBackend.api.entity.Util;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import bte.sgrc.SpringBackend.api.entity.User;
@@ -32,7 +33,7 @@ public class VerificationToken {
     
     
     @OneToOne(cascade = CascadeType.ALL) @JoinProperty(name = "user_id")
-    @Getter @Setter @JsonIgnore private User user;
+    @Getter @Setter @DBRef(lazy = true) @JsonIgnore private User user;
     
     
     public VerificationToken() {

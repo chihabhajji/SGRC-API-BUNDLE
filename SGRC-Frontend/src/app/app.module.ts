@@ -30,6 +30,8 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { RegisterComponent } from './components/security/register/register.component';
 import { TicketArchivedListComponent } from './components/ticket-archived-list/ticket-archived-list.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
+import { ChangePasswordComponent } from './components/security/change-password/change-password.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,6 +47,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
     ProfileComponent,
     RegisterComponent,
     TicketArchivedListComponent,
+    VerifyEmailComponent,
+    ChangePasswordComponent,
   ],
   imports: [
     BrowserModule,

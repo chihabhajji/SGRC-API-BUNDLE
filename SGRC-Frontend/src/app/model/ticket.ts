@@ -15,6 +15,9 @@ export class Ticket {
     public deleted : Boolean ,
     public reminded : Boolean,
     public archived : Boolean,
-    public overdue : Boolean
+    public overdue : Boolean,
+    public flagged : Boolean,
+    public changesEmpty : Boolean,
+    public remindersEmpty : Boolean
   ) {}
 }

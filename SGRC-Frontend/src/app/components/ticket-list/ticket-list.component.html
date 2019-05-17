@@ -83,8 +83,24 @@
       <tr *ngFor="let ticket of listTicket">
         <td>{{ticket.number}}</td>
         <td>{{ticket.title}}</td>
-        <td>{{ticket.priority}}</td>
-        <td>{{ticket.status}}</td>
+        <td>
+          <span *ngIf="ticket.priority=='High'" class="badge badge-pill badge-danger">High</span>
+          <span *ngIf="ticket.priority=='Low'" class="badge badge-pill badge-info">Low</span>
+          <span *ngIf="ticket.priority=='Normal'" class="badge badge-pill badge-light">Normal</span>
+        </td>
+        <td>
+          <span *ngIf="ticket.status=='Assigned'" class='label label-primary'>Assigned</span>
+          <span *ngIf="ticket.status=='Closed'" class='label label-primary'>Closed</span>
+
+          <span *ngIf="ticket.status=='Rejected'" class='label label-danger'>Rejected</span>
+          <span *ngIf="ticket.status=='Flagged'" class='label label-danger'>Flagged</span>
+          <span *ngIf="ticket.status=='Disapproved'" class='label label-danger'>Disapproved</span>
+          <span *ngIf="ticket.status=='Approved'" class='label label-success'>Approved</span>
+          <span *ngIf="ticket.status=='Resolved'" class='label label-success'>Resolved</span>
+
+          <span *ngIf="ticket.status=='New'" class='label label-default'>Pending</span>
+        
+        </td>
         <td>{{ticket.user.email}}</td>
         <td *ngIf="shared.user.profile == 'CUSTOMER'">
             <button class="btn btn-primary" *ngIf="shared.user.profile == 'CUSTOMER' && this.ticket.status=='New'" (click)="edit(ticket.id)">Edit</button>
@@ -97,7 +113,7 @@
       </tr>
     </table>
   </div>
-  
+
   <div class="box-footer clearfix">
     <ul class="pagination pagination-sm no-margin pull-right">
       <li><a href="" (click)="setPreviousPage($event)">&laquo;</a></li>

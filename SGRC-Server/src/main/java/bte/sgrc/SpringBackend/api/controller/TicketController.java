@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -41,7 +40,6 @@ import bte.sgrc.SpringBackend.api.service.UserNotificationService;
 import bte.sgrc.SpringBackend.api.service.SendingMailService;
 import bte.sgrc.SpringBackend.api.service.TicketService;
 import bte.sgrc.SpringBackend.api.service.UserService;
-import net.bytebuddy.asm.Advice.This;
 
 @RestController
 @RequestMapping("/api/ticket")
@@ -65,6 +63,7 @@ public class TicketController{
     @Autowired
     SendingMailService mailSender;
 
+
     private static Logger logger = LoggerFactory.getLogger(TicketController.class);
 
     @PostMapping
@@ -79,6 +78,11 @@ public class TicketController{
             if (result.hasErrors()){
                 result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
                 return ResponseEntity.badRequest().body(response);
+            }
+            if (!ticket.getImage().isEmpty())
+            if(!ticket.getImage().substring(0,10).equalsIgnoreCase("data:image")){
+                            response.getErrors().add("File is not an image");
+                            return ResponseEntity.badRequest().body(response);
             }
             ticket.setStatus(StatusEnum.getStatus("New"));
             ticket.setUser(userFromRequest(request));
@@ -150,6 +154,9 @@ public class TicketController{
             changes.add(changeStatus);
         }
         ticket.setChanges(changes);
+        if (!changes.isEmpty()){
+            ticket.setChangesEmpty(false);
+        }
 
         List<Reminder> reminders = new ArrayList<Reminder>();
         Iterable<Reminder> remindersCurrent = ticketService.listReminders(ticket.getId());
@@ -159,7 +166,12 @@ public class TicketController{
             reminders.add(reminder);
         }
         ticket.setReminders(reminders);
+        if (!ticket.getReminders().isEmpty()){
+            ticket.setRemindersEmpty(false);
+        }
 
+
+        // Checking if user reminded in last 2 days and if the ticket is overdue for a reminder
         if (ticket.getStatus().equals(StatusEnum.New))
             if (LocalDateTime.now().isAfter(ticket.getDate().plusDays(2)))
                 ticket.setOverdue(true);
@@ -279,7 +291,9 @@ public class TicketController{
             }
             Ticket ticketCurrent = ticketService.findById(id);
             ticketCurrent.setStatus(StatusEnum.getStatus(status));
-            
+            // If it was flagged set it true to dissallow tech from flagging again incase admin decides to approve
+            if (ticketCurrent.getStatus().equals(StatusEnum.Flagged))
+            ticketCurrent.setFlagged(true);
             if (status.equals("Assigned")){
                 if(ticket.getAssignedUser()==null){
                   response.getErrors().add("Please select an agent to assign");

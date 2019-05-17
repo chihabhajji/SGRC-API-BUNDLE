@@ -16,11 +16,11 @@ export class TicketNewComponent implements OnInit {
   @ViewChild('form')
   form: NgForm;
 
-  ticket = new Ticket('', null, '', '', '', '', null, null, '', null,null, false, false,false,false);
+  ticket = new Ticket('', null, '', '', '', '', null, null, '', null, null, false, false, false, false, false, false, false);
   shared: SharedService;
   message: {};
   classCss: {};
-
+  submited: Boolean = true;
   constructor(
     private ticketService: TicketService,
     private route: ActivatedRoute,
@@ -48,22 +48,26 @@ export class TicketNewComponent implements OnInit {
   }
 
   register() {
+    this.submited=false;
     this.message = {};
     this.ticketService.createOrUpdate(this.ticket).subscribe((responseApi: ResponseApi) => {
-        this.form.resetForm
-        this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, null, false, false,false,false);
+      this.form.resetForm;
+      this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, null, false, false, false, false, false, false, false);
         const ticket: Ticket = responseApi.data;
         this.form.resetForm();
         this.showMessage({
           type: 'success',
           text: `Registered ${ticket.title} successfully`
         });
-        this.router.navigate(['']);
+      setTimeout(() => {
+        this.router.navigate(['/']);
+      }, 5000);
     } , err => {
       this.showMessage({
         type: 'error',
         text: err['error']['errors'][0]
       });
+      this.submited = true;
     });
   }
 

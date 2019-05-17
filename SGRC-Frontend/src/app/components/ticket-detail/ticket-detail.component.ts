@@ -33,7 +33,7 @@ export class TicketDetailComponent implements OnInit {
   page: number;
   count: number;
   pages: Array<Number>;
-  ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, null, false, false,false,false);
+  ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, null, false, false, false, false, false, false, false);
   shared: SharedService;
   message: {};
   classCss: {};
@@ -84,7 +84,7 @@ export class TicketDetailComponent implements OnInit {
   register() {
     this.message = {};
     this.ticketService.createOrUpdate(this.ticket).subscribe((responseApi: ResponseApi) => {
-        this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null , null, false, false,false,false);
+      this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, null, false, false, false, false, false, false, false);
         const ticket: Ticket = responseApi.data;
         this.form.resetForm();
         this.showMessage({

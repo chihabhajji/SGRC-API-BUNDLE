@@ -2,10 +2,9 @@ import { UserService } from './../../services/user/user.service';
 import { User } from './../../model/user';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { Router,ActivatedRoute } from '@angular/router';
 import { SharedService } from '../../services/shared.service';
 import { ResponseApi } from './../../model/response-api';
-
 @Component({
   selector: 'app-user-new',
   templateUrl: './user-new.component.html',
@@ -15,8 +14,8 @@ export class UserNewComponent implements OnInit {
 
   @ViewChild('form')
   form: NgForm;
-
-  user = new User('', '', '', '','');
+  submited: Boolean;
+  user = new User('', '', '', '','',false);
   shared: SharedService;
   message: {};
   classCss: {};
@@ -24,14 +23,15 @@ export class UserNewComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.shared = SharedService.getInstance();
   }
 
   ngOnInit() {
     const id: String = this.route.snapshot.params['id'];
-
+    this.submited=true;
     if (id !== undefined) {
       this.findById(id);
     }
@@ -65,20 +65,27 @@ export class UserNewComponent implements OnInit {
   }
 
   register() {
+    this.submited = false;
     this.message = {};
     this.userService.createOrUpdate(this.user).subscribe((responseApi: ResponseApi) => {
-      this.user = new User('', '', '', '','');
+      this.user = new User('', '', '', '','',false);
       const userRet: User = responseApi.data;
       this.form.resetForm();
       this.showMessage({
         type: 'success',
         text: `Registered ${userRet.email} successfully`
       });
+      setTimeout(() => {
+        this.router.navigate(['/user-list']);
+      }, 5000);
     }, err => {
       this.showMessage({
         type: 'error',
         text: err['error']['errors'][0]
       });
+        setTimeout(() => {
+          this.submited=true;
+        }, 5000);
     });
   }
 

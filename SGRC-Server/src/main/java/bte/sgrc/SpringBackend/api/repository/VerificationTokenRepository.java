@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import bte.sgrc.SpringBackend.api.entity.Util.VerificationToken;
 
 public interface VerificationTokenRepository extends MongoRepository<VerificationToken, String> {
-    List<VerificationToken> findByUserEmail(String email);
+    List<VerificationToken> findByUserId(String userId);
     List<VerificationToken> findByToken(String token);
+    
 }

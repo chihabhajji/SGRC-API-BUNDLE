@@ -37,7 +37,11 @@ public class Ticket{
    
     @Getter @Setter private Boolean archived = false;
     @Getter @Setter private Boolean deleted = false;
-    @Getter @Setter private Boolean reminded = false;
-    @Getter @Setter private Boolean overdue = false;
+    @Getter @Setter @Transient private Boolean reminded = false;
+    @Getter @Setter @Transient private Boolean overdue = false;
+    @Getter @Setter private Boolean flagged = false;
+    @Getter @Setter @Transient private Boolean changesEmpty = true;
+    @Getter @Setter @Transient private Boolean remindersEmpty = true;
+
 
 }

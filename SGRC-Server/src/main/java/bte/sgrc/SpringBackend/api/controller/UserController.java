@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import bte.sgrc.SpringBackend.api.response.Response;
@@ -28,6 +31,7 @@ import bte.sgrc.SpringBackend.api.security.service.VerificationTokenService;
 import bte.sgrc.SpringBackend.api.entity.User;
 import bte.sgrc.SpringBackend.api.enums.ProfileEnum;
 import bte.sgrc.SpringBackend.api.service.SendingMailService;
+import bte.sgrc.SpringBackend.api.service.UserNotificationService;
 import bte.sgrc.SpringBackend.api.service.UserService;
 
 @RestController
@@ -49,9 +53,11 @@ public class UserController{
 
     @Autowired
     private PasswordEncoder passwordEnconder;
+    
+    private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     public ResponseEntity<Response<User>> create(HttpServletRequest request, @RequestBody User user,
             BindingResult result) {
         Response<User> response = new Response<User>();
@@ -60,6 +66,12 @@ public class UserController{
             if (result.hasErrors()) {
                 result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
                 return ResponseEntity.badRequest().body(response);
+            }
+            if (userFromRequest(request).getProfile()==ProfileEnum.ROLE_ADMIN) {
+                mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account created",
+                        "Your account has been created by the system administrator, your new password is now :"
+                                + user.getPassword()+" please change it when you first login!");
+                user.setIsDue(true);
             }
             user.setPassword(passwordEnconder.encode(user.getPassword()));
             User userPersisted = userService.createOrUpdate(user);
@@ -85,23 +97,29 @@ public class UserController{
     }
 
     @PutMapping
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     public ResponseEntity<Response<User>> update(HttpServletRequest request, @RequestBody User user, BindingResult result){
         Response<User> response = new Response<User>();
         try {
+            logger.info("1");
             validateUpdateUser(user, result);
             if (result.hasErrors()){
                 result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
                 return ResponseEntity.badRequest().body(response);
             }
-            
-            String passPre = user.getPassword();  String passO = userService.findByEmail(user.getEmail()).getPassword();
-
+            // TODO : do the same when reseting pw
+            String passPre = user.getPassword();
             user.setPassword(passwordEnconder.encode(user.getPassword()));
-            if (userFromRequest(request).getProfile() == ProfileEnum.ROLE_ADMIN||!user.getPassword().matches(passO)){
-                mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account updated","Your account has been updated by the system administrator, your new password is now :" + passPre);
+            if (!(userService.findByEmail(user.getEmail()).getPassword().equals(user.getPassword()))){
+
+                if (userFromRequest(request).getProfile().equals(ProfileEnum.ROLE_ADMIN)&&userFromRequest(request).getId()!= user.getId()){
+                    mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account updated","Your account has been updated by the system administrator, your new password is now :" + passPre);
+                    user.setIsDue(true);
+                }
+                if (userFromRequest(request).getProfile().equals(ProfileEnum.ROLE_CUSTOMER)){
+                    user.setIsDue(false);
+                }
             }
-            
             User userPesistente = userService.createOrUpdate(user);
             response.setData(userPesistente);
 
@@ -141,13 +159,16 @@ public class UserController{
     public ResponseEntity<Response<String>> delete(@PathVariable("id") String id){
         Response<String> response = new Response<String>();
         User user = userService.findById(id);
-
+        
         if (user == null){
             response.getErrors().add("Register not fount id: " + id);
             return ResponseEntity.badRequest().body(response);
         }
+        
         mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account deleted", "Your account has been deleted");
+        verificationTokenService.deleteVerifications(user);
         userService.delete(id);
+
         return ResponseEntity.ok(new Response<String>());
     }
 
@@ -180,4 +201,6 @@ public class UserController{
         response.setData(agents);
         return ResponseEntity.ok(response);
     }
+
 }
+    

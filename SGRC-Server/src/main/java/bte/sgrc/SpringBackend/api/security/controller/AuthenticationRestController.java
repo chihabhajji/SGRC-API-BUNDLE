@@ -2,6 +2,8 @@ package bte.sgrc.SpringBackend.api.security.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,12 +13,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import bte.sgrc.SpringBackend.api.entity.User;
+import bte.sgrc.SpringBackend.api.response.Response;
 import bte.sgrc.SpringBackend.api.security.jwt.JwtAuthenticationRequest;
 import bte.sgrc.SpringBackend.api.security.jwt.JwtTokenUtil;
 import bte.sgrc.SpringBackend.api.security.jwt.WebSecurityConfig;
@@ -41,6 +45,8 @@ public class AuthenticationRestController {
 
     @Autowired
     VerificationTokenService verificationTokenService;
+
+    private static Logger logger = LoggerFactory.getLogger(AuthenticationRestController.class);
 
     @PostMapping(value = "/api/auth")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest)
@@ -71,9 +77,10 @@ public class AuthenticationRestController {
         }
     }
     
-    @GetMapping("/api/auth/verify-email")
-    @ResponseBody
-    public String verifyEmail(String code) {
-        return verificationTokenService.verifyEmail(code).getBody();
+    @GetMapping("/api/auth/verify-email/{code}")
+    public ResponseEntity<Response<String>> verifyEmail(@PathVariable("code") String code) {
+        logger.info(code);
+        return verificationTokenService.verifyEmail(code);
     }
+
 }

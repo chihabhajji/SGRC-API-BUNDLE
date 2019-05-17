@@ -4,7 +4,7 @@ export class User {
     public name: String,
     public email: String,
     public password: String,
-    public profile: String
-    
+    public profile: String,
+    public isDue: Boolean
   ) {}
 }

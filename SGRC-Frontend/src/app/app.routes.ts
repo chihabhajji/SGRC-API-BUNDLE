@@ -11,6 +11,8 @@ import { SummaryComponent } from './components/summary/summary.component';
 import { RegisterComponent } from './components/security/register/register.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { TicketArchivedListComponent } from './components/ticket-archived-list/ticket-archived-list.component'
+import { VerifyEmailComponent } from './components/verify-email/verify-email.component'
+import { ChangePasswordComponent } from './components/security/change-password/change-password.component'
 export const ROUTES: Routes = [
   { path: '', component: TicketListComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
@@ -24,6 +26,8 @@ export const ROUTES: Routes = [
   { path: 'ticket-detail/:id' , component: TicketDetailComponent, canActivate: [AuthGuard] },
   { path: 'summary' , component: SummaryComponent, canActivate: [AuthGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  { path: 'changepassword', component: ChangePasswordComponent},
+  { path: 'verify-email', component: VerifyEmailComponent},
   { path: 'archived', component: TicketArchivedListComponent, canActivate: [AuthGuard] }
   
 ];
