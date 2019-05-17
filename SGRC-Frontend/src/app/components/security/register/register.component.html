@@ -1,7 +1,7 @@
-<div class="col-md-6" style="margin-left:0%">
+<div class="col-md-4" style="margin-left:20%">
   <div class="box box-info">
     <div class="box-header with-border">
-      <h3 class="box-title">New User</h3>
+      <h3 class="box-title">Register</h3>
     </div>
     <form class="form-horizontal" #form="ngForm" (ngSubmit)="register()" novalidate>
       <div [ngClass]="classCss" role="alert" *ngIf="message">
@@ -21,7 +21,7 @@
           <label for="inputEmail" class="col-sm-2 control-label">Name</label>
           <div class="col-sm-10">
             <input type="text" [(ngModel)]="user.name" name="name" class="form-control" id="inputName" #name="ngModel"
-              placeholder="Full name" pattern="[A-Za-z]+" required>
+              placeholder="Full name" pattern="[A-Za-z ]+" required>
             <span class="help-block" *ngIf="name.invalid  && name.dirty">Full name is invalid </span>
           </div>
         </div>
@@ -29,16 +29,35 @@
         <div [ngClass]="getFormGroupClass(password.invalid,password.dirty)">
           <label for="inputPassword" class="col-sm-2 control-label">Password</label>
           <div class="col-sm-10">
-            <input type="password" [(ngModel)]="user.password" name="password" class="form-control" id="inputPassword"
-              placeholder="Password" #password="ngModel" required>
-            <span class="help-block" *ngIf="password.invalid && password.dirty">Password is required</span>
+            <input type="password" [(ngModel)]="user.password" name="password" placeholder="Password"
+              class="form-control" required #password="ngModel" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" />
+            <div *ngIf="password.invalid && (submited!=true || password.touched)" class="alert alert-danger">
+              <div *ngIf="password.errors.required"> Password is required. </div>
+              <div *ngIf="password.errors.pattern"> Must contain at least one number and one uppercase and lowercase
+                letter, and at least 8 or more characters.</div>
+            </div>
+          </div>
+        </div>
+
+        <div [ngClass]="getFormGroupClass(password.invalid,password.dirty)">
+          <label for="inputPassword" class="col-sm-2 control-label">Password</label>
+          <div class="col-sm-10">
+            <input type="password" [(ngModel)]="confirmpasswordvalue" name="confirmpassword"
+              placeholder="Confirm Password" class="form-control" required #confirmpassword="ngModel"
+              pattern="{{ password.value }}" />
+            <div *ngIf=" confirmpassword.invalid && (submited!=true || confirmpassword.touched)"
+              class="alert alert-danger">
+              <div *ngIf="confirmpassword.errors.required"> Confirm password is required. </div>
+              <div *ngIf="confirmpassword.errors.pattern"> Password & Confirm Password does not match.</div>
+            </div>
           </div>
         </div>
 
         
       </div>
       <div class="box-footer">
-        <button type="submit" [disabled]="!form.valid" class="btn btn-info pull-right">Submit</button>
+        Already have an account ? <a [routerLink]="[ '/login']">Login</a>
+        <button *ngIf="submited" type="submit" [disabled]="!form.valid" class="btn btn-info pull-right" >Register!</button>
       </div>
     </form>
   </div>

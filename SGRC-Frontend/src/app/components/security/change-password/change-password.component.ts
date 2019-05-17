@@ -93,7 +93,6 @@ export class ChangePasswordComponent implements OnInit {
         this.submited = true;
       }, 5000);
     });
-    this.submited = true;
   }
 
   signOut(): void {

@@ -17,9 +17,12 @@ export class UserService {
       return this.http.put(`${HELP_DESK_API}/api/user`, user);
     } else {
       user.id = null;
-      return this.http.post(`${HELP_DESK_API}/api/user`, user);
+      return this.http.post(`${HELP_DESK_API}/api/auth/register`, user);
     }
   }
+
+
+  
 
   register(user: User) {
     if (user.id != null && user.id !== '') {
@@ -45,7 +48,7 @@ export class UserService {
   verify(code: String){
     return this.http.get(`${HELP_DESK_API}/api/auth/verify-email/${code}`);
   }
-  
+
   delete(id: String) {
     return this.http.delete(`${HELP_DESK_API}/api/user/${id}`);
   }

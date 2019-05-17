@@ -2,15 +2,20 @@ package bte.sgrc.SpringBackend.api.security.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.mongodb.DuplicateKeyException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +32,7 @@ import bte.sgrc.SpringBackend.api.security.jwt.WebSecurityConfig;
 import bte.sgrc.SpringBackend.api.security.model.CurrentUser;
 import bte.sgrc.SpringBackend.api.security.service.VerificationTokenService;
 import bte.sgrc.SpringBackend.api.service.UserService;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 @RestController
 @CrossOrigin(origins = "*")
 public class AuthenticationRestController {
@@ -45,6 +50,9 @@ public class AuthenticationRestController {
 
     @Autowired
     VerificationTokenService verificationTokenService;
+
+    @Autowired
+    private PasswordEncoder passwordEnconder;
 
     private static Logger logger = LoggerFactory.getLogger(AuthenticationRestController.class);
 
@@ -77,10 +85,44 @@ public class AuthenticationRestController {
         }
     }
     
+    @PostMapping( value="/api/auth/register")
+    public ResponseEntity<Response<User>> create(HttpServletRequest request, @RequestBody User user,
+            BindingResult result) {
+        Response<User> response = new Response<User>();
+        try {
+            validateCreateUser(user, result);
+            if (result.hasErrors()) {
+                result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            user.setPassword(passwordEnconder.encode(user.getPassword()));
+            User userPersisted = userService.createOrUpdate(user);
+            response.setData(userPersisted);
+        } catch (DuplicateKeyException dE) {
+            response.getErrors().add("E-mail already registered");
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            response.getErrors().add(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+        verificationTokenService.createVerification(user);
+        return ResponseEntity.ok(response);
+    }
+    
     @GetMapping("/api/auth/verify-email/{code}")
     public ResponseEntity<Response<String>> verifyEmail(@PathVariable("code") String code) {
         logger.info(code);
         return verificationTokenService.verifyEmail(code);
+    }
+
+    public void validateCreateUser(User user, BindingResult result) {
+        if (user.getEmail() == null) {
+            result.addError(new ObjectError("User", "Email no informed"));
+        }
+        if (user.getName() == null) {
+            result.addError(new ObjectError("User", "Name not set"));
+        }
     }
 
 }
