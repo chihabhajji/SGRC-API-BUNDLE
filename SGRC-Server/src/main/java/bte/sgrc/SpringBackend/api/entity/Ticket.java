@@ -25,14 +25,15 @@ public class Ticket{
 	@Getter @Setter @DBRef(lazy = true) private User assignedUser;
     @Getter @Setter @Transient  List<ChangeStatus> changes;
     @Getter @Setter @Transient List<Reminder> reminders;
+
     @Getter @Setter private LocalDateTime date;
-    
     @Getter @Setter @Size(min = 6, max = 60)private String title;
     @Getter @Setter @Size(min = 10, max = 255) private String description;
     @Getter @Setter private String image;
-    
     @Getter @Setter private Integer number;
     @Getter @Setter private StatusEnum status;
+    @Getter @Setter private String message;
+
     @Getter @Setter private PriorityEnum priority;
    
     @Getter @Setter private Boolean archived = false;

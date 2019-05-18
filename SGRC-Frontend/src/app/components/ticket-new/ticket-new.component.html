@@ -1,3 +1,57 @@
+<style>
+      ul {
+        background: #fff;
+                width: 180px;
+                height: 180px;
+        margin: auto;
+        margin-top: 60px;
+        list-style: none;
+        padding: 0;
+        -moz-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.37);
+        box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.37);
+
+        border-radius: 50%;
+        display: inline-block;
+      }
+      ul li {
+        width: 180px;
+        height: 180px;
+        line-height: 176px;
+        text-align: center;
+        background-repeat: no-repeat;
+        background-position: center;
+
+        border-radius: 50%;
+        display: inline-block;
+      }
+      ul li img {
+        vertical-align: middle;
+      }
+
+      li:nth-child(1) {
+        background-color: rgb(19, 171, 218);
+      }
+      .actions {
+        margin: auto;
+        margin-top: 45px;
+        width: 325px;
+      }
+      .actions a {
+        width: 150px;
+        height: 46px;
+        background-repeat: no-repeat;
+        background-size: 150px 46px;
+        display: block;
+        text-indent: -9999px;
+        float: left;
+      }
+      .attr {
+        color: #fff;
+        text-align: center;
+        font-size: 0.875rem;
+        margin-top: 20px;
+      }
+</style>
 <div class="col-md-12" style="margin-left:0%">
   <div class="box box-info">
     <div class="box-header with-border">
@@ -64,7 +118,26 @@
       </div>
       <div class="box-footer">
         <button *ngIf="submited" type="submit" [disabled]="!form.valid" class="btn btn-info pull-right">Submit</button>
+          <ul *ngIf="!submited" class="pull-right">
+            <li><img src="./../../../assets/img/rings.svg" width="160" alt=""></li>
+          </ul>
       </div>
     </form>
   </div>
+      <script>
+        (function (i, s, o, g, r, a, m) {
+          i['GoogleAnalyticsObject'] = r;
+          i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+          }, i[r].l = 1 * new Date();
+          a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0];
+          a.async = 1;
+          a.src = g;
+          m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-56980351-1', 'auto');
+        ga('send', 'pageview');
+      </script>
 </div>

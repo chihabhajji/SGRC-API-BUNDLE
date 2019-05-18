@@ -1,5 +1,7 @@
 package bte.sgrc.SpringBackend.api.security.controller;
 
+import java.util.UUID;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.mongodb.DuplicateKeyException;
@@ -8,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,10 +22,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import bte.sgrc.SpringBackend.api.entity.User;
+import bte.sgrc.SpringBackend.api.enums.ProfileEnum;
 import bte.sgrc.SpringBackend.api.response.Response;
 import bte.sgrc.SpringBackend.api.security.jwt.JwtAuthenticationRequest;
 import bte.sgrc.SpringBackend.api.security.jwt.JwtTokenUtil;
@@ -86,16 +87,22 @@ public class AuthenticationRestController {
     }
     
     @PostMapping( value="/api/auth/register")
-    public ResponseEntity<Response<User>> create(HttpServletRequest request, @RequestBody User user,
+    public ResponseEntity<Response<User>> register(HttpServletRequest request, @RequestBody User user,
             BindingResult result) {
         Response<User> response = new Response<User>();
         try {
+            user.setId(UUID.randomUUID().toString());
             validateCreateUser(user, result);
             if (result.hasErrors()) {
                 result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
                 return ResponseEntity.badRequest().body(response);
             }
-            
+            if (userService.findByEmail(user.getEmail())!=null){
+                response.getErrors().add("E-mail already registered");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            user.setProfile(ProfileEnum.ROLE_CUSTOMER);
             user.setPassword(passwordEnconder.encode(user.getPassword()));
             User userPersisted = userService.createOrUpdate(user);
             response.setData(userPersisted);

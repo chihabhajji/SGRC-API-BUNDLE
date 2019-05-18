@@ -291,7 +291,6 @@ public class TicketController{
             }
             Ticket ticketCurrent = ticketService.findById(id);
             ticketCurrent.setStatus(StatusEnum.getStatus(status));
-            // If it was flagged set it true to dissallow tech from flagging again incase admin decides to approve
             if (ticketCurrent.getStatus().equals(StatusEnum.Flagged))
             ticketCurrent.setFlagged(true);
             if (status.equals("Assigned")){
@@ -303,17 +302,19 @@ public class TicketController{
                 ticketCurrent.setReminded(false);
 
             }
+
+            if (message.equals("undefined"))
+                message = "";
+            ticket.setMessage(message);
             Ticket ticketPersisted = ticketService.createOrUpdate(ticketCurrent);
             ChangeStatus changeStatus = new ChangeStatus();
             changeStatus.setUserChange(userFromRequest(request));
             changeStatus.setDateChangeStatus(LocalDateTime.now());
             changeStatus.setStatus(StatusEnum.getStatus(status));
             changeStatus.setTicket(ticketPersisted);
-            if(message.equals("undefined"))
-            message="";
             changeStatus.setMessage(message);
             ticketService.createChangeStatus(changeStatus);
-            response.setData(ticketPersisted);
+            
             if (ticket.getStatus()!=changeStatus.getStatus())
             switch (changeStatus.getStatus()) {
                 case Assigned: {
@@ -363,7 +364,7 @@ public class TicketController{
                     break;
                 }
             }
-
+            response.setData(ticketPersisted);
         } catch (Exception e) {
             response.getErrors().add(e.getMessage());
             return ResponseEntity.badRequest().body(response);

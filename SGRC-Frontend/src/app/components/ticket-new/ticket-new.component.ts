@@ -5,6 +5,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Ticket } from '../../model/ticket';
 import { ResponseApi } from '../../model/response-api';
 import { NgForm } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-ticket-new',
@@ -16,7 +17,7 @@ export class TicketNewComponent implements OnInit {
   @ViewChild('form')
   form: NgForm;
 
-  ticket = new Ticket('', null, '', '', '', '', null, null, '', null, null, false, false, false, false, false, false, false);
+  ticket = new Ticket('', null, '', '', '', '', null, null, '', null, null, '',false, false, false, false, false, false, false);
   shared: SharedService;
   message: {};
   classCss: {};
@@ -24,6 +25,7 @@ export class TicketNewComponent implements OnInit {
   constructor(
     private ticketService: TicketService,
     private route: ActivatedRoute,
+    private sanitizer: DomSanitizer,
     private router: Router
   ) {
     this.shared = SharedService.getInstance();
@@ -34,6 +36,10 @@ export class TicketNewComponent implements OnInit {
     if (id !== undefined) {
       this.findById(id);
     }
+  }
+
+  transform(html) {
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
   findById(id: String) {
@@ -52,7 +58,7 @@ export class TicketNewComponent implements OnInit {
     this.message = {};
     this.ticketService.createOrUpdate(this.ticket).subscribe((responseApi: ResponseApi) => {
       this.form.resetForm;
-      this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, null, false, false, false, false, false, false, false);
+      this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, null, '',false, false, false, false, false, false, false);
         const ticket: Ticket = responseApi.data;
         this.form.resetForm();
         this.showMessage({

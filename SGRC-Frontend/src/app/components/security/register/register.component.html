@@ -1,3 +1,62 @@
+<style>
+  ul {
+    background: #fff;
+    width: 180px;
+    height: 180px;
+    margin: auto;
+    margin-top: 60px;
+    list-style: none;
+    padding: 0;
+    -moz-box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.37);
+    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.37);
+
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  ul li {
+    width: 180px;
+    height: 180px;
+    line-height: 176px;
+    text-align: center;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  ul li img {
+    vertical-align: middle;
+  }
+
+  li:nth-child(1) {
+    background-color: rgb(19, 171, 218);
+  }
+
+  .actions {
+    margin: auto;
+    margin-top: 45px;
+    width: 325px;
+  }
+
+  .actions a {
+    width: 150px;
+    height: 46px;
+    background-repeat: no-repeat;
+    background-size: 150px 46px;
+    display: block;
+    text-indent: -9999px;
+    float: left;
+  }
+
+  .attr {
+    color: #fff;
+    text-align: center;
+    font-size: 0.875rem;
+    margin-top: 20px;
+  }
+</style>
 <div class="col-md-4" style="margin-left:20%">
   <div class="box box-info">
     <div class="box-header with-border">
@@ -8,21 +67,31 @@
         <strong>{{ message['text'] }}</strong>
       </div>
       <div class="box-body">
+
         <div [ngClass]="getFormGroupClass(email.invalid,email.dirty)">
           <label for="inputEmail" class="col-sm-2 control-label">Email</label>
           <div class="col-sm-10">
             <input type="email" [(ngModel)]="user.email" name="email" class="form-control" id="inputEmail"
-              #email="ngModel" placeholder="Email" email>
-            <span class="help-block" *ngIf="email.invalid  && email.dirty">Email is invalid </span>
+              #email="ngModel" placeholder="Email"
+              pattern="(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|''(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*'')@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"
+              email required>
+            <div class="help-block"  *ngIf="email.invalid && (submited!=true || email.touched)"
+              class="alert alert-danger">
+              <div *ngIf="email.errors.required"> Email is required. </div>
+              <div *ngIf="email.errors.pattern"> Email is invalid, please verify.</div>
+            </div>
           </div>
         </div>
 
+
         <div [ngClass]="getFormGroupClass(name.invalid,name.dirty)">
-          <label for="inputEmail" class="col-sm-2 control-label">Name</label>
+          <label for="inputName" class="col-sm-2 control-label">Name</label>
           <div class="col-sm-10">
-            <input type="text" [(ngModel)]="user.name" name="name" class="form-control" id="inputName" #name="ngModel"
-              placeholder="Full name" pattern="[A-Za-z ]+" required>
-            <span class="help-block" *ngIf="name.invalid  && name.dirty">Full name is invalid </span>
+            <input type="text" [(ngModel)]="user.name" name="name" class="form-control" id="inputName" #name="ngModel" placeholder="Full name" pattern="[A-Za-z ]+" required>
+            <div *ngIf="name.invalid && (submited!=true || name.touched)" class="alert alert-danger">
+              <div *ngIf="name.errors.required"> Full Name is required. </div>
+              <div *ngIf="name.errors.pattern"> Please provide a valid full name.</div>
+            </div>
           </div>
         </div>
 
@@ -58,7 +127,11 @@
       <div class="box-footer">
         Already have an account ? <a [routerLink]="[ '/login']">Login</a>
         <button *ngIf="submited" type="submit" [disabled]="!form.valid" class="btn btn-info pull-right" >Register!</button>
+        <ul *ngIf="!submited" class="pull-right">
+          <li><img src="./../../../assets/img/rings.svg" width="160" alt=""></li>
+        </ul>
       </div>
     </form>
   </div>
+
 </div>

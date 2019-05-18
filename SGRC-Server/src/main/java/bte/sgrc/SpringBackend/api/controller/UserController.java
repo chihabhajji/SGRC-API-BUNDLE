@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import bte.sgrc.SpringBackend.api.response.Response;
@@ -31,7 +30,6 @@ import bte.sgrc.SpringBackend.api.security.service.VerificationTokenService;
 import bte.sgrc.SpringBackend.api.entity.User;
 import bte.sgrc.SpringBackend.api.enums.ProfileEnum;
 import bte.sgrc.SpringBackend.api.service.SendingMailService;
-import bte.sgrc.SpringBackend.api.service.UserNotificationService;
 import bte.sgrc.SpringBackend.api.service.UserService;
 
 @RestController
@@ -57,7 +55,7 @@ public class UserController{
     private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<Response<User>> create(HttpServletRequest request, @RequestBody User user,
             BindingResult result) {
         Response<User> response = new Response<User>();
@@ -67,12 +65,11 @@ public class UserController{
                 result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
                 return ResponseEntity.badRequest().body(response);
             }
-            if (userFromRequest(request).getProfile()==ProfileEnum.ROLE_ADMIN) {
-                mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account created",
-                        "Your account has been created by the system administrator, your new password is now :"
-                                + user.getPassword()+" please change it when you first login!");
-                user.setIsDue(true);
-            }
+            mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account created","Your account has been created by the system administrator, your new password is now :"+ user.getPassword()+" please change it when you first login!");
+        
+            user.setIsDue(true);
+            user.setIsActive(true);
+
             user.setPassword(passwordEnconder.encode(user.getPassword()));
             User userPersisted = userService.createOrUpdate(user);
             response.setData(userPersisted);
@@ -83,7 +80,6 @@ public class UserController{
             response.getErrors().add(e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
-        verificationTokenService.createVerification(user);
         return ResponseEntity.ok(response);
     }
     
@@ -101,7 +97,6 @@ public class UserController{
     public ResponseEntity<Response<User>> update(HttpServletRequest request, @RequestBody User user, BindingResult result){
         Response<User> response = new Response<User>();
         try {
-            logger.info("1");
             validateUpdateUser(user, result);
             if (result.hasErrors()){
                 result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
@@ -109,17 +104,20 @@ public class UserController{
             }
             // TODO : do the same when reseting pw
             String passPre = user.getPassword();
-            user.setPassword(passwordEnconder.encode(user.getPassword()));
-            if (!(userService.findByEmail(user.getEmail()).getPassword().equals(user.getPassword()))){
-
+            if (!passwordEnconder.matches(user.getPassword(), userService.findByEmail(user.getEmail()).getPassword())){
+                user.setPassword(passwordEnconder.encode(user.getPassword()));
                 if (userFromRequest(request).getProfile().equals(ProfileEnum.ROLE_ADMIN)&&userFromRequest(request).getId()!= user.getId()){
                     mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account updated","Your account has been updated by the system administrator, your new password is now :" + passPre);
                     user.setIsDue(true);
                 }
-                if (userFromRequest(request).getProfile().equals(ProfileEnum.ROLE_CUSTOMER)){
+                if (userFromRequest(request).getProfile().equals(ProfileEnum.ROLE_CUSTOMER)) {
                     user.setIsDue(false);
                 }
+            }else {
+                response.getErrors().add("Please change the password!");
+                return ResponseEntity.badRequest().body(response);
             }
+
             User userPesistente = userService.createOrUpdate(user);
             response.setData(userPesistente);
 

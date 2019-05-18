@@ -26,15 +26,12 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private route: ActivatedRoute,
     private router: Router
   ) {
-    this.shared = SharedService.getInstance();
   }
 
   ngOnInit() {
     this.submited = true;
-    this.user = this.shared.user;
   }
 
   private showMessage(message: { type: String, text: String }): void {
@@ -56,16 +53,18 @@ export class RegisterComponent implements OnInit {
     this.message = {};
     this.submited = false;
     this.user.profile = 'ROLE_CUSTOMER';
-    this.userService.createOrUpdate(this.user).subscribe((responseApi: ResponseApi) => {
-      const userRet: User = responseApi.data;
-      this.submited = false;
+    this.userService.register(this.user).subscribe((responseApi: ResponseApi) => {
+      this.user = responseApi.data;
       this.showMessage({
         type: 'success',
-        text: `Registered ${userRet.email} successfully`
+        text: `Registered ${this.user.email} successfully`
       });
       setTimeout(() => {
-        this.login();
-      }, 5000);
+        this.submited = true;
+      }, 3000);
+      this.form.resetForm();
+      this.form.reset();
+      this.router.navigate(['/login']);
     }, err => {
       this.showMessage({
         type: 'error',
@@ -73,28 +72,11 @@ export class RegisterComponent implements OnInit {
       });
         setTimeout(() => {
           this.submited = true;
-        }, 5000);
+        }, 3000);
     });
   }
 
-  login() {
-    this.message = '';
-    this.userService.login(this.user).subscribe((userAuthentication: CurrentUser) => {
-      this.shared.token = userAuthentication.token;
-      this.shared.user = userAuthentication.user;
-      console.log(this.shared.user)
-      console.log(this.shared.token)
-      this.shared.user.profile = this.shared.user.profile.substring(5);
-      this.shared.showTemplate.emit(true);
-      this.form.resetForm();
-      this.router.navigate(['/']);
-    }, err => {
-      this.shared.token = null;
-      this.shared.user = null;
-      this.shared.showTemplate.emit(false);
-      this.message = 'Erro';
-    });
-  }
+
   getFormGroupClass(isInvalid: boolean, isDirty: Boolean): {} {
     return {
       'form-group': true,

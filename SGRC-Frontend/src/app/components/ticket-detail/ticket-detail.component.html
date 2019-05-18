@@ -56,6 +56,19 @@
                       </tr>
                     </table>
                   </span>
+
+                  <span class="pull-right" *ngIf="ticket?.message">
+                     
+                    <table class="table table-bordered" >
+                      <tr>
+                        <th><i class="fas fa-user-shield"></i>Note :</th>
+                      </tr>
+                      <tr>
+                        <td>{{ ticket?.message }}</td>
+                      </tr>
+                    </table>
+                  </span>
+
           </li>
         </ul>
       </div>
@@ -75,7 +88,8 @@
           </tr>
         </table>
       </span>
-      <span *ngIf="((shared.user.profile == 'TECHNICIAN' && (ticket.status == 'Assigned' || ticket.status == 'Disapproved')) || (shared.user.profile =='CUSTOMER' && ticket.status == 'Resolved')) || (shared.user.profile == 'CUSTOMER' && (ticket.status == 'New'||ticket.status == 'Assigned')) && ticket.overdue && ticket.reminded==false || (shared.user.profile=='ADMIN'&&ticket.status=='Flagged')">
+      <span
+        *ngIf="((shared.user.profile == 'TECHNICIAN' && (ticket.status == 'Assigned' || ticket.status == 'Disapproved')) || (shared.user.profile =='CUSTOMER' && ticket.status == 'Resolved')) || (shared.user.profile == 'CUSTOMER' && (ticket.status == 'New'||ticket.status == 'Assigned')) && ticket.overdue && ticket.reminded==false || (shared.user.profile=='ADMIN'&&ticket.status=='Flagged')|| (shared.user.profile=='ADMIN'&&ticket.status=='New')">
         <label for="comment">Comment:</label>
         <textarea class="form-control" rows="4" id="comment" [(ngModel)]="msg" (input)="msg = $event.target.value"></textarea>
       </span>

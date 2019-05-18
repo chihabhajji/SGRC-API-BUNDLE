@@ -42,7 +42,6 @@ export class LoginComponent implements OnInit {
   cancelLogin() {
     this.message = '';
     this.user = new User('', '', '', '','',false);
-
   }
 
   getFormGroupClass(isInvalid: boolean, isDirty: Boolean): {} {
