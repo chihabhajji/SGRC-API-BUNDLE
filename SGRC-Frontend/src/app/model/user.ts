@@ -5,6 +5,7 @@ export class User {
     public email: String,
     public password: String,
     public profile: String,
-    public isDue: Boolean
+    public isDue: Boolean,
+    public isActive : Boolean
   ) {}
 }

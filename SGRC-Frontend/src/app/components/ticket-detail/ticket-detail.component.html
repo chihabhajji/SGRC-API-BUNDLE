@@ -2,6 +2,9 @@
   <div class="box box-info">
     <div class="box-header with-border">
       <h3 class="box-title">Ticket number : {{ticket.number}}</h3>
+                    <ul *ngIf="!submited" class="pull-right">
+                      <li><img src="./../../../assets/img/rings.svg" width="160" alt=""></li>
+                    </ul>
     </div>
     <form class="form-horizontal" #form="ngForm" (ngSubmit)="register()" novalidate>
       <div [ngClass]="classCss" role="alert" *ngIf="message">
@@ -56,9 +59,7 @@
                       </tr>
                     </table>
                   </span>
-
-                  <span class="pull-right" *ngIf="ticket?.message">
-                     
+                  <span class="pull-right" *ngIf="ticket?.message && shared.user.profile=='CUSTOMER' && (ticket.status=='Disapproved'||ticket.status=='Approved'||ticket.status=='Resolved' || ticket.status=='Rejected' || ticket.status== 'Closed')">
                     <table class="table table-bordered" >
                       <tr>
                         <th><i class="fas fa-user-shield"></i>Note :</th>
@@ -68,7 +69,6 @@
                       </tr>
                     </table>
                   </span>
-
           </li>
         </ul>
       </div>
@@ -90,20 +90,20 @@
       </span>
       <span
         *ngIf="((shared.user.profile == 'TECHNICIAN' && (ticket.status == 'Assigned' || ticket.status == 'Disapproved')) || (shared.user.profile =='CUSTOMER' && ticket.status == 'Resolved')) || (shared.user.profile == 'CUSTOMER' && (ticket.status == 'New'||ticket.status == 'Assigned')) && ticket.overdue && ticket.reminded==false || (shared.user.profile=='ADMIN'&&ticket.status=='Flagged')|| (shared.user.profile=='ADMIN'&&ticket.status=='New')">
-        <label for="comment">Comment:</label>
-        <textarea class="form-control" rows="4" id="comment" [(ngModel)]="msg" (input)="msg = $event.target.value"></textarea>
+        <label for="message"> <p *ngIf="shared.user.profile=='CUSTOMER'">Feedback or </p>Comment:</label>
+        <textarea class="form-control" rows="4" id="message" name="message" [(ngModel)]="ticket.message" required #message="ngModel"></textarea>
       </span>
       <div>
       </div>
       <div class="box-footer">
-        <button *ngIf="(shared.user.profile == 'CUSTOMER' && (ticket.status == 'New'||ticket.status == 'Assigned')) && ticket.overdue == true && ticket.reminded == false" (click)="remind()" class="btn btn-primary">Send reminder</button>
-        <button *ngIf="shared.user.profile == 'ADMIN' && (ticket.status == 'New'||ticket.status == 'Flagged')" (click)="changeStatus('Assigned')" class="btn btn-primary" >Assign</button>
-        <button *ngIf="shared.user.profile == 'TECHNICIAN' && (ticket.status == 'Assigned' || ticket.status == 'Disapproved')" (click)="changeStatus('Resolved')" class="btn btn-primary">Solve</button>
-        <button *ngIf="shared.user.profile=='TECHNICIAN' && ticket.status == 'Assigned' && ticket.flagged==false" (click)="changeStatus('Flagged')" class="btn btn-danger" >Flag</button>
-        <button *ngIf="shared.user.profile == 'ADMIN' && (ticket.status == 'New' || ticket.status == 'Flagged')" (click)="changeStatus('Rejected')" class="btn btn-danger">Reject</button>
-        <button *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved'" (click)="changeStatus('Approved')" class="btn btn-success" >Approve</button>
-        <button *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved'" (click)="changeStatus('Disapproved')" class="btn btn-danger">Disapprove</button>
-        <button *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'Approved'" (click)="changeStatus('Closed')" class="btn btn-primary">Close</button>
+        <button class="pull-right" *ngIf="(shared.user.profile == 'CUSTOMER' && (ticket.status == 'New'||ticket.status == 'Assigned')) && ticket.overdue == true && ticket.reminded == false && submited" (click)="remind()" class="btn btn-primary">Send reminder</button>
+        <button class="pull-right" *ngIf="shared.user.profile == 'ADMIN' && (ticket.status == 'New'||ticket.status == 'Flagged')" (click)="changeStatus('Assigned') && submited" class="btn btn-primary" >Assign</button>
+        <button class="pull-right" *ngIf="shared.user.profile == 'TECHNICIAN' && (ticket.status == 'Assigned' || ticket.status == 'Disapproved') && submited" (click)="changeStatus('Resolved')" class="btn btn-primary">Solve</button>
+        <button class="pull-right" *ngIf="shared.user.profile=='TECHNICIAN' && ticket.status == 'Assigned' && ticket.flagged==false && submited" (click)="changeStatus('Flagged')" class="btn btn-danger" >Flag</button>
+        <button class="pull-right" *ngIf="shared.user.profile == 'ADMIN' && (ticket.status == 'New' || ticket.status == 'Flagged') && submited" (click)="changeStatus('Rejected')" class="btn btn-danger">Reject</button>
+        <button class="pull-right" *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved'" (click)="changeStatus('Approved') && submited" class="btn btn-success" >Approve</button>
+        <button class="pull-right" *ngIf="shared.user.profile == 'CUSTOMER' && ticket.status == 'Resolved' && submited" (click)="changeStatus('Disapproved')" class="btn btn-danger">Disapprove</button>
+        <button class="pull-right" *ngIf="shared.user.profile == 'ADMIN' && ticket.status == 'Approved' && submited" (click)="changeStatus('Closed')" class="btn btn-primary">Close</button>
       </div>
     </form>
   </div>

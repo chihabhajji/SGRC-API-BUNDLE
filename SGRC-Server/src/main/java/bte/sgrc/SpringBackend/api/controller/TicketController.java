@@ -273,18 +273,16 @@ public class TicketController{
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping(value = "{id}/{status}/{message}")
+    @PutMapping(value = "{id}/{status}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN','ADMIN')")
     public ResponseEntity<Response<Ticket>> changeStatus(HttpServletRequest request, 
                     @PathVariable("id") String id, 
-                    @PathVariable("message")  String message,
                     @PathVariable("status") String status,
                     @RequestBody Ticket ticket,
                     BindingResult result){
         Response<Ticket> response = new Response<Ticket>();
         try {
             validateChangeStatus(id, status, result);
-            
             if (result.hasErrors()){
                 result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
                 return ResponseEntity.badRequest().body(response);
@@ -302,19 +300,19 @@ public class TicketController{
                 ticketCurrent.setReminded(false);
 
             }
-
-            if (message.equals("undefined"))
-                message = "";
-            ticket.setMessage(message);
+            User userFR = userFromRequest(request);
+            if (ticketCurrent.getStatus().equals(StatusEnum.Rejected)|| ticketCurrent.getStatus().equals(StatusEnum.Resolved) && (!userFR.getProfile().equals(ProfileEnum.ROLE_CUSTOMER)))
+            ticketCurrent.setMessage(ticket.getMessage());
             Ticket ticketPersisted = ticketService.createOrUpdate(ticketCurrent);
             ChangeStatus changeStatus = new ChangeStatus();
             changeStatus.setUserChange(userFromRequest(request));
             changeStatus.setDateChangeStatus(LocalDateTime.now());
             changeStatus.setStatus(StatusEnum.getStatus(status));
             changeStatus.setTicket(ticketPersisted);
-            changeStatus.setMessage(message);
+            changeStatus.setMessage(ticket.getMessage());
             ticketService.createChangeStatus(changeStatus);
             
+            String message;
             if (ticket.getStatus()!=changeStatus.getStatus())
             switch (changeStatus.getStatus()) {
                 case Assigned: {
@@ -373,6 +371,7 @@ public class TicketController{
     }
 
     @GetMapping(value = "/summary")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN', 'ADMIN')")
     public ResponseEntity<Response<Summary>> findSummary(){
         Response<Summary> response = new Response<Summary>();
         Summary summary = new Summary();
@@ -417,6 +416,7 @@ public class TicketController{
         return ResponseEntity.ok(response);
     }
 
+
     public User userFromRequest(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         String email = jwbTokenUtil.getUsernameFromToken(token);
@@ -430,11 +430,11 @@ public class TicketController{
 
     private void validateChangeStatus(String id, String status, BindingResult result) {
         if (id == null || id.equals("")) {
-            result.addError(new ObjectError("Ticket", "Id no informed"));
+            result.addError(new ObjectError("Ticket", "Id missing ? huh how ?"));
             return;
         }
         if (status == null || status.equals("")) {
-            result.addError((new ObjectError("Ticket", "Title no informed")));
+            result.addError((new ObjectError("Ticket", "Title missing")));
             return;
         }
     }
@@ -460,13 +460,7 @@ public class TicketController{
             User userRequest = userFromRequest(request);
 
             if (userRequest.getProfile().equals(ProfileEnum.ROLE_TECHNICIAN)) {
-                if (assigned) {
-                    tickets = ticketService.findByParametersAndAssignedUser(page, count, title, status, priority,
-                            userRequest.getId());
-                } else {
-                    tickets = ticketService.findByParameters(page, count, title, status, priority);
-                }
-
+                tickets = ticketService.findByParametersAndAssignedUser(page, count, title, status, priority,userRequest.getId());
             } else if (userRequest.getProfile().equals(ProfileEnum.ROLE_CUSTOMER)) {
                 tickets = ticketService.findByParametersAndCurrentUser(page, count, title, status, priority,
                         userRequest.getId());
@@ -492,7 +486,7 @@ public class TicketController{
     
     private void validadeCreateTicket(Ticket ticket, BindingResult result) {
         if (ticket.getTitle() == null || ticket.getDescription() == null) {
-            result.addError(new ObjectError("Ticket", "Title or Description on informed"));
+            result.addError(new ObjectError("Ticket", "Title or Description missing"));
             return;
         }
 

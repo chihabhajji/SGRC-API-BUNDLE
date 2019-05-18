@@ -33,6 +33,8 @@ export class TicketListComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (!this.shared.user.isActive)
+    this.showMessage({type : 'warning', text :'Please verify your email adress'})
     this.findAll(this.page, this.count);
   }
 

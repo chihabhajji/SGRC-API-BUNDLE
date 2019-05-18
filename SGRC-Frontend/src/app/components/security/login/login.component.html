@@ -35,14 +35,15 @@
                    ng-reflect-required=""
                    ng-reflect-model=""
                    ng-reflect-name="password"
+                   (keyup.enter)="login()"
                    required="">
             <span class="help-block" *ngIf="password.invalid && password.dirty">Password is required</span>
           </div>
         </div>
       </div>
       <div class="box-footer">
-        <button type="submit" (click)="cancelLogin()" class="btn btn-default">Cancel</button>
         <button type="submit" [disabled]="!form.valid" class="btn btn-info pull-right">Login</button>
+        <button type="submit" (click)="cancelLogin()" class="btn btn-default">Cancel</button>
       </div>
     </form>
   </div>

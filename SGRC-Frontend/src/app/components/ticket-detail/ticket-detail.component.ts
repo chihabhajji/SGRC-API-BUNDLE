@@ -38,6 +38,7 @@ export class TicketDetailComponent implements OnInit {
   message: {};
   classCss: {};
   agents : User[];
+  submited: Boolean = true;
   msg: String;
   constructor(
     private ticketService: TicketService,
@@ -142,19 +143,24 @@ export class TicketDetailComponent implements OnInit {
   changeStatus(status: string): void {
     if (status =="Assigned")
     this.ticket.reminded = false;
-    this.ticketService.changeStatus(status, this.ticket,this.msg).subscribe((responseApi: ResponseApi) => {
+    this.ticketService.changeStatus(status, this.ticket).subscribe((responseApi: ResponseApi) => {
         this.ticket = responseApi.data;
         this.ticket.data = new Date(this.ticket.data).toISOString();
         this.showMessage({
           type: 'success',
           text: 'Successfully changed status'
         });
-        this.router.navigate(['']);
+        setTimeout(() => {
+          this.router.navigate(['/']);
+        }, 5000);
     } , err => {
       this.showMessage({
         type: 'error',
         text: err['error']['errors'][0]
       });
+        setTimeout(() => {
+          this.submited=true;
+        }, 5000);
     });
   }
 
