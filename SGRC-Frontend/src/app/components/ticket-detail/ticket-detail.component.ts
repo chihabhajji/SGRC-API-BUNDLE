@@ -47,6 +47,7 @@ export class TicketDetailComponent implements OnInit {
     private notificationService: NotificationService,
     private router: Router) {
     this.shared = SharedService.getInstance();
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
   }
 
   ngOnInit() {

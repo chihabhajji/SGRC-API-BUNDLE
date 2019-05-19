@@ -17,7 +17,7 @@ export class RegisterComponent implements OnInit {
   @ViewChild('form')
   form: NgForm;
 
-  user = new User('', '', '', '', '',false);
+  user = new User('', '', '', '', '',false,false);
   shared: SharedService;
   message: {};
   classCss: {};
@@ -61,7 +61,7 @@ export class RegisterComponent implements OnInit {
       });
       setTimeout(() => {
         this.submited = true;
-      }, 3000);
+      }, 5000);
       this.form.resetForm();
       this.form.reset();
       this.router.navigate(['/login']);

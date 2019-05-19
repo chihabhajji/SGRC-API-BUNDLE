@@ -32,6 +32,7 @@ import { TicketArchivedListComponent } from './components/ticket-archived-list/t
 import { NgSelectModule } from '@ng-select/ng-select';
 import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
 import { ChangePasswordComponent } from './components/security/change-password/change-password.component';
+import { LoadingAnimationComponent } from './components/loading-animation/loading-animation.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -49,6 +50,7 @@ import { ChangePasswordComponent } from './components/security/change-password/c
     TicketArchivedListComponent,
     VerifyEmailComponent,
     ChangePasswordComponent,
+    LoadingAnimationComponent,
   ],
   imports: [
     BrowserModule,

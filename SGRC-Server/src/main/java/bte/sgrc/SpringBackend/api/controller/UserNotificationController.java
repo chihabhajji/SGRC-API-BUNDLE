@@ -48,11 +48,15 @@ public class UserNotificationController {
     @GetMapping(value = "{userId}")
     public ResponseEntity<Response<Collection<Notification>>> findAll(@PathVariable("userId") String userId) {
         Response<Collection<Notification>> response = new Response<Collection<Notification>>();
-        UserNotification userNotifications = notificationService.findByUser(userId);
-
-        Stack<Notification> notifications = userNotifications.getNotification();
-        Collections.reverse(notifications);
-        response.setData(notifications);
+        try {
+            UserNotification userNotifications = notificationService.findByUser(userId);
+            Stack<Notification> notifications = userNotifications.getNotification();
+            Collections.reverse(notifications);
+            response.setData(notifications);
+            
+        } catch ( NullPointerException e){
+            return ResponseEntity.ok(response);
+        }
         return ResponseEntity.ok(response);
     }
 

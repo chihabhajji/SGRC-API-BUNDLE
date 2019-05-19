@@ -15,8 +15,8 @@ export class ChangePasswordComponent implements OnInit {
   @ViewChild('form')
   form: NgForm;
 
-  submited: Boolean;
-  user = new User('', '', '', '', '', false);
+  submited: Boolean=true;
+  user = new User('','', '', '', '', false,false);
   shared: SharedService;
   message: {};
   classCss: {};
@@ -29,25 +29,45 @@ export class ChangePasswordComponent implements OnInit {
 
   ngOnInit() {
     if(this.shared.isLoggedIn()){
-      this.findById(this.shared.user.id);
-      this.submited=true;
-      this.user = this.shared.user;
+      this.user=this.shared.user;
+      const role : string = "ROLE_";
+      this.user.profile = role.concat(this.user.profile.toString());
+      console.log(this.user);
     }else {
       // check if he has code form router param 
       this.router.navigate(['/']);
     }
 
   }
-  findById(id: String) {
-    this.userService.findById(id).subscribe((responseApi: ResponseApi) => {
-      this.user = responseApi.data;
-      this.user.password = '';
+  register() {
+    this.submited = !this.submited;
+    this.message = {};
+    this.userService.createOrUpdate(this.user).subscribe((responseApi: ResponseApi) => {
+      this.showMessage({
+        type: 'success',
+        text: `Succesfully changed password`
+      });
+      setTimeout(() => {
+         this.signOut();
+      }, 5000);
     }, err => {
       this.showMessage({
         type: 'error',
         text: err['error']['errors'][0]
       });
+      setTimeout(() => {
+        this.submited = true;
+      }, 5000);
     });
+  }
+
+  signOut(): void {
+    this.shared.token = null;
+    this.shared.user = null;
+    sessionStorage.clear();
+    localStorage.clear();
+    window.location.href = '/login';
+    window.location.reload();
   }
   private showMessage(message: { type: String, text: String }): void {
     this.message = message;
@@ -69,39 +89,6 @@ export class ChangePasswordComponent implements OnInit {
       'has-error': isInvalid && isDirty,
       'has-success': !isInvalid && isDirty
     };
-  }
-
-  register() {
-    this.submited = false;
-    this.message = {};
-    this.user.profile='ROLE_CUSTOMER';
-    console.log(this.shared.user);
-    this.userService.createOrUpdate(this.user).subscribe((responseApi: ResponseApi) => {
-      this.showMessage({
-        type: 'success',
-        text: `Succesfully changed password`
-      });
-      setTimeout(() => {
-        this.signOut();
-      }, 5000);
-    }, err => {
-      this.showMessage({
-        type: 'error',
-        text: err['error']['errors'][0]
-      });
-      setTimeout(() => {
-        this.submited = true;
-      }, 5000);
-    });
-  }
-
-  signOut(): void {
-    this.shared.token = null;
-    this.shared.user = null;
-    sessionStorage.clear();
-    localStorage.clear();
-    window.location.href = '/login';
-    window.location.reload();
   }
 
 }

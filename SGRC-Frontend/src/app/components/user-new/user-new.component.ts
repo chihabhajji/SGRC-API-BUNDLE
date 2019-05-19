@@ -5,6 +5,7 @@ import { NgForm } from '@angular/forms';
 import { Router,ActivatedRoute } from '@angular/router';
 import { SharedService } from '../../services/shared.service';
 import { ResponseApi } from './../../model/response-api';
+
 @Component({
   selector: 'app-user-new',
   templateUrl: './user-new.component.html',
@@ -14,12 +15,12 @@ export class UserNewComponent implements OnInit {
 
   @ViewChild('form')
   form: NgForm;
-  submited: Boolean;
-  user = new User('', '', '', '','',false);
+  user = new User('', '', '', '','',false,false);
   shared: SharedService;
   message: {};
   classCss: {};
-
+  addinterface: Boolean = true;
+  submited: Boolean = true ;
 
   constructor(
     private userService: UserService,
@@ -30,14 +31,16 @@ export class UserNewComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.submited);
     const id: String = this.route.snapshot.params['id'];
-    this.submited=true;
-    if (id !== undefined) {
+    if (id != null){
       this.findById(id);
+      console.log(id);
     }
   }
 
   findById(id: String) {
+    this.submited = false;
     this.userService.findById(id).subscribe((responseApi: ResponseApi) => {
       this.user = responseApi.data;
       this.user.password = '';
@@ -65,26 +68,26 @@ export class UserNewComponent implements OnInit {
   }
 
   register() {
-    this.submited = false;
+    this.submited = !this.submited;
     this.message = {};
     this.userService.createOrUpdate(this.user).subscribe((responseApi: ResponseApi) => {
-      this.user = new User('', '', '', '','',false);
+      this.user = new User('', '', '', '','',false,false);
       const userRet: User = responseApi.data;
       this.form.resetForm();
       this.showMessage({
         type: 'success',
-        text: `Registered ${userRet.email} successfully`
+        text: `Updated ${userRet.email} successfully`
       });
-      setTimeout(() => {
-        this.router.navigate(['/user-list']);
-      }, 5000);
+        setTimeout(() => {
+          this.router.navigate(['/user-list']);
+        }, 5000);
     }, err => {
       this.showMessage({
         type: 'error',
         text: err['error']['errors'][0]
       });
         setTimeout(() => {
-          this.submited=true;
+          this.submited=!this.submited;
         }, 5000);
     });
   }

@@ -327,7 +327,7 @@ public class TicketController{
                 case Flagged:{
                     for (User admin : userService.findByRole(ProfileEnum.ROLE_ADMIN.name())) {
                         notificationService.notifyUser(admin.getId(), ticket.getId(),
-                                "Ticket :" + ticket.getNumber() + " has been flagged for rejection");
+                        "Ticket :" + ticket.getNumber() + " has been flagged for rejection");
                     }
                     break;
                 }

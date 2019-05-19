@@ -93,7 +93,7 @@ public class UserController{
     }
 
     @PutMapping
-    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER','TECHNICIAN')")
     public ResponseEntity<Response<User>> update(HttpServletRequest request, @RequestBody User user, BindingResult result){
         Response<User> response = new Response<User>();
         try {
@@ -103,21 +103,18 @@ public class UserController{
                 return ResponseEntity.badRequest().body(response);
             }
             // TODO : do the same when reseting pw
-            String passPre = user.getPassword();
             if (!passwordEnconder.matches(user.getPassword(), userService.findByEmail(user.getEmail()).getPassword())){
-                user.setPassword(passwordEnconder.encode(user.getPassword()));
-                if (userFromRequest(request).getProfile().equals(ProfileEnum.ROLE_ADMIN)&&userFromRequest(request).getId()!= user.getId()){
-                    mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account updated","Your account has been updated by the system administrator, your new password is now :" + passPre);
+                if (userFromRequest(request).getProfile().equals(ProfileEnum.ROLE_ADMIN)&&(!userFromRequest(request).getEmail().equals(user.getEmail()))){
+                    mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account updated","Your account has been updated by the system administrator, your new password is now :" + user.getPassword());
                     user.setIsDue(true);
-                }
-                if (userFromRequest(request).getProfile().equals(ProfileEnum.ROLE_CUSTOMER)) {
+                }else {
                     user.setIsDue(false);
                 }
+                user.setPassword(passwordEnconder.encode(user.getPassword()));
             }else {
-                response.getErrors().add("Please change the password!");
+                response.getErrors().add("Please provide a new password!");
                 return ResponseEntity.badRequest().body(response);
             }
-
             User userPesistente = userService.createOrUpdate(user);
             response.setData(userPesistente);
 

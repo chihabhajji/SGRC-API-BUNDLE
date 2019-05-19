@@ -1,6 +1,7 @@
 <div >
+<app-user-new></app-user-new>
 <app-change-password></app-change-password>
-<app-ticket-archived-list></app-ticket-archived-list>
+<app-ticket-archived-list *ngIf="shared.user.profile=='CUSTOMER'"></app-ticket-archived-list>
 
 
 </div>

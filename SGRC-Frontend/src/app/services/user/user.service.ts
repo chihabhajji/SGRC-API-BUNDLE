@@ -13,9 +13,11 @@ export class UserService {
   }
   createOrUpdate(user: User) {
     if (user.id != null && user.id !== '') {
+      console.log("id not null, updating");
       return this.http.put(`${HELP_DESK_API}/api/user`, user);
     } else {
       user.id = null;
+      console.log("id null, creating");
       return this.http.post(`${HELP_DESK_API}/api/user`, user);
     }
   }
