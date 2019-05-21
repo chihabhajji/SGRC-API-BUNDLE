@@ -18,6 +18,8 @@ public interface TicketService {
     public Iterable<ChangeStatus> listaChangeStatus(String ticketId);
     public Iterable<Reminder> listReminders(String ticketId);
     public Iterable<Ticket> findall();
+    public Iterable<Ticket> findByUser(String userId);
+    public Iterable<Ticket> findByTechnician(String assignedUserId);
 
     public Page<Ticket> findByCurrentUser(Integer page, Integer count, String userId);
     public Page<Ticket> findByCurrentUserArchived(Integer page, Integer count, String id);

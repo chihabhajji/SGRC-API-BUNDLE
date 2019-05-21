@@ -22,7 +22,10 @@ public interface TicketRepository extends MongoRepository<Ticket, String>{
 
     Page<Ticket> findByNumber(Integer number, Pageable pages);
 
-	Page<Ticket> findByAssignedUserId(String assignedUserId , Pageable pages);
+    Page<Ticket> findByAssignedUserId(String assignedUserId , Pageable pages);
+    
+	Iterable<Ticket> findByUser(String userId);
+	Iterable<Ticket> findByAssignedUserId(String assignedUserId);
 
 
 }

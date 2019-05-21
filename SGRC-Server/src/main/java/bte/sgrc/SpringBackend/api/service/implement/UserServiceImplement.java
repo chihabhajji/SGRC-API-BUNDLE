@@ -54,4 +54,10 @@ public class UserServiceImplement implements UserService{
 	public List<User> findByRole(String role){
 		return this.userRepository.findAllByRole(role);
 	}
+
+	@Override
+	public Page<User> findByParameters(Integer page, Integer count, String name, String profile, String email){
+		Pageable pages = PageRequest.of(page, count);
+		return this.userRepository.findByNameIgnoreCaseContainingAndProfileIgnoreCaseContainingAndEmailIgnoreCaseContaining(name, email, profile, pages);
+	}
 }

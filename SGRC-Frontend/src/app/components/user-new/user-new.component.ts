@@ -31,11 +31,9 @@ export class UserNewComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.submited);
     const id: String = this.route.snapshot.params['id'];
     if (id != null){
       this.findById(id);
-      console.log(id);
     }
   }
 

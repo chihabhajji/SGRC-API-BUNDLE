@@ -106,6 +106,15 @@ public class TicketServiceImplement implements TicketService{
 	return this.ticketRepository.findAll();
 	}
 
+	@Override 
+	public Iterable<Ticket> findByUser(String userId){
+		return this.ticketRepository.findByUser(userId);
+	}
+	@Override
+	public Iterable<Ticket> findByTechnician(String assignedUserId){
+        return this.ticketRepository.findByAssignedUserId(assignedUserId);
+	}
+
 	@Override
 	public Page<Ticket> findByParametersAndAssignedUser(Integer page, Integer count, String title, String status,
 			String priority, String assignedUserId) {
@@ -118,5 +127,6 @@ public class TicketServiceImplement implements TicketService{
 		Pageable pages = PageRequest.of(page, count);
 		return this.ticketRepository.findByAssignedUserId(assignedUserId,pages);
 	}
+
 
 }

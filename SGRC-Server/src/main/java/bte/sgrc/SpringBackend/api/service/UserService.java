@@ -14,4 +14,5 @@ public interface UserService{
     public Page<User> findAll(Integer page, Integer count);
     public List<User> findTudo();
     public List<User> findByRole(String role);
+	public Page<User> findByParameters(Integer page, Integer count, String name, String profile, String email);
 }

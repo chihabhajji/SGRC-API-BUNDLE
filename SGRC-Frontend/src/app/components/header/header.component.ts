@@ -26,7 +26,6 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-
   }
   
   signOut(): void {
@@ -41,8 +40,6 @@ export class HeaderComponent implements OnInit {
   findAllNotifications(userId:String) {
     this.notificationService.findAll(userId).subscribe((responseApi: ResponseApi) => {
       this.Notifications = responseApi.data;
-      
-      console.log(this.Notifications);
     }, err => {
       this.showMessage({
         type: 'error',
@@ -68,5 +65,4 @@ export class HeaderComponent implements OnInit {
   detail(id: string) {
     this.router.navigate(['/ticket-detail', id]);
   }
-
 }

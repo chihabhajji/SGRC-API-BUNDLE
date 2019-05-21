@@ -371,7 +371,7 @@ public class TicketController{
     }
 
     @GetMapping(value = "/summary")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<Response<Summary>> findSummary(){
         Response<Summary> response = new Response<Summary>();
         Summary summary = new Summary();

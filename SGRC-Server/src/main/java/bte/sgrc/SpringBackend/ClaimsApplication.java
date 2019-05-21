@@ -39,28 +39,11 @@ public class ClaimsApplication {
 			admin.setName("Admin ben admin");
 			admin.setPassword(passwordEncoder.encode("123456"));
 			admin.setProfile(ProfileEnum.ROLE_ADMIN);
-			// verificationTokenService.createVerification(admin);
+			admin.setIsDue(true);
+			admin.setIsActive(true);
 			userService.createOrUpdate(admin);
 			log.info("Admin initiated : please change the password !");
 			// TODO :: that reminds me, we need a change password client side ( profile like ) , also, check out old Version for the logo with auto name
-			
-			User agent = new User();
-			agent.setEmail("agent@sgrc.bte");
-			agent.setName("Agent ben agent");
-			agent.setPassword(passwordEncoder.encode("123456"));
-			agent.setProfile(ProfileEnum.ROLE_TECHNICIAN);
-			// verificationTokenService.createVerification(agent);
-			userService.createOrUpdate(agent);
-			log.info("Agent initiated : please change the password !");
-
-			User client = new User();
-			client.setEmail("client1@sgrc.bte");
-			client.setName("Foulen ben falten");
-			client.setPassword(passwordEncoder.encode("123456"));
-			client.setProfile(ProfileEnum.ROLE_CUSTOMER);
-			// verificationTokenService.createVerification(client);
-			userService.createOrUpdate(client);
-			log.info("Client initiated : please change the password !");
 			
 
 		}else{

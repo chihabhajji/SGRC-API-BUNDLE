@@ -24,14 +24,12 @@ export class ChangePasswordComponent implements OnInit {
   
   constructor(
     private userService: UserService,
-    private route: ActivatedRoute,
     private router: Router) { this.shared = SharedService.getInstance();}
 
   ngOnInit() {
     if(this.shared.isLoggedIn()){
       this.user=this.shared.user;
-      const role : string = "ROLE_";
-      this.user.profile = role.concat(this.user.profile.toString());
+
       console.log(this.user);
     }else {
       // check if he has code form router param 
@@ -42,6 +40,8 @@ export class ChangePasswordComponent implements OnInit {
   register() {
     this.submited = !this.submited;
     this.message = {};
+    const role: string = "ROLE_";
+    this.user.profile = role.concat(this.user.profile.toString());
     this.userService.createOrUpdate(this.user).subscribe((responseApi: ResponseApi) => {
       this.showMessage({
         type: 'success',
@@ -59,6 +59,7 @@ export class ChangePasswordComponent implements OnInit {
         this.submited = true;
       }, 5000);
     });
+    this.user.profile = this.user.profile.substring(5);
   }
 
   signOut(): void {

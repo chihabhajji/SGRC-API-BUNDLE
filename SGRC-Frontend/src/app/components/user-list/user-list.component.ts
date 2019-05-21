@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { DialogService } from '../../dialog.service';
 import { Router } from '@angular/router';
 import { ResponseApi } from '../../model/response-api';
+import { User } from '../../model/user';
 
 
 @Component({
@@ -20,6 +21,7 @@ export class UserListComponent implements OnInit {
   message: {};
   classCss: {};
   listUser = [];
+  userFilter = new User('', '', '', '', '', false, false);
 
   constructor(
     private dialogService: DialogService,
@@ -69,6 +71,32 @@ export class UserListComponent implements OnInit {
           });
         }
       });
+  }
+
+  filter(): void {
+    if(this.userFilter==null){
+      this.cleanFilter();
+      return;
+    }
+    this.userService.findByParams(this.page,this.count,this.userFilter).subscribe((responseApi:ResponseApi)=>{
+      this.userFilter.email = this.userFilter.email === 'uninformed' ? '' : this.userFilter.email;
+      this.userFilter.name = this.userFilter.name === 'uninformed' ? '' : this.userFilter.name;
+      this.userFilter.profile = this.userFilter.profile === 'uninformed' ? '' : this.userFilter.profile;
+      this.listUser = responseApi['data']['content'];
+      this.pages = new Array(responseApi['data']['totalPages']);
+     }, err => {
+      this.showMessage({
+          type : 'error',
+          text: err['error']['errors'][0]
+      });
+    });
+  }
+
+  cleanFilter():void{
+    this.page = 0 ;
+    this.count = 10;
+    this.userFilter = new User('', '', '', '', '', false, false);
+    this.findAll(this.page,this.count);
   }
 
   setNextPage(event: any) {

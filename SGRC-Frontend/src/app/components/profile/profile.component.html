@@ -1,7 +1,44 @@
 <div >
-<app-user-new></app-user-new>
+<div class="col-md-12" style="margin-left:0%">
+  <div class="box box-info">
+    <div class="box-header with-border">
+      <h3 class="box-title"> 
+        <i *ngIf="shared.user.profile=='CUSTOMER'" class="fas fa-users"></i>
+        <i *ngIf="shared.user.profile =='TECHNICIAN'" class="fas fa-users-cog"> </i>
+        <i *ngIf="shared.user.profile=='ADMIN'" class="fas fa-user-shield"> </i>
+        Profile
+    </h3>
+      <avatar class="pull-right" [name]="shared.user.name" [displayType]="'rounded'" [size]="42" background="#0000FF">
+      </avatar>
+    </div>
+      <div class="box-body">
+
+        <div >    
+            <span>
+                <label>Email :</label>
+            </span>  
+            <span>     
+            {{shared.user.email}}
+            </span>
+        </div>
+        <div >
+            <span>
+                <label>Full name :</label>
+            </span>
+            <span>
+                {{shared.user.name}}
+            </span>
+        </div>
+        <div>
+            <p-chart type="bar" [data]="data"></p-chart>
+        </div>
+        
+
+      <div class="box-footer">
+        
+      </div>
+
+  </div>
+</div>
 <app-change-password></app-change-password>
-<app-ticket-archived-list *ngIf="shared.user.profile=='CUSTOMER'"></app-ticket-archived-list>
-
-
 </div>

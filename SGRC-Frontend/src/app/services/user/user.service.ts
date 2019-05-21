@@ -45,4 +45,15 @@ export class UserService {
   delete(id: String) {
     return this.http.delete(`${HELP_DESK_API}/api/user/${id}`);
   }
+
+  findByParams(page: Number, count: Number, u: User) {
+    u.email = u.email === '' ? 'uninformed' : u.email;
+    u.name = u.name === '' ? 'uninformed' : u.name;
+    u.profile = u.profile === '' ? 'uninformed' : u.profile;
+    return this.http.get(`${HELP_DESK_API}/api/user/${page}/${count}/${u.name}/${u.profile}/${u.email}`);
+  }
+
+  summary(id : String , year : Number) {
+    return this.http.get(`${HELP_DESK_API}/api/user/summary`);
+  }
 }

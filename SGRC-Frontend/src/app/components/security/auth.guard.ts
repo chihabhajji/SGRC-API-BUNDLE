@@ -14,7 +14,6 @@ export class AuthGuard implements CanActivate {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | boolean {
-    console.log(this.shared.user.isDue)
     if (this.shared.isLoggedIn()) {
       if (this.shared.user.isDue == true){
         this.router.navigate(['/changepassword']);

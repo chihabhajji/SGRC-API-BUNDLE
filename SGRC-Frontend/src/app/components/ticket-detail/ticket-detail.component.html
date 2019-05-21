@@ -91,7 +91,9 @@
       <span
         *ngIf="((shared.user.profile == 'TECHNICIAN' && (ticket.status == 'Assigned' || ticket.status == 'Disapproved')) || (shared.user.profile =='CUSTOMER' && ticket.status == 'Resolved')) || (shared.user.profile == 'CUSTOMER' && (ticket.status == 'New'||ticket.status == 'Assigned')) && ticket.overdue && ticket.reminded==false || (shared.user.profile=='ADMIN'&&ticket.status=='Flagged')|| (shared.user.profile=='ADMIN'&&ticket.status=='New')">
         <label for="message"> <p *ngIf="shared.user.profile=='CUSTOMER'">Feedback or </p>Comment:</label>
+        <span style="margin: 8px 0;">
         <textarea class="form-control" rows="4" id="message" name="message" [(ngModel)]="ticket.message" required #message="ngModel"></textarea>
+        </span>
       </span>
       <div>
       </div>
