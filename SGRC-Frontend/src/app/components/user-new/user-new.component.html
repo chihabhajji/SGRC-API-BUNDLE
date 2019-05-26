@@ -8,14 +8,20 @@
         <strong>{{ message['text'] }}</strong>
       </div>
       <div class="box-body">
-        <div [ngClass]="getFormGroupClass(email.invalid,email.dirty)">
-          <label for="inputEmail" class="col-sm-2 control-label">Email</label>
-          <div class="col-sm-10">
-            <input type="email" [(ngModel)]="user.email" name="email" class="form-control" id="inputEmail"
-              #email="ngModel" placeholder="Email" email>
-            <span class="help-block" *ngIf="email.invalid  && email.dirty">Email is invalid </span>
-          </div>
-        </div>
+              <div [ngClass]="getFormGroupClass(email.invalid,email.dirty)">
+                <label for="inputEmail" class="col-sm-2 control-label">Email</label>
+                <div class="col-sm-10">
+                  <input type="email" [(ngModel)]="user.email" name="email" class="form-control" id="inputEmail"
+                    #email="ngModel" placeholder="Email"
+                    pattern="(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|''(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*'')@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"
+                    email required>
+                  <div class="help-block" *ngIf="email.invalid && (!submited || email.touched)"
+                    class="alert alert-danger">
+                    <div *ngIf="email.errors.required"> Email is required. </div>
+                    <div *ngIf="email.errors.pattern"> Email is invalid, please verify.</div>
+                  </div>
+                </div>
+              </div>
 
         <div [ngClass]="getFormGroupClass(name.invalid,name.dirty)">
           <label for="inputEmail" class="col-sm-2 control-label">Name</label>
@@ -60,8 +66,9 @@
         <button *ngIf="submited" type="submit" [disabled]="!form.valid" class="btn btn-info pull-right" >Submit</button>
       </div>
     </form>
+    <div class="box box-footer">
+      <app-loading-animation *ngIf="!submited"></app-loading-animation>
+    </div>
   </div>
   </div>
-  <div class="col-md-4 pull-right">
-    <app-loading-animation *ngIf="!submited"></app-loading-animation>
-  </div>
+

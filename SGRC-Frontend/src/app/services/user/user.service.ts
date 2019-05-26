@@ -53,7 +53,7 @@ export class UserService {
     return this.http.get(`${HELP_DESK_API}/api/user/${page}/${count}/${u.name}/${u.profile}/${u.email}`);
   }
 
-  summary(id : String , year : Number) {
-    return this.http.get(`${HELP_DESK_API}/api/user/summary`);
+  summary(userId : String , year : Number) {
+    return this.http.get(`${HELP_DESK_API}/api/user/summary/${userId}/${year}`);
   }
 }

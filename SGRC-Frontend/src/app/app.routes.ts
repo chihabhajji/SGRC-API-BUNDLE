@@ -26,6 +26,7 @@ export const ROUTES: Routes = [
   { path: 'ticket-detail/:id' , component: TicketDetailComponent, canActivate: [AuthGuard] },
   { path: 'summary' , component: SummaryComponent, canActivate: [AuthGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  { path: 'profile/:id', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'changepassword', component: ChangePasswordComponent},
   { path: 'verify-email', component: VerifyEmailComponent},
   { path: 'archived', component: TicketArchivedListComponent, canActivate: [AuthGuard] }

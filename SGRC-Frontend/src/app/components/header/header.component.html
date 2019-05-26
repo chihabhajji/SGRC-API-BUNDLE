@@ -40,10 +40,10 @@
         
            <li *ngIf="shared.user.profile == 'CUSTOMER'">
              
-             <a [routerLink]="['archived']"> <i class="fas fa-inbox"></i> | Archived tickets </a>
+             <a [routerLink]="['/archived']"> <i class="fas fa-inbox"></i> | Archived tickets </a>
           </li>
            <li >
-             <a [routerLink]="['profile']"> <i class="far fa-user-circle"></i> | Profile</a>
+             <a [routerLink]="['/profile']"> <i class="far fa-user-circle"></i> | Profile</a>
            </li>
            <li>
              <a role="button" (click)="signOut()" style="color:#41c7f4;">

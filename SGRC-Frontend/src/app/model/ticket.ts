@@ -1,4 +1,5 @@
 import { User } from './user';
+import { Change } from './Change';
 export class Ticket {
   constructor (
     public id: String,
@@ -10,7 +11,8 @@ export class Ticket {
     public user: User,
     public assignedUser: User,
     public data: string,
-    public changes: Array<String>,
+    public date : Date,
+    public changes: Array<Change>,
     public reminders: Array<String>,
     public message : String,
     public deleted : Boolean ,
@@ -19,6 +21,7 @@ export class Ticket {
     public overdue : Boolean,
     public flagged : Boolean,
     public changesEmpty : Boolean,
-    public remindersEmpty : Boolean
+    public remindersEmpty : Boolean,
+    public rating : Number
   ) {}
 }

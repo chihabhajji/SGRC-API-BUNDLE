@@ -59,9 +59,9 @@ public class UserNotificationController {
         }
         return ResponseEntity.ok(response);
     }
-
-    @PutMapping(value = "{message}")
-    public ResponseEntity<Response<Ticket>> reminder(HttpServletRequest request,@PathVariable("message")  String message,@RequestBody Ticket ticket)
+    
+    @PutMapping
+    public ResponseEntity<Response<Ticket>> reminder(HttpServletRequest request,@RequestBody Ticket ticket)
     {
         Response<Ticket> response = new Response<Ticket>();
         if(ticket.getAssignedUser()==null){
@@ -78,7 +78,7 @@ public class UserNotificationController {
         }
 
         Reminder reminder =new Reminder();
-        reminder.setMessage(message);
+        reminder.setMessage(ticket.getMessage());
         reminder.setDate(LocalDateTime.now());
         reminder.setTicket(ticket);
         ticketService.createReminder(reminder);

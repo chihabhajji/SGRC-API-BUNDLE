@@ -9,7 +9,8 @@ import { NotificationService } from '../../services/notification/notification.se
 import { User } from '../../model/user';
 import { UserService } from './../../services/user/user.service';
 import { Router } from '@angular/router';
-
+import * as jsPDF from 'jspdf';
+import { Change } from 'src/app/model/change';
 @Component({
   selector: 'app-ticket-detail',
   templateUrl: './ticket-detail.component.html',
@@ -33,13 +34,14 @@ export class TicketDetailComponent implements OnInit {
   page: number;
   count: number;
   pages: Array<Number>;
-  ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, null, '',false, false, false, false, false, false, false);
+  ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, null, null, '',false, false, false, false, false, false, false,5);
   shared: SharedService;
-  message: {};
   classCss: {};
   agents : User[];
   submited: Boolean = true;
   msg: String;
+  message: any;
+  readonly : Boolean = true;
   constructor(
     private ticketService: TicketService,
     private userService: UserService,
@@ -56,6 +58,7 @@ export class TicketDetailComponent implements OnInit {
       this.findById(id);
     }
     this.findAllTechnicians();
+
   }
 
   findAllTechnicians() {
@@ -74,7 +77,7 @@ export class TicketDetailComponent implements OnInit {
     this.ticketService.findById(id).subscribe((responseApi: ResponseApi) => {
       this.ticket = responseApi.data;
       this.ticket.data = new Date(this.ticket.data).toISOString();
-      console.log(this.ticket);
+
   } , err => {
     this.showMessage({
       type: 'error',
@@ -86,7 +89,7 @@ export class TicketDetailComponent implements OnInit {
   register() {
     this.message = {};
     this.ticketService.createOrUpdate(this.ticket).subscribe((responseApi: ResponseApi) => {
-      this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, null, '',false, false, false, false, false, false, false);
+      this.ticket = new Ticket('', 0, '', '', '', '', null, null, '', null, null, null, '',false, false, false, false, false, false, false,5);
         const ticket: Ticket = responseApi.data;
         this.form.resetForm();
         this.showMessage({
@@ -101,7 +104,32 @@ export class TicketDetailComponent implements OnInit {
       });
     });
   }
+  downloadPDF(){
+    const doc = new jsPDF();
+    let image = new Image();
+    image.src = './../../../assets/img/bte.png';
+    var i : number = 100;
 
+
+    doc.addImage(image,'png',10,0,120,60);
+    doc.text("Ticket number :" + this.ticket.number, 10, 60);
+    doc.text("Priority :" + this.ticket.priority,10,70);
+    doc.text("Created at :"+ this.ticket.date.toString().substr(0,10),10,80);
+    doc.text("Title :"+ this.ticket.title,10,90);
+
+    this.ticket.changes.forEach(change => {
+      if(this.shared.user.profile=='CUSTOMER'){
+        if (change.status =='Resolved'){
+          doc.text("Note :" + change.message, 10, i);
+        }
+      }else{
+        doc.text("Message :" + change.message, 10, i);
+      }
+    i+=10;
+    });
+    
+    doc.save(this.ticket.number+".pdf");
+  }
   getFormGroupClass(isInvalid: boolean, isDirty: boolean): {} {
     return {
       'form-group': true,
@@ -184,7 +212,7 @@ export class TicketDetailComponent implements OnInit {
   }
 
   remind(){
-    this.notificationService.remind(this.ticket, this.msg).subscribe((responseApi: ResponseApi) => {
+    this.notificationService.remind(this.ticket).subscribe((responseApi: ResponseApi) => {
       this.showMessage({
         type: 'success',
         text: 'Succesfully notified technicians'

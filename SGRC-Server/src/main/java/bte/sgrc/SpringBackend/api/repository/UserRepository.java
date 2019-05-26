@@ -17,7 +17,7 @@ public interface UserRepository extends MongoRepository<User, String>{
     @Query("{ 'profile' : ?0 }")
     List<User> findAllByRole(String profile);
 
-	public Page<User> findByNameIgnoreCaseContainingAndProfileIgnoreCaseContainingAndEmailIgnoreCaseContaining(
-			String name, String email, String profile, Pageable pages);
+	public Page<User> findByNameIgnoreCaseContainingAndEmailIgnoreCaseContaining(
+			String name, String email, Pageable pages);
     
 }

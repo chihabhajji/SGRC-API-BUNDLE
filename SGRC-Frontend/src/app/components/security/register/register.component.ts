@@ -2,10 +2,8 @@ import { UserService } from '../../../services/user/user.service';
 import { User } from '../../../model/user';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { SharedService } from '../../../services/shared.service';
 import { ResponseApi } from '../../../model/response-api';
-import { CurrentUser } from '../../../model/currentUser';
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-register',
@@ -17,7 +15,7 @@ export class RegisterComponent implements OnInit {
   @ViewChild('form')
   form: NgForm;
 
-  user = new User('', '', '', '', '',false,false);
+  user = new User('', '', '', '', '',false,false,false);
   shared: SharedService;
   message: {};
   classCss: {};
@@ -31,7 +29,7 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.submited = true;
+    this.submited = false;
   }
 
   private showMessage(message: { type: String, text: String }): void {
@@ -51,17 +49,16 @@ export class RegisterComponent implements OnInit {
 
   register() {
     this.message = {};
-    this.submited = false;
+    this.submited = true;
     this.user.profile = 'ROLE_CUSTOMER';
     this.userService.register(this.user).subscribe((responseApi: ResponseApi) => {
       this.user = responseApi.data;
-      this.showMessage({
-        type: 'success',
-        text: `Registered ${this.user.email} successfully`
-      });
       setTimeout(() => {
-        this.submited = true;
-      }, 5000);
+        this.showMessage({
+          type: 'success',
+          text: `Registered ${this.user.email} successfully`
+        });
+      },5000);
       this.form.resetForm();
       this.form.reset();
       this.router.navigate(['/login']);
@@ -71,7 +68,7 @@ export class RegisterComponent implements OnInit {
         text: err['error']['errors'][0]
       });
         setTimeout(() => {
-          this.submited = true;
+          this.submited = false;
         }, 3000);
     });
   }

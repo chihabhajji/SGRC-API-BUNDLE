@@ -22,8 +22,6 @@ import { TicketDetailComponent } from './components/ticket-detail/ticket-detail.
 import { SummaryComponent } from './components/summary/summary.component';
 import { ChartModule } from 'primeng/primeng';
 import { AvatarModule } from 'ng2-avatar';
-import { CarouselModule } from 'primeng/carousel';
-import { CardModule } from 'primeng/card';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProfileComponent } from './components/profile/profile.component';
@@ -58,8 +56,6 @@ import { LoadingAnimationComponent } from './components/loading-animation/loadin
     FormsModule,
     ChartModule,
     AvatarModule,
-    CarouselModule,
-    CardModule,
     DynamicDialogModule,
     NgbModule,
     NgSelectModule,

@@ -40,5 +40,62 @@
 
   </div>
 </div>
-<app-change-password></app-change-password>
+<app-change-password *ngIf="userProfile"></app-change-password>
+</div>
+
+<div class="row" *ngIf="!userProfile">
+  <div class="col-md-12">
+    <div class="box">
+      <div class="box-header with-border">
+        <h3 class="box-title">Ticket List :</h3>
+      </div>
+      <div [ngClass]="classCss" role="alert" *ngIf="message">
+        <strong>{{ message['text'] }}</strong>
+      </div>
+      <div class="box-body">
+      <div class="box-body">
+        <table class="table table-bordered">
+          <tr>
+            <th>Number</th>
+            <th>Title</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th style="width: 10px"></th>
+          </tr>
+          <tr *ngFor="let ticket of listTicket">
+            <td>{{ticket.number}}</td>
+            <td>{{ticket.title}}</td>
+            <td>
+              <span *ngIf="ticket.priority=='High'" class="badge badge-pill badge-danger"
+                style="background-color: red;">High</span>
+              <span *ngIf="ticket.priority=='Low'" class="badge badge-pill badge-info"
+                style="background-color:aqua;">Low</span>
+              <span *ngIf="ticket.priority=='Normal'" class="badge badge-pill badge-light">Normal</span>
+            </td>
+            <td>
+              <span *ngIf="ticket.status=='Assigned'" class='label label-primary'>Assigned</span>
+              <span *ngIf="ticket.status=='Closed'" class='label label-primary'>Closed</span>
+              <span *ngIf="ticket.status=='Rejected'" class='label label-danger'>Rejected</span>
+              <span *ngIf="ticket.status=='Flagged'" class='label label-danger'>Flagged</span>
+              <span *ngIf="ticket.status=='Disapproved'" class='label label-danger'>Disapproved</span>
+              <span *ngIf="ticket.status=='Approved'" class='label label-success'>Approved</span>
+              <span *ngIf="ticket.status=='Resolved'" class='label label-success'>Resolved</span>
+              <span *ngIf="ticket.status=='New'" class='label label-default'>Pending</span>
+            </td>
+            <td><button class="btn btn-success" (click)="detail(ticket.id)">Detail</button></td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="box-footer clearfix">
+        <ul class="pagination pagination-sm no-margin pull-right">
+          <li><a href="" (click)="setPreviousPage($event)">&laquo;</a></li>
+          <li *ngFor="let p of pages; let i=index">
+            <a [ngClass]="{'pagination-focus':i==page}" href="" (click)="setPage(i,$event)">{{i+1}}</a>
+          </li>
+          <li><a href="" (click)="setNextPage($event)">&raquo;</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>

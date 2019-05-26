@@ -21,18 +21,6 @@
           (keyup.enter)="filter()">
       </div>
     </div>
-
-    <div class="form-group">
-      <label for="inputProfile" class="col-sm-2 control-label">Role</label>
-      <div class="col-sm-10">
-        <select [(ngModel)]="userFilter.profile" class="form-control select2" name="profile" id="inputProfile"
-          style="width: 100%;">
-          <option></option>
-          <option>ROLE_CUSTOMER</option>
-          <option>ROLE_TECHNICIAN</option>
-        </select>
-      </div>
-    </div>
   <div class="box-footer">
     <button class="btn btn-info pull-left" (click)="cleanFilter()">Clean Filter</button>
     <button style="margin-left: 10px" class="btn btn-info pull-right" (click)="filter()">Filter</button>
@@ -47,18 +35,21 @@
         <th style="width: 10px">&nbsp;</th>
         <th style="width: 10px">&nbsp;</th>
       </tr>
-      <tr *ngFor="let user of listUser">
+      <tr *ngFor="let user of listUser" >
         <td> <avatar [name]="user.name" [displayType]="'circle'" [size]="28"></avatar></td>
-        <td>{{user.email}}</td>
+        <td><button type="button" class="btn btn-link" *ngIf="user.profile!='ROLE_ADMIN'" (click)="profile(user.id)">{{user.email}}</button>
+            <p *ngIf="user.profile=='ROLE_ADMIN'">{{user.email}}</p>
+        </td>
         <td>{{user.name}}</td>
         <td>
           <div *ngIf="user.profile == 'ROLE_CUSTOMER'" >  <i class="fas fa-users">      </i> Client</div>
           <div *ngIf="user.profile == 'ROLE_TECHNICIAN'"> <i  class="fas fa-users-cog"> </i> Technician</div>
           <div *ngIf="user.profile == 'ROLE_ADMIN'"     > <i class="fas fa-user-shield"></i> Admin </div>
         </td>
-        <td><button class="btn btn-primary" (click)="edit(user.id)">Edit</button></td>
+        <td><button class="btn btn-primary" *ngIf="user.profile!='ROLE_ADMIN'"(click)="edit(user.id)">Edit</button></td>
         <td><button class="btn btn-danger" *ngIf="user.profile!='ROLE_ADMIN'" (click)="delete(user.id)">Delete</button></td>
       </tr>
+
     </table>
   </div>
   <div class="box-footer clearfix">

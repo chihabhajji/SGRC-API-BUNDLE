@@ -5,7 +5,6 @@ import { SharedService } from './../../services/shared.service';
 import { Router } from '@angular/router';
 import { DialogService } from '../../dialog.service';
 import { TicketService } from '../../services/ticket/ticket.service';
-
 @Component({
   selector: 'app-ticket-list',
   templateUrl: './ticket-list.component.html',
@@ -21,21 +20,24 @@ export class TicketListComponent implements OnInit {
   message: {};
   classCss: {};
   listTicket = [];
-  ticketFilter = new Ticket('', null, '', '', '', '', null, null, '', null, null , '', false, false, false, false, false, false, false);
-
+  ticketFilter = new Ticket('', null, '', '', '', '', null, null, '', null, null, null , '', false, false, false, false, false, false, false,0);
+  display: boolean = false;
   constructor(
     private dialogService: DialogService,
     private ticketService: TicketService,
     private router: Router) {
       this.shared = SharedService.getInstance();
       this.page = 0;
-      this.count = 5;
+      this.count = 10;
   }
 
   ngOnInit() {
     if (!this.shared.user.isActive)
     this.showMessage({type : 'warning', text :'Please verify your email adress'})
     this.findAll(this.page, this.count);
+  }
+  showDialog() {
+    this.display = true;
   }
 
   findAll(page: number, count: number) {
@@ -74,8 +76,8 @@ export class TicketListComponent implements OnInit {
   cleanFilter(): void {
     this.assignedToMe = false;
     this.page = 0;
-    this.count = 5;
-    this.ticketFilter = new Ticket('', null, '', '', '', '', null, null, '', null, null , '', false, false, false, false, false, false, false);
+    this.count = 10;
+    this.ticketFilter = new Ticket('', null, '', '', '', '', null, null, '' , null, null, null , '', false, false, false, false, false, false, false,0);
     this.findAll(this.page, this.count);
   }
 

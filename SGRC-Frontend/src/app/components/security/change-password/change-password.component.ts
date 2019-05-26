@@ -16,7 +16,7 @@ export class ChangePasswordComponent implements OnInit {
   form: NgForm;
 
   submited: Boolean=true;
-  user = new User('','', '', '', '', false,false);
+  user = new User('','', '', '', '', false,false,false);
   shared: SharedService;
   message: {};
   classCss: {};
@@ -29,8 +29,6 @@ export class ChangePasswordComponent implements OnInit {
   ngOnInit() {
     if(this.shared.isLoggedIn()){
       this.user=this.shared.user;
-
-      console.log(this.user);
     }else {
       // check if he has code form router param 
       this.router.navigate(['/']);

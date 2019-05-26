@@ -2,11 +2,13 @@ package bte.sgrc.SpringBackend;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import bte.sgrc.SpringBackend.api.entity.User;
@@ -14,11 +16,16 @@ import bte.sgrc.SpringBackend.api.enums.ProfileEnum;
 import bte.sgrc.SpringBackend.api.security.service.VerificationTokenService;
 import bte.sgrc.SpringBackend.api.service.UserService;
 
+
 @SpringBootApplication
 @EnableAsync
+@EnableScheduling
 public class ClaimsApplication {
 
-	
+	@Value("${admin.email}")
+	String adminEmail;
+	@Value("${admin.password}")
+	String adminPassword;
 	private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
 	public static void main(String[] args) {
@@ -32,20 +39,17 @@ public class ClaimsApplication {
 
 	private void initUsers(UserService userService, PasswordEncoder passwordEncoder,
 			VerificationTokenService verificationTokenService) {
-        User find = userService.findByEmail("admin@sgrc.bte");
+        User find = userService.findByEmail(adminEmail);
 		if (find == null) {
 			User admin = new User();
-			admin.setEmail("admin@sgrc.bte");
-			admin.setName("Admin ben admin");
-			admin.setPassword(passwordEncoder.encode("123456"));
+			admin.setEmail(adminEmail);
+			admin.setName("System ADMIN");
+			admin.setPassword(passwordEncoder.encode(adminPassword));
 			admin.setProfile(ProfileEnum.ROLE_ADMIN);
 			admin.setIsDue(true);
 			admin.setIsActive(true);
 			userService.createOrUpdate(admin);
 			log.info("Admin initiated : please change the password !");
-			// TODO :: that reminds me, we need a change password client side ( profile like ) , also, check out old Version for the logo with auto name
-			
-
 		}else{
             log.info("Initial users already created !");
 		}

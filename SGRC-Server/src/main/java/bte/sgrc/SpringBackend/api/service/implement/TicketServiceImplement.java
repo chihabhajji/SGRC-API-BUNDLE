@@ -1,20 +1,32 @@
 package bte.sgrc.SpringBackend.api.service.implement;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import bte.sgrc.SpringBackend.api.entity.ChangeStatus;
 import bte.sgrc.SpringBackend.api.entity.Ticket;
+import bte.sgrc.SpringBackend.api.entity.User;
 import bte.sgrc.SpringBackend.api.entity.Util.Reminder;
+import bte.sgrc.SpringBackend.api.enums.ProfileEnum;
+import bte.sgrc.SpringBackend.api.enums.StatusEnum;
 import bte.sgrc.SpringBackend.api.repository.ChangeStatusRepository;
 import bte.sgrc.SpringBackend.api.repository.ReminderRepository;
 import bte.sgrc.SpringBackend.api.repository.TicketRepository;
 import bte.sgrc.SpringBackend.api.service.TicketService;
+import bte.sgrc.SpringBackend.api.service.UserNotificationService;
+import lombok.Value;
 
 @Service
 public class TicketServiceImplement implements TicketService{
@@ -25,8 +37,16 @@ public class TicketServiceImplement implements TicketService{
     @Autowired
 	private ChangeStatusRepository changeStatusReposiroty;
 	
+	@Autowired
+	private UserNotificationService userNotificationService;
+	
 	@Autowired 
-	ReminderRepository reminderRepository;
+	private ReminderRepository reminderRepository;
+
+	@Autowired
+	private UserServiceImplement userService;
+
+	private static Logger logger = LoggerFactory.getLogger(TicketServiceImplement.class);
 
 	@Override
 	public Ticket createOrUpdate(Ticket ticket) {
@@ -129,4 +149,37 @@ public class TicketServiceImplement implements TicketService{
 	}
 
 
+	@Scheduled(cron = "0 30 23 * * *")
+	private void purgeFromDB() {
+		logger.info("Initiating ticket clean up");
+		List<Ticket> tickets = ticketRepository.findAll();
+		if (tickets != null) {
+            for (Iterator<Ticket> iterator = tickets.iterator(); iterator.hasNext();) {
+				Ticket ticket = iterator.next();
+				if (ticket.getStatus().equals(StatusEnum.Resolved)){
+					Iterable<ChangeStatus> changesCurrent = listaChangeStatus(ticket.getId());
+					for (ChangeStatus change : changesCurrent){
+						if (change.getStatus().equals(StatusEnum.Resolved))
+							if (LocalDateTime.now().isAfter(change.getDateChangeStatus().plusMonths(2))){
+								ChangeStatus updateStatus = new ChangeStatus();
+								updateStatus.setDateChangeStatus(LocalDateTime.now());
+								updateStatus.setMessage("Automatically approved due to no response from client!");
+								updateStatus.setStatus(StatusEnum.Approved);
+								updateStatus.setUserChange(ticket.getUser());
+								updateStatus.setTicket(ticket);
+								createChangeStatus(updateStatus);
+
+								ticket.setStatus(StatusEnum.Approved);
+								createOrUpdate(ticket);
+								logger.info("Approved ticket number :"+ ticket.getNumber());
+								List<User> admins = userService.findByRole(ProfileEnum.ROLE_ADMIN.name());
+								for (User admin : admins){
+									userNotificationService.notifyUser(admin.getId(), ticket.getId(), "Ticket number :"+ticket.getNumber()+" has been approved");
+								}
+							}
+					}
+				}
+			}
+		}
+	}
 }

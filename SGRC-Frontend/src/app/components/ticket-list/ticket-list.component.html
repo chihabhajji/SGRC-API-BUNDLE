@@ -75,7 +75,7 @@
         <th>Title</th>
         <th>Priority</th>
         <th>Status</th>
-        <th>Owner</th>
+        <th *ngIf="shared.user.profile!='CUSTOMER'">Owner</th>
         <th style="width: 10px" *ngIf="shared.user.profile == 'CUSTOMER'"></th>
         <th style="width: 10px" *ngIf="shared.user.profile == 'CUSTOMER'"></th>
         <th style="width: 10px"></th>
@@ -84,8 +84,8 @@
         <td>{{ticket.number}}</td>
         <td>{{ticket.title}}</td>
         <td>
-          <span *ngIf="ticket.priority=='High'" class="badge badge-pill badge-danger">High</span>
-          <span *ngIf="ticket.priority=='Low'" class="badge badge-pill badge-info">Low</span>
+          <span *ngIf="ticket.priority=='High'" class="badge badge-pill badge-danger" style="background-color: red;">High</span>
+          <span *ngIf="ticket.priority=='Low'" class="badge badge-pill badge-info" style="background-color:aqua;">Low</span>
           <span *ngIf="ticket.priority=='Normal'" class="badge badge-pill badge-light">Normal</span>
         </td>
         <td>
@@ -101,7 +101,7 @@
           <span *ngIf="ticket.status=='New'" class='label label-default'>Pending</span>
         
         </td>
-        <td>{{ticket.user.email}}</td>
+        <td *ngIf="shared.user.profile!='CUSTOMER'">{{ticket.user.email}}</td>
         <td *ngIf="shared.user.profile == 'CUSTOMER'">
             <button class="btn btn-primary" *ngIf="shared.user.profile == 'CUSTOMER' && this.ticket.status=='New'" (click)="edit(ticket.id)">Edit</button>
             <button class="btn btn-primary" *ngIf="shared.user.profile == 'CUSTOMER' && (this.ticket.status=='Closed' || this.ticket.status=='Rejected' || this.ticket.status=='Approved')" (click)="archive(ticket.id)">Archive</button>
@@ -126,3 +126,7 @@
 </div>
 </div>
 </div>
+
+
+
+

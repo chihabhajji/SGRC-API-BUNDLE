@@ -15,7 +15,7 @@ export class UserNewComponent implements OnInit {
 
   @ViewChild('form')
   form: NgForm;
-  user = new User('', '', '', '','',false,false);
+  user = new User('', '', '', '','',false,false,false);
   shared: SharedService;
   message: {};
   classCss: {};
@@ -38,7 +38,6 @@ export class UserNewComponent implements OnInit {
   }
 
   findById(id: String) {
-    this.submited = false;
     this.userService.findById(id).subscribe((responseApi: ResponseApi) => {
       this.user = responseApi.data;
       this.user.password = '';
@@ -69,7 +68,7 @@ export class UserNewComponent implements OnInit {
     this.submited = !this.submited;
     this.message = {};
     this.userService.createOrUpdate(this.user).subscribe((responseApi: ResponseApi) => {
-      this.user = new User('', '', '', '','',false,false);
+      this.user = new User('', '', '', '','',false,false,false);
       const userRet: User = responseApi.data;
       this.form.resetForm();
       this.showMessage({
@@ -84,9 +83,7 @@ export class UserNewComponent implements OnInit {
         type: 'error',
         text: err['error']['errors'][0]
       });
-        setTimeout(() => {
-          this.submited=!this.submited;
-        }, 5000);
+      this.submited = !this.submited;
     });
   }
 

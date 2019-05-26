@@ -1,6 +1,5 @@
 package bte.sgrc.SpringBackend.api.controller;
 
-import java.security.Principal;
 import java.util.Iterator;
 import java.util.List;
 
@@ -187,8 +186,6 @@ public class UserController{
             return ResponseEntity.ok(response);
         }
     }
-    
-    // TODO: CurrentUser version of TicketController summary for technician and their OWN stats
     public User userFromRequest(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         String email = jwbTokenUtil.getUsernameFromToken(token);
@@ -200,150 +197,147 @@ public class UserController{
     public ResponseEntity<Response<List<User>>> getAllTechnicians(){
         Response<List<User>> response = new Response<List<User>>();
         List<User> agents = userService.findByRole(ProfileEnum.ROLE_TECHNICIAN.name());
-
         response.setData(agents);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(value = "/summary/{userId}/{year}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN', 'ADMIN')")
+    @GetMapping(value = "/summary/{userid}/{year}")
     public ResponseEntity<Response<UserSummary>> findSummary(
-            @PathVariable("userId") String userId,
-            @PathVariable("year") int year) {
-        logger.info("im here");
+            @PathVariable("userid") String userId,
+            @PathVariable("year") String year) {
         Response<UserSummary> response = new Response<UserSummary>();
-        logger.info("im here");
         UserSummary userSummary = new UserSummary();
-        logger.info("im here");
         Iterable<Ticket> tickets;
-        logger.info("im here");
         User user = userService.findById(userId);
-        logger.info("im here");
+        
         if(user.getProfile().equals(ProfileEnum.ROLE_ADMIN)){
-            logger.info("Admin");
             tickets = ticketService.findall();
         } else if (user.getProfile().equals(ProfileEnum.ROLE_TECHNICIAN)){
-            logger.info("Tech");
             tickets = ticketService.findByTechnician(userId);
         } else if (user.getProfile().equals(ProfileEnum.ROLE_CUSTOMER)){
-            logger.info("Customer");
             tickets = ticketService.findByUser(userId);
         } else {
             tickets = null;
             response.getErrors().add("Hola amigo , no no no");
             return ResponseEntity.badRequest().body(response);
         }
-
+        int pYear = Integer.parseInt(year);
         if (tickets != null) {
             for (Iterator<Ticket> iterator = tickets.iterator(); iterator.hasNext();) {
                 Ticket ticket = iterator.next();
-                if(ticket.getDate().getYear()==year){
+                if(ticket.getDate().getYear()==pYear){
                     switch (ticket.getDate().getMonth()) {
                         case OCTOBER : {
                             if (ticket.getStatus().equals(StatusEnum.Closed)|| ticket.getStatus().equals(StatusEnum.Approved)) {
-                                userSummary.getOctober().setAmountApproved(userSummary.getOctober().getAmountApproved()+1);
+                                userSummary.getOctober().addApproved();
                             }
-                            if (ticket.getStatus().equals(StatusEnum.Disapproved)) {
-                                userSummary.getOctober().setAmountDisaproved(userSummary.getOctober().getAmountDisaproved()+1);
+                            if (ticket.getStatus().equals(StatusEnum.Disapproved)||ticket.getStatus().equals(StatusEnum.Rejected)) {
+                                userSummary.getOctober().addDisaproved();
                             }
                             break;
                          } 
                         case JULY: {
                             if (ticket.getStatus().equals(StatusEnum.Closed)|| ticket.getStatus().equals(StatusEnum.Approved)) {
-                            userSummary.getJuly().setAmountDisaproved(userSummary.getJuly().getAmountDisaproved() + 1);
+                                userSummary.getJuly().addApproved();
                             }
-                            if (ticket.getStatus().equals(StatusEnum.Disapproved)) {
-                                userSummary.getJuly().setAmountDisaproved(userSummary.getJuly().getAmountDisaproved()+1);
+                            if (ticket.getStatus().equals(StatusEnum.Disapproved)||ticket.getStatus().equals(StatusEnum.Rejected)) {
+                                userSummary.getJuly().addDisaproved();
                             }
                             break;
                         }
                         case JUNE : {
                             if (ticket.getStatus().equals(StatusEnum.Closed)|| ticket.getStatus().equals(StatusEnum.Approved)) {
-                                userSummary.getJune().setAmountDisaproved(userSummary.getJune().getAmountDisaproved() + 1);
+                                userSummary.getJune().addApproved();
                             }
-                            if (ticket.getStatus().equals(StatusEnum.Disapproved)) {
-                                userSummary.getJune().setAmountDisaproved(userSummary.getJune().getAmountDisaproved() + 1);
+                            if (ticket.getStatus().equals(StatusEnum.Disapproved)||ticket.getStatus().equals(StatusEnum.Rejected)) {
+                                userSummary.getJune().addDisaproved();
                             }
                             break;
                         } 
                         case APRIL: {
                             if (ticket.getStatus().equals(StatusEnum.Closed)|| ticket.getStatus().equals(StatusEnum.Approved)) {
-                                userSummary.getApril().setAmountDisaproved(userSummary.getApril().getAmountDisaproved() + 1);
+                                userSummary.getApril().addApproved();
                             }
-                            if (ticket.getStatus().equals(StatusEnum.Disapproved)) {
-                                userSummary.getApril().setAmountDisaproved(userSummary.getApril().getAmountDisaproved() + 1);
+                            if (ticket.getStatus().equals(StatusEnum.Disapproved)||ticket.getStatus().equals(StatusEnum.Rejected)) {
+                                userSummary.getApril().addDisaproved();
                             }
+
                             break;
                         }         
                         case MAY : {
                             if (ticket.getStatus().equals(StatusEnum.Closed)|| ticket.getStatus().equals(StatusEnum.Approved)) {
-                                userSummary.getMay().setAmountDisaproved(userSummary.getMay().getAmountDisaproved() + 1);
+                                userSummary.getMay().addApproved();
                             }
-                            if (ticket.getStatus().equals(StatusEnum.Disapproved)) {
-                                userSummary.getMay().setAmountDisaproved(userSummary.getMay().getAmountDisaproved() + 1);
+                            if (ticket.getStatus().equals(StatusEnum.Disapproved)||ticket.getStatus().equals(StatusEnum.Rejected)) {
+                                userSummary.getMay().addDisaproved();
                             }
                             break;
                         }         
                         case SEPTEMBER : {
                             if (ticket.getStatus().equals(StatusEnum.Closed)|| ticket.getStatus().equals(StatusEnum.Approved)) {
-                                userSummary.getSeptember().setAmountDisaproved(userSummary.getSeptember().getAmountDisaproved() + 1);
+                                userSummary.getSeptember().addApproved();
                             }
-                            if (ticket.getStatus().equals(StatusEnum.Disapproved)) {
-                                userSummary.getSeptember().setAmountDisaproved(userSummary.getSeptember().getAmountDisaproved() + 1);
+                            if (ticket.getStatus().equals(StatusEnum.Disapproved)||ticket.getStatus().equals(StatusEnum.Rejected)) {
+                                userSummary.getSeptember().addDisaproved();
                             }
+
                             break;
                         }         
                         case DECEMBER : {
                             if (ticket.getStatus().equals(StatusEnum.Closed)|| ticket.getStatus().equals(StatusEnum.Approved)) {
-                                userSummary.getDecember().setAmountDisaproved(userSummary.getDecember().getAmountDisaproved() + 1);
+                                userSummary.getDecember().addApproved();
                             }
-                            if (ticket.getStatus().equals(StatusEnum.Disapproved)) {
-                                userSummary.getDecember().setAmountDisaproved(userSummary.getDecember().getAmountDisaproved() + 1);
+                            if (ticket.getStatus().equals(StatusEnum.Disapproved)||ticket.getStatus().equals(StatusEnum.Rejected)) {
+                                userSummary.getDecember().addDisaproved();
                             }
+
                             break;
                         }   
                         case AUGUST : {
                             if (ticket.getStatus().equals(StatusEnum.Closed)|| ticket.getStatus().equals(StatusEnum.Approved)) {
-                                userSummary.getAugust().setAmountDisaproved(userSummary.getAugust().getAmountDisaproved() + 1);
+                                userSummary.getAugust().addApproved();
                             }
-                            if (ticket.getStatus().equals(StatusEnum.Disapproved)) {
-                                userSummary.getAugust().setAmountDisaproved(userSummary.getAugust().getAmountDisaproved() + 1);
+                            if (ticket.getStatus().equals(StatusEnum.Disapproved)||ticket.getStatus().equals(StatusEnum.Rejected)) {
+                                userSummary.getAugust().addDisaproved();
                             }
+
                             break;
                         }
                         case NOVEMBER : {
                             if (ticket.getStatus().equals(StatusEnum.Closed)|| ticket.getStatus().equals(StatusEnum.Approved)) {
-                                userSummary.getNovember().setAmountDisaproved(userSummary.getNovember().getAmountDisaproved() + 1);
+                                userSummary.getNovember().addApproved();
                             }
-                            if (ticket.getStatus().equals(StatusEnum.Disapproved)) {
-                                userSummary.getNovember().setAmountDisaproved(userSummary.getNovember().getAmountDisaproved() + 1);
+                            if (ticket.getStatus().equals(StatusEnum.Disapproved)||ticket.getStatus().equals(StatusEnum.Rejected)) {
+                                userSummary.getNovember().addDisaproved();
                             }
+
                             break;
                         }
                         case FEBRUARY : {
                             if (ticket.getStatus().equals(StatusEnum.Closed)|| ticket.getStatus().equals(StatusEnum.Approved)) {
-                                userSummary.getFebruary().setAmountDisaproved(userSummary.getFebruary().getAmountDisaproved() + 1);
+                                userSummary.getFebruary().addApproved();
                             }
-                            if (ticket.getStatus().equals(StatusEnum.Disapproved)) {
-                                userSummary.getFebruary().setAmountDisaproved(userSummary.getFebruary().getAmountDisaproved() + 1);
+                            if (ticket.getStatus().equals(StatusEnum.Disapproved)||ticket.getStatus().equals(StatusEnum.Rejected)) {
+                                userSummary.getFebruary().addDisaproved();
                             }
+
                             break;
                         }
                         case MARCH : {
                             if (ticket.getStatus().equals(StatusEnum.Closed)|| ticket.getStatus().equals(StatusEnum.Approved)) {
-                                userSummary.getMarch().setAmountDisaproved(userSummary.getMarch().getAmountDisaproved() + 1);    
+                                userSummary.getMarch().addApproved();
                             }
-                            if (ticket.getStatus().equals(StatusEnum.Disapproved)) {
-                                userSummary.getMarch().setAmountDisaproved(userSummary.getMarch().getAmountDisaproved() + 1);
+                            if (ticket.getStatus().equals(StatusEnum.Disapproved)||ticket.getStatus().equals(StatusEnum.Rejected)) {
+                                userSummary.getMarch().addDisaproved();
                             }
                             break;
                         } 
                         case JANUARY : {
                             if (ticket.getStatus().equals(StatusEnum.Closed)|| ticket.getStatus().equals(StatusEnum.Approved)) {
-                                userSummary.getJanuary().setAmountDisaproved(userSummary.getJanuary().getAmountDisaproved() + 1);
+                                userSummary.getJanuary().addApproved();
                             }
-                            if (ticket.getStatus().equals(StatusEnum.Disapproved)) {
-                                userSummary.getJanuary().setAmountDisaproved(userSummary.getJanuary().getAmountDisaproved() + 1);
+                            if (ticket.getStatus().equals(StatusEnum.Disapproved)||ticket.getStatus().equals(StatusEnum.Rejected)) {
+                                userSummary.getJanuary().addDisaproved();
                             }
                             break;
                         }
@@ -351,7 +345,6 @@ public class UserController{
                 }
             }
         }
-
         response.setData(userSummary);
         return ResponseEntity.ok(response);
     }
@@ -366,14 +359,11 @@ public class UserController{
         name = name.equals("uninformed") ? "" : name;
         profile = profile.equals("uninformed") ? "" : profile;
         email = email.equals("uninformed") ? "" : email;
-        logger.info(name + " " + profile +" "+ email );
         Response<Page<User>> response = new Response<Page<User>>();
         Page<User> users = null;
         users = userService.findByParameters(page, count, name, profile, email);
         response.setData(users);
-        logger.info(users.toString());
         return ResponseEntity.ok(response);
     }
-
 }
     

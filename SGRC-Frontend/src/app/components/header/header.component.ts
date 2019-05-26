@@ -22,7 +22,7 @@ export class HeaderComponent implements OnInit {
               private router: Router,
               private notificationService: NotificationService) {
     this.shared = SharedService.getInstance();
-    this.shared.user = new User('', '', '', '','',false,false);
+    this.shared.user = new User('', '', '', '','',false,false,false);
   }
 
   ngOnInit() {

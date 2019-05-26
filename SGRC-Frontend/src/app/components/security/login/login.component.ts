@@ -12,7 +12,7 @@ import { CurrentUser } from '../../../model/currentUser';
 })
 export class LoginComponent implements OnInit {
 
-  user = new User('', '', '', '','',false,false);
+  user = new User('', '', '', '','',false,false,false);
   shared: SharedService;
   message: String;
 
@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.user = new User('', '', '', '', '', false,false);
+    this.user = new User('', '', '', '', '', false,false,false);
   }
 
   login() {
@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
 
   cancelLogin() {
     this.message = '';
-    this.user = new User('', '', '', '','',false,false);
+    this.user = new User('', '', '', '','',false,false,false);
   }
 
   getFormGroupClass(isInvalid: boolean, isDirty: Boolean): {} {

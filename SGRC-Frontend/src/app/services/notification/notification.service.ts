@@ -11,8 +11,8 @@ export class NotificationService {
     return this.http.get(`${HELP_DESK_API}/api/notifications/${userId}`);
   }
 
-  remind(ticket : Ticket , message:String){
-    return this.http.put(`${HELP_DESK_API}/api/notifications/${message}`,ticket);
+  remind(ticket : Ticket){
+    return this.http.put(`${HELP_DESK_API}/api/notifications`,ticket);
   }
 }
 

@@ -58,6 +58,6 @@ public class UserServiceImplement implements UserService{
 	@Override
 	public Page<User> findByParameters(Integer page, Integer count, String name, String profile, String email){
 		Pageable pages = PageRequest.of(page, count);
-		return this.userRepository.findByNameIgnoreCaseContainingAndProfileIgnoreCaseContainingAndEmailIgnoreCaseContaining(name, email, profile, pages);
+		return this.userRepository.findByNameIgnoreCaseContainingAndEmailIgnoreCaseContaining(name, email, pages);
 	}
 }

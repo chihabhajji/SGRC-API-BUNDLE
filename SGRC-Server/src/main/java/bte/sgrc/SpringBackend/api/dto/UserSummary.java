@@ -7,16 +7,17 @@ import lombok.Setter;
 
 public class UserSummary implements Serializable {
     private static final long serialVersionUID = 1L;
-    @Getter @Setter SummaryData october;
-    @Getter @Setter SummaryData november;
-    @Getter @Setter SummaryData july;
-    @Getter @Setter SummaryData june;
-    @Getter @Setter SummaryData april;
-    @Getter @Setter SummaryData may;
-    @Getter @Setter SummaryData september;
-    @Getter @Setter SummaryData december;
-    @Getter @Setter SummaryData august;
-    @Getter @Setter SummaryData march;
-    @Getter @Setter SummaryData february;
-    @Getter @Setter SummaryData january;
+    @Getter @Setter SummaryData october = new SummaryData();
+    @Getter @Setter SummaryData november = new SummaryData();
+    @Getter @Setter SummaryData july = new SummaryData();
+    @Getter @Setter SummaryData june = new SummaryData();
+    @Getter @Setter SummaryData april = new SummaryData();
+    @Getter @Setter SummaryData may = new SummaryData();
+    @Getter @Setter SummaryData september = new SummaryData();
+    @Getter @Setter SummaryData december = new SummaryData();
+    @Getter @Setter SummaryData august = new SummaryData();
+    @Getter @Setter SummaryData march = new SummaryData();
+    @Getter @Setter SummaryData february = new SummaryData();
+    @Getter @Setter SummaryData january = new SummaryData();
+
 }

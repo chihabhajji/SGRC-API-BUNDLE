@@ -6,7 +6,9 @@
  *           Please visit http://opensource.org/licenses/MIT for more information
  */html,
  body {
-   height: 100%;
+     min-height: 100vh;
+     height: auto;
+     margin: 0;
  }
 
  .layout-boxed html,

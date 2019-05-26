@@ -88,6 +88,7 @@ public class TicketController{
             ticket.setUser(userFromRequest(request));
             ticket.setDate((LocalDateTime.now()));
             ticket.setNumber(generateNumber());
+            ticket.setRating(5);
 			Ticket ticketPersisted = ticketService.createOrUpdate(ticket);
             response.setData(ticketPersisted);
             
@@ -138,14 +139,13 @@ public class TicketController{
     @GetMapping(value = "{id}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN','ADMIN')")
     public ResponseEntity<Response<Ticket>> findById(@PathVariable("id") String id){
-        Response<Ticket> response = new Response<Ticket>();
-        Ticket ticket = ticketService.findById(id);
-
+            Response<Ticket> response = new Response<Ticket>();
+            Ticket ticket = ticketService.findById(id);
         if (ticket == null){
             response.getErrors().add("Register not found id: " + id);
             return ResponseEntity.badRequest().body(response);
         }
-        
+            ticket.setMessage("");
         List<ChangeStatus> changes = new ArrayList<ChangeStatus>();
         Iterable<ChangeStatus> changesCurrent = ticketService.listaChangeStatus(ticket.getId());
         for (Iterator<ChangeStatus> iterator = changesCurrent.iterator(); iterator.hasNext();){
@@ -157,7 +157,6 @@ public class TicketController{
         if (!changes.isEmpty()){
             ticket.setChangesEmpty(false);
         }
-
         List<Reminder> reminders = new ArrayList<Reminder>();
         Iterable<Reminder> remindersCurrent = ticketService.listReminders(ticket.getId());
         for (Iterator<Reminder> iterator = remindersCurrent.iterator(); iterator.hasNext();){
@@ -165,30 +164,28 @@ public class TicketController{
             reminder.setTicket(null);
             reminders.add(reminder);
         }
-        ticket.setReminders(reminders);
+            ticket.setReminders(reminders);
         if (!ticket.getReminders().isEmpty()){
             ticket.setRemindersEmpty(false);
         }
-
-
         // Checking if user reminded in last 2 days and if the ticket is overdue for a reminder
-        if (ticket.getStatus().equals(StatusEnum.New))
-            if (LocalDateTime.now().isAfter(ticket.getDate().plusDays(2)))
-                ticket.setOverdue(true);
-            else
-                ticket.setOverdue(false);
+            if (ticket.getStatus().equals(StatusEnum.New))
+                if (LocalDateTime.now().isAfter(ticket.getDate().plusDays(2)))
+                    ticket.setOverdue(true);
+                else
+                    ticket.setOverdue(false);
 
-        if (ticket.getStatus().equals(StatusEnum.Assigned))
-            if (LocalDateTime.now().isAfter(ticket.getChanges().get(ticket.getChanges().size()-1).getDateChangeStatus().plusDays(2)))
-                ticket.setOverdue(true);
-            else
-                ticket.setOverdue(false);
+            if (ticket.getStatus().equals(StatusEnum.Assigned))
+                if (LocalDateTime.now().isAfter(ticket.getChanges().get(ticket.getChanges().size()-1).getDateChangeStatus().plusDays(2)))
+                    ticket.setOverdue(true);
+                else
+                    ticket.setOverdue(false);
 
-        if (!ticket.getReminders().isEmpty())
-            if (LocalDateTime.now().isAfter(ticket.getReminders().get(ticket.getReminders().size()-1).getDate().plusDays(2)))
-                ticket.setReminded(false);
-            else
-                ticket.setReminded(true);
+            if (!ticket.getReminders().isEmpty())
+                if (LocalDateTime.now().isAfter(ticket.getReminders().get(ticket.getReminders().size()-1).getDate().plusDays(2)))
+                    ticket.setReminded(false);
+                else
+                    ticket.setReminded(true);
 
         response.setData(ticket);
         return ResponseEntity.ok(response);
@@ -259,6 +256,23 @@ public class TicketController{
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping(value = "profile/{id}/{page}/{count}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<Response<Page<Ticket>>> findAll(HttpServletRequest request,
+            @PathVariable("page") Integer page, @PathVariable("count") Integer count, @PathVariable("id") String id) {
+        Response<Page<Ticket>> response = new Response<Page<Ticket>>();
+        Page<Ticket> tickets = null;
+        User user = userService.findById(id);
+        logger.info(user.getEmail());
+        if (user.getProfile().equals(ProfileEnum.ROLE_CUSTOMER)) {
+            tickets = ticketService.findByCurrentUser(page, count, id);
+        } else if (user.getProfile().equals(ProfileEnum.ROLE_TECHNICIAN)) {
+            tickets = ticketService.findByAssignedUser(page, count, id);
+        }
+        response.setData(tickets);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping(value = "archived/{page}/{count}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'TECHNICIAN', 'ADMIN')")
     public ResponseEntity<Response<Page<Ticket>>> findAllArchived(HttpServletRequest request,
@@ -288,22 +302,25 @@ public class TicketController{
                 return ResponseEntity.badRequest().body(response);
             }
             Ticket ticketCurrent = ticketService.findById(id);
+            ticketCurrent.setRating(ticket.getRating());
             ticketCurrent.setStatus(StatusEnum.getStatus(status));
+
             if (ticketCurrent.getStatus().equals(StatusEnum.Flagged))
             ticketCurrent.setFlagged(true);
             if (status.equals("Assigned")){
                 if(ticket.getAssignedUser()==null){
                   response.getErrors().add("Please select an agent to assign");
-                return ResponseEntity.badRequest().body(response);
+                  return ResponseEntity.badRequest().body(response);
+                }
+                if (ticket.getAssignedUser().equals(ticket.getUser())){
+                    response.getErrors().add("Cannot assign ticket holder to solve his own ticket");
+                    return ResponseEntity.badRequest().body(response);
                 }
                 ticketCurrent.setAssignedUser(ticket.getAssignedUser());
                 ticketCurrent.setReminded(false);
-
             }
-            User userFR = userFromRequest(request);
-            if (ticketCurrent.getStatus().equals(StatusEnum.Rejected)|| ticketCurrent.getStatus().equals(StatusEnum.Resolved) && (!userFR.getProfile().equals(ProfileEnum.ROLE_CUSTOMER)))
-            ticketCurrent.setMessage(ticket.getMessage());
             Ticket ticketPersisted = ticketService.createOrUpdate(ticketCurrent);
+            
             ChangeStatus changeStatus = new ChangeStatus();
             changeStatus.setUserChange(userFromRequest(request));
             changeStatus.setDateChangeStatus(LocalDateTime.now());
@@ -334,11 +351,13 @@ public class TicketController{
                 case Approved: {
                     notificationService.notifyUser(userRepository.findByEmail(ticketCurrent.getAssignedUser().getEmail()).getId(), ticketCurrent.getId(),
                     " Ticket number "+ticket.getNumber()+" has been approved");
+                    ticket.getUser().setFeedbackDue(true);
+                    userService.createOrUpdate(ticket.getUser());
                     break;
                 }
                 case Disapproved: {
                     notificationService.notifyUser(userRepository.findByEmail(ticketCurrent.getAssignedUser().getEmail()).getId(), ticketCurrent.getId(),
-                    " Ticket number : "+ticket.getNumber()+" has been dissaproved ,please review it again");
+                    " Ticket number : "+ticket.getNumber()+" has been dissaproved");
                     
                     break;
                 }
@@ -349,7 +368,7 @@ public class TicketController{
                     break;
                 }
                 case Resolved:{
-                    message = "Ticket number : " + ticket.getNumber() + " is now resolved, please refer to it to confirm or dissaprove it! ";
+                    message = "Ticket number : " + ticket.getNumber() + " has been resolved";
                     notificationService.notifyUser(userRepository.findByEmail(ticket.getUser().getEmail()).getId(),
                             ticketCurrent.getId(),message);
                     mailSender.sendMail(ticket.getUser().getEmail(), "Ticket number "+ticket.getNumber(),message);

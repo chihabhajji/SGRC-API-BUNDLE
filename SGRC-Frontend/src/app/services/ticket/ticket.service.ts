@@ -21,6 +21,9 @@ export class TicketService {
   findAll(page: Number, count: Number) {
     return this.http.get(`${HELP_DESK_API}/api/ticket/${page}/${count}`);
   }
+  findAllProfile(id: String, page: Number, count: Number){
+    return this.http.get(`${HELP_DESK_API}/api/ticket/profile/${id}/${page}/${count}`);
+  }
 
   findAllArchived(page: Number, count: Number) {
     return this.http.get(`${HELP_DESK_API}/api/ticket/archived/${page}/${count}`);

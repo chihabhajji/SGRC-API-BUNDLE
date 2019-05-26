@@ -21,8 +21,8 @@ export class UserListComponent implements OnInit {
   message: {};
   classCss: {};
   listUser = [];
-  userFilter = new User('', '', '', '', '', false, false);
-
+  userFilter = new User('', '', '', '', '', false, false,false);
+  transient : Boolean = false;
   constructor(
     private dialogService: DialogService,
     private userService: UserService,
@@ -72,7 +72,9 @@ export class UserListComponent implements OnInit {
         }
       });
   }
-
+  profile(id: string) {
+    this.router.navigate(['/profile', id]);
+  }
   filter(): void {
     if(this.userFilter==null){
       this.cleanFilter();
@@ -95,7 +97,7 @@ export class UserListComponent implements OnInit {
   cleanFilter():void{
     this.page = 0 ;
     this.count = 10;
-    this.userFilter = new User('', '', '', '', '', false, false);
+    this.userFilter = new User('', '', '', '', '', false, false,false);
     this.findAll(this.page,this.count);
   }
 

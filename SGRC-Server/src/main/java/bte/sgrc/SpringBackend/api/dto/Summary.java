@@ -13,5 +13,4 @@ public class Summary implements Serializable{
     @Getter @Setter private Integer amountDisapproved;
     @Getter @Setter private Integer amountAssigned;
     @Getter @Setter private Integer amountClosed;
-
 }
