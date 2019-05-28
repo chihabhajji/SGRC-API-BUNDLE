@@ -15,7 +15,7 @@
                     #email="ngModel" placeholder="Email"
                     pattern="(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|''(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*'')@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"
                     email required>
-                  <div class="help-block" *ngIf="email.invalid && (!submited || email.touched)"
+                  <div class="help-block" *ngIf="email.invalid && (!submited && email.touched)"
                     class="alert alert-danger">
                     <div *ngIf="email.errors.required"> Email is required. </div>
                     <div *ngIf="email.errors.pattern"> Email is invalid, please verify.</div>
@@ -38,7 +38,7 @@
                         <input type="password" [(ngModel)]="user.password" name="password" placeholder="Password"
                           class="form-control" required #password="ngModel"
                           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" />
-                        <div *ngIf="password.invalid && (submited!=true || password.touched)"
+                        <div *ngIf="password.invalid && (submited!=true && password.touched)"
                           class="alert alert-danger">
                           <div *ngIf="password.errors.required"> Password is required. </div>
                           <div *ngIf="password.errors.pattern"> Must contain at least one number and one uppercase and

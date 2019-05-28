@@ -47,11 +47,13 @@
               <b>Date :</b> <span>{{ticket.date | date:'dd/MM/yyyy'}}</span>
             </li>
           <li class="list-group-item">
-            <b>Description :</b> <span >{{ticket.description}}</span>
-              <span class="pull-right" *ngIf="shared.user.profile != 'CUSTOMER'">
+            <b>Description :</b> <span>
+              <div style="width:40%;">{{ticket.description}}</div>
+            </span>
+              <div class="pull-right" *ngIf="shared.user.profile != 'CUSTOMER'">
                 <span *ngIf="this.ticket.deleted==true"><i  class="far fa-trash-alt" title="Deleted by user"></i>Deleted</span>
                 <span *ngIf="this.ticket.archived==true"><i class="fas fa-archive" title="Archived by user"></i>Archived</span>
-              </span>
+              </div>
           </li>
           <li class="list-group-item">
              <span><img [src]="ticket.image" width="500px" height="400px"></span>
@@ -107,7 +109,6 @@
         <label *ngIf="ticket.status=='Resolved' && shared.user.profile=='CUSTOMER'">Statisfaction rating :</label>
         <ngb-rating [(rate)]="ticket.rating" *ngIf="ticket.status=='Resolved'&& shared.user.profile=='CUSTOMER'">
         </ngb-rating>
-        {{ticket.rating}}
       </span>
       <div>
       </div>

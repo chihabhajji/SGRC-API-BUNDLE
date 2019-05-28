@@ -1,5 +1,5 @@
 import { User } from './user';
-import { Change } from './Change';
+import { Change } from './change';
 export class Ticket {
   constructor (
     public id: String,

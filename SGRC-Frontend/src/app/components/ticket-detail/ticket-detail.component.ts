@@ -10,7 +10,6 @@ import { User } from '../../model/user';
 import { UserService } from './../../services/user/user.service';
 import { Router } from '@angular/router';
 import * as jsPDF from 'jspdf';
-import { Change } from 'src/app/model/change';
 @Component({
   selector: 'app-ticket-detail',
   templateUrl: './ticket-detail.component.html',

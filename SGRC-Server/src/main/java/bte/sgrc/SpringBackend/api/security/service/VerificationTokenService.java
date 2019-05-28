@@ -1,5 +1,7 @@
 package bte.sgrc.SpringBackend.api.security.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ public class VerificationTokenService {
     private UserService userService;
     @Autowired
     private SendingMailService sendingMailService;
+
+    private static Logger logger = LoggerFactory.getLogger(VerificationTokenService.class);
 
     @Autowired
     public VerificationTokenService(UserRepository userRepository,
@@ -62,16 +66,19 @@ public class VerificationTokenService {
         }
         
         VerificationToken verificationToken = verificationTokens.get(0);
-        if (verificationToken.getExpiredDateTime().isBefore(LocalDateTime.now())) {
-            response.getErrors().add("Token expired");
-            return ResponseEntity.unprocessableEntity().body(response);
-        }
+        // no resend logic implemented yet
+        /**
+         * if (verificationToken.getExpiredDateTime().isBefore(LocalDateTime.now())) {
+         * response.getErrors().add("Token expired"); return
+         * ResponseEntity.unprocessableEntity().body(response); }
+         */
         
         verificationToken.setConfirmedDateTime(LocalDateTime.now());
         verificationToken.setStatus(VerificationToken.STATUS_VERIFIED);
         verificationTokenRepository.save(verificationToken);
 
         User user = userService.findByEmail(verificationToken.getUser().getEmail());
+
         if (user.getIsActive()) {
             response.getErrors().add("Email already verified");
             return ResponseEntity.badRequest().body(response);

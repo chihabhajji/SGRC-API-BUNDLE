@@ -45,10 +45,22 @@ public class SendingMailService {
         return sendMail(toEmail, subject, body);
     }
 
+    public boolean sendMailTemplated (String toEmail, String subject,String message){
+        String body = "";
+        try {
+            Template t = templates.getTemplate("email.ftl");
+            Map<String, String> map = new HashMap<>();
+            map.put("MESSAGE", message);
+            body = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return sendMail(toEmail, subject, body);
+    }
+
     //@Async
     public boolean sendMail(String toEmail, String subject, String body) {
         try {
-            
             Properties props = System.getProperties();
             props.put("mail.transport.protocol", "smtp");
             props.put("mail.smtp.port", mailProperties.getSmtp().getPort());

@@ -119,7 +119,6 @@ public class AuthenticationRestController {
     
     @GetMapping("/api/auth/verify-email/{code}")
     public ResponseEntity<Response<String>> verifyEmail(@PathVariable("code") String code) {
-        logger.info(code);
         return verificationTokenService.verifyEmail(code);
     }
 

@@ -371,13 +371,18 @@ public class TicketController{
                     message = "Ticket number : " + ticket.getNumber() + " has been resolved";
                     notificationService.notifyUser(userRepository.findByEmail(ticket.getUser().getEmail()).getId(),
                             ticketCurrent.getId(),message);
-                    mailSender.sendMail(ticket.getUser().getEmail(), "Ticket number "+ticket.getNumber(),message);
+                    mailSender.sendMailTemplated(ticket.getUser().getEmail(), "Ticket number " + ticket.getNumber()+ " updated to resolved", "Greetings "+ticket.getUser().getName() + ", your ticket number "+ticket.getNumber()
+                    +" has been resolved, please refer to it to confirm it.");
                     break;
                 }
                 case Rejected:{
                     message = "Ticket number : " + ticket.getNumber()+ " has been rejected! ";
                     notificationService.notifyUser(userRepository.findByEmail(ticket.getUser().getEmail()).getId(),ticketCurrent.getId(), message);
                     mailSender.sendMail(ticket.getUser().getEmail(), "Ticket number " + ticket.getNumber(), message);
+                    
+                    mailSender.sendMailTemplated(ticket.getUser().getEmail(), "Ticket number " + ticket.getNumber()+ " updated to REJECTED", "Greetings "+ticket.getUser().getName() + ", your ticket number "+ticket.getNumber()
+                    +" has been rejected because ',"+ticket.getMessage()+" 'please create a new one .");
+
                     break;
                 }
             }

@@ -1,5 +1,6 @@
 package bte.sgrc.SpringBackend.api.controller;
 
+import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class UserController{
                 result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
                 return ResponseEntity.badRequest().body(response);
             }
-            mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account created","Your account has been created by the system administrator, your new password is now :"+ user.getPassword()+" please change it when you first login!");
+            mailSender.sendMailTemplated(user.getEmail(), "BTE : SGRC Helpdesk - Account created", "Your account has been created by the system administrator, your login password is :"+ user.getPassword()+" you will be prompted to change it when you first signin!");
         
             user.setIsDue(true);
             user.setIsActive(true);
@@ -113,7 +114,7 @@ public class UserController{
             // TODO : do the same when reseting pw
             if (!passwordEnconder.matches(user.getPassword(), userService.findByEmail(user.getEmail()).getPassword())){
                 if (userFromRequest(request).getProfile().equals(ProfileEnum.ROLE_ADMIN)&&(!userFromRequest(request).getEmail().equals(user.getEmail()))){
-                    mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account updated","Your account has been updated by the system administrator, your new password is now :" + user.getPassword());
+                    mailSender.sendMailTemplated(user.getEmail(), "BTE : SGRC Helpdesk - Account updated","Your account has been updated by the system administrator, your new password is now :" + user.getPassword());
                     user.setIsDue(true);
                 }else {
                     user.setIsDue(false);
@@ -167,7 +168,7 @@ public class UserController{
             return ResponseEntity.badRequest().body(response);
         }
         
-        mailSender.sendMail(user.getEmail(), "BTE : SGRC - Account deleted", "Your account has been deleted");
+        mailSender.sendMail(user.getEmail(), "BTE : SGRC helpdesk - Account deleted", "Your account has been deleted at"+LocalDate.now());
         verificationTokenService.deleteVerifications(user);
         userService.delete(id);
 

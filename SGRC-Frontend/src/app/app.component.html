@@ -1,6 +1,7 @@
 <app-header [hidden]="!showTemplate"></app-header>
 <app-menu [hidden]="!showTemplate"></app-menu>
-<div [ngClass]="showContentWrapper()" style="background-image: url('./../assets/img/boxed-bg.jpg');">
+<div [ngClass]="showContentWrapper()" style="background-image: url('./../assets/img/boxed-bg.jpg');  background-repeat: no-repeat;
+  background-attachment: fixed;">
   <section class="content-header">
   </section>
   <section class="content">

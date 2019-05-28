@@ -52,11 +52,11 @@
                     id="inputDescription"
                     placeholder="Description..."
                     #description="ngModel"
-                    minlength="4" maxlength="255"
+                    minlength="4" maxlength="2000"
                     required>
             </textarea>
             <span class="help-block" *ngIf="description.invalid && description.dirty && !(description.errors?.minlength || description.errors?.maxlength)">Description is required</span>
-            <span class="help-block" *ngIf="title.errors?.minlength || title.errors?.maxlength">Description should be between 6 and 255 caracters</span>
+            <span class="help-block" *ngIf="title.errors?.minlength || title.errors?.maxlength">Description should be between 6 and 2000 caracters</span>
           </div>
         </div>
         <div class="form-group">
