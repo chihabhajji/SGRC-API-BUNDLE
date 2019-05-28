@@ -7,6 +7,8 @@ export class SharedService {
   public static instance: SharedService = null;
   user: User;
   token: String;
+  notifications: Array<Notification>;
+  
   showTemplate = new EventEmitter<Boolean>();
 
   constructor() {

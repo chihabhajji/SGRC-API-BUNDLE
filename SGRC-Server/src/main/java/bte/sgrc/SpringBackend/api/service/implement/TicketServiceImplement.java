@@ -1,7 +1,6 @@
 package bte.sgrc.SpringBackend.api.service.implement;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +25,6 @@ import bte.sgrc.SpringBackend.api.repository.ReminderRepository;
 import bte.sgrc.SpringBackend.api.repository.TicketRepository;
 import bte.sgrc.SpringBackend.api.service.TicketService;
 import bte.sgrc.SpringBackend.api.service.UserNotificationService;
-import lombok.Value;
 
 @Service
 public class TicketServiceImplement implements TicketService{

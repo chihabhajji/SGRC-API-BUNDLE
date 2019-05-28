@@ -16,7 +16,7 @@ export class ChangePasswordComponent implements OnInit {
   form: NgForm;
 
   submited: Boolean=true;
-  user = new User('','', '', '', '', false,false,false);
+  user = new User('','', '', '', '', false,false,false,null);
   shared: SharedService;
   message: {};
   classCss: {};

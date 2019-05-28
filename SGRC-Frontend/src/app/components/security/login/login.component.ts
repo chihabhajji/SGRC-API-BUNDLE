@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { User } from '../../../model/user';
 import { SharedService } from '../../../services/shared.service';
 import { UserService } from '../../../services/user/user.service';
@@ -12,7 +12,7 @@ import { CurrentUser } from '../../../model/currentUser';
 })
 export class LoginComponent implements OnInit {
 
-  user = new User('', '', '', '','',false,false,false);
+  user = new User('', '', '', '','',false,false,false,null);
   shared: SharedService;
   message: String;
 
@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.user = new User('', '', '', '', '', false,false,false);
+    this.user = new User('', '', '', '', '', false,false,false,null);
   }
 
   login() {
@@ -29,6 +29,7 @@ export class LoginComponent implements OnInit {
     this.userService.login(this.user).subscribe((userAuthentication: CurrentUser) => {
       this.shared.token = userAuthentication.token;
       this.shared.user = userAuthentication.user;
+      this.shared.user.notifications = userAuthentication.notifications;
       this.shared.user.profile = this.shared.user.profile.substring(5);
       this.shared.showTemplate.emit(true);
       this.router.navigate(['/']);
@@ -42,7 +43,7 @@ export class LoginComponent implements OnInit {
 
   cancelLogin() {
     this.message = '';
-    this.user = new User('', '', '', '','',false,false,false);
+    this.user = new User('', '', '', '','',false,false,false,null);
   }
 
   getFormGroupClass(isInvalid: boolean, isDirty: Boolean): {} {

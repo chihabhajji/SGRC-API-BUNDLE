@@ -5,7 +5,6 @@ import { SharedService } from './../../services/shared.service';
 import { NgForm } from '@angular/forms';
 import { TicketService } from './../../services/ticket/ticket.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NotificationService } from '../../services/notification/notification.service';
 import { User } from '../../model/user';
 import { UserService } from './../../services/user/user.service';
 import { Router } from '@angular/router';
@@ -45,7 +44,6 @@ export class TicketDetailComponent implements OnInit {
     private ticketService: TicketService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private notificationService: NotificationService,
     private router: Router) {
     this.shared = SharedService.getInstance();
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -211,7 +209,7 @@ export class TicketDetailComponent implements OnInit {
   }
 
   remind(){
-    this.notificationService.remind(this.ticket).subscribe((responseApi: ResponseApi) => {
+    this.ticketService.remind(this.ticket).subscribe((responseApi: ResponseApi) => {
       this.showMessage({
         type: 'success',
         text: 'Succesfully notified technicians'

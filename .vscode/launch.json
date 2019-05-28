@@ -9,6 +9,16 @@
             "mainClass": "bte.sgrc.SpringBackend.ClaimsApplication",
             "projectName": "claims",
             "args": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ClaimsApplication<SGRC-API>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "bte.sgrc.SpringBackend.ClaimsApplication",
+            "projectName": "SGRC-API",
+            "args": ""
         }
     ]
 }

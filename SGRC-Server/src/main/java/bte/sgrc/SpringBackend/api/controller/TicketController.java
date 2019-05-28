@@ -393,6 +393,28 @@ public class TicketController{
         }
         return ResponseEntity.ok(response);
     }
+    
+    @PutMapping(value="/remind")
+    public ResponseEntity<Response<Ticket>> reminder(HttpServletRequest request, @RequestBody Ticket ticket) {
+        Response<Ticket> response = new Response<Ticket>();
+        if (ticket.getAssignedUser() == null) {
+            for (User admin : userService.findByRole(ProfileEnum.ROLE_ADMIN.name())) {
+                notificationService.notifyUser(admin.getId(), ticket.getId(),
+                    "User Issued Reminder : Ticket" + ticket.getNumber() + " is pending");
+            }
+        } else {
+            notificationService.notifyUser(ticket.getAssignedUser().getId(), ticket.getId(),
+                    "User Issued Reminder : Ticket" + ticket.getNumber() + " is pending");
+        }
+
+        Reminder reminder = new Reminder();
+        reminder.setMessage(ticket.getMessage());
+        reminder.setDate(LocalDateTime.now());
+        reminder.setTicket(ticket);
+        ticketService.createReminder(reminder);
+
+        return ResponseEntity.ok().body(response);
+    }
 
     @GetMapping(value = "/summary")
     @PreAuthorize("hasAnyRole('ADMIN')")

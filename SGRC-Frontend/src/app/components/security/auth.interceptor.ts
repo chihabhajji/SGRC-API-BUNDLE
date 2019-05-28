@@ -15,7 +15,6 @@ export class AuthInterceptor implements HttpInterceptor {
         let authRequest: any;
         const vl_token: String = this.shared.token;
         if (this.shared.isLoggedIn()) {
-
             authRequest = req.clone( {
                 setHeaders: {
                   'Authorization': `${this.shared.token}`

@@ -56,4 +56,8 @@ export class TicketService {
   summary() {
     return this.http.get(`${HELP_DESK_API}/api/ticket/summary`);
   }
+
+  remind(ticket: Ticket) {
+    return this.http.put(`${HELP_DESK_API}/api/ticket/remind`, ticket);
+  }
 }

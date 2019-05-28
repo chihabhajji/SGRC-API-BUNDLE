@@ -1,7 +1,6 @@
 import { TicketService } from './services/ticket/ticket.service';
 import { SharedService } from './services/shared.service';
 import { UserService } from './services/user/user.service';
-import { NotificationService } from './services/notification/notification.service'
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
@@ -65,7 +64,6 @@ import { LoadingAnimationComponent } from './components/loading-animation/loadin
     UserService,
     TicketService,
     SharedService,
-    NotificationService,
     AuthGuard,
     DialogService,
     {

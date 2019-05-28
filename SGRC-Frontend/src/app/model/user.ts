@@ -7,6 +7,7 @@ export class User {
     public profile: String,
     public isDue: Boolean,
     public isActive : Boolean,
-    public feedbackDue : Boolean
+    public feedbackDue : Boolean,
+    public notifications: Array<Notification>
   ) {}
 }

@@ -15,7 +15,7 @@ export class RegisterComponent implements OnInit {
   @ViewChild('form')
   form: NgForm;
 
-  user = new User('', '', '', '', '',false,false,false);
+  user = new User('', '', '', '', '', false, false, false, null);
   shared: SharedService;
   message: {};
   classCss: {};

@@ -1,13 +1,12 @@
 package bte.sgrc.SpringBackend.api.security.controller;
 
+import java.util.Stack;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.mongodb.DuplicateKeyException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import bte.sgrc.SpringBackend.api.entity.User;
+import bte.sgrc.SpringBackend.api.entity.Util.Notification;
 import bte.sgrc.SpringBackend.api.enums.ProfileEnum;
 import bte.sgrc.SpringBackend.api.response.Response;
 import bte.sgrc.SpringBackend.api.security.jwt.JwtAuthenticationRequest;
@@ -32,8 +32,10 @@ import bte.sgrc.SpringBackend.api.security.jwt.JwtTokenUtil;
 import bte.sgrc.SpringBackend.api.security.jwt.WebSecurityConfig;
 import bte.sgrc.SpringBackend.api.security.model.CurrentUser;
 import bte.sgrc.SpringBackend.api.security.service.VerificationTokenService;
+import bte.sgrc.SpringBackend.api.service.UserNotificationService;
 import bte.sgrc.SpringBackend.api.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 @RestController
 @CrossOrigin(origins = "*")
 public class AuthenticationRestController {
@@ -55,7 +57,8 @@ public class AuthenticationRestController {
     @Autowired
     private PasswordEncoder passwordEnconder;
 
-    private static Logger logger = LoggerFactory.getLogger(AuthenticationRestController.class);
+    @Autowired
+    private UserNotificationService userNotificationService;
 
     @PostMapping(value = "/api/auth")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest)
@@ -68,8 +71,12 @@ public class AuthenticationRestController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         final String token = jwtTokenUtil.generateToken(userDetails);
         final User user = userService.findByEmail(authenticationRequest.getEmail());
+        final Stack<Notification> notifications = userNotificationService.findByUser(user.getId()).getNotification();
         user.setPassword(null);
-        return ResponseEntity.ok(new CurrentUser(token, user));
+
+
+
+        return ResponseEntity.ok(new CurrentUser(token, user, notifications));
     }
 
     @PostMapping(value = "/api/refresh")
@@ -77,13 +84,13 @@ public class AuthenticationRestController {
         String token = request.getHeader("Authorization");
         String username = jwtTokenUtil.getUsernameFromToken(token);
         final User user = userService.findByEmail(username);
-
+        final Stack<Notification> notifications = userNotificationService.findByUser(user.getId()).getNotification();
         if (jwtTokenUtil.canTokenBeRefreshed(token)) {
             String refreshedToken = jwtTokenUtil.refreshToken(token);
-            return ResponseEntity.ok(new CurrentUser(refreshedToken, user));
+            return ResponseEntity.ok(new CurrentUser(refreshedToken, user, notifications));
         } else {
             return ResponseEntity.badRequest().body(null);
-        }
+        }   
     }
     
     @PostMapping( value="/api/auth/register")

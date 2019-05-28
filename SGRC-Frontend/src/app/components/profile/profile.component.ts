@@ -57,7 +57,6 @@ export class ProfileComponent implements OnInit {
   ngOnInit() {
     this.year = new Date().getFullYear();
     const id: string = this.route.snapshot.params['id'];
-
     if (id !== undefined) {
       this.userProfile=false;
       this.userId = id;

@@ -21,7 +21,7 @@ export class UserListComponent implements OnInit {
   message: {};
   classCss: {};
   listUser = [];
-  userFilter = new User('', '', '', '', '', false, false,false);
+  userFilter = new User('', '', '', '', '', false, false, false, null);
   transient : Boolean = false;
   constructor(
     private dialogService: DialogService,
@@ -97,7 +97,7 @@ export class UserListComponent implements OnInit {
   cleanFilter():void{
     this.page = 0 ;
     this.count = 10;
-    this.userFilter = new User('', '', '', '', '', false, false,false);
+    this.userFilter = new User('', '', '', '', '', false, false, false, null);
     this.findAll(this.page,this.count);
   }
 

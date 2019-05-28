@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
@@ -60,8 +58,6 @@ public class UserController{
 
     @Autowired
     private TicketService ticketService;
-    
-    private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN')")
@@ -111,7 +107,6 @@ public class UserController{
                 result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
                 return ResponseEntity.badRequest().body(response);
             }
-            // TODO : do the same when reseting pw
             if (!passwordEnconder.matches(user.getPassword(), userService.findByEmail(user.getEmail()).getPassword())){
                 if (userFromRequest(request).getProfile().equals(ProfileEnum.ROLE_ADMIN)&&(!userFromRequest(request).getEmail().equals(user.getEmail()))){
                     mailSender.sendMailTemplated(user.getEmail(), "BTE : SGRC Helpdesk - Account updated","Your account has been updated by the system administrator, your new password is now :" + user.getPassword());
@@ -137,10 +132,10 @@ public class UserController{
 
     public void validateUpdateUser(User user, BindingResult result){
         if (user.getId() == null){
-            result.addError(new ObjectError("User", "Id no informated"));
+            result.addError(new ObjectError("User", "Id missing"));
         }
         if (user.getEmail() == null){
-            result.addError(new ObjectError("User", "E-mail no informated"));
+            result.addError(new ObjectError("User", "E-mail missing"));
         }
     }
 
@@ -219,7 +214,7 @@ public class UserController{
             tickets = ticketService.findByUser(userId);
         } else {
             tickets = null;
-            response.getErrors().add("Hola amigo , no no no");
+            response.getErrors().add("Hola amigo , no no no fech ta3mel linna !!");
             return ResponseEntity.badRequest().body(response);
         }
         int pYear = Integer.parseInt(year);
