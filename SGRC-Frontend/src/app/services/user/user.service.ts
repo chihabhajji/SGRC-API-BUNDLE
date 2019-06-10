@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpRequest } from '@angular/common/http';
 import { User } from '../../model/user';
 import { HELP_DESK_API } from '../../services/helpdesk.api';
 
@@ -11,6 +11,11 @@ export class UserService {
   login(user: User) {
     return this.http.post(`${HELP_DESK_API}/api/auth`, user);
   }
+
+  refresh() {
+    return this.http.post(`${HELP_DESK_API}/api/refresh`,HttpRequest);
+  }
+
   createOrUpdate(user: User) {
     if (user.id != null && user.id !== '') {
       console.log("id not null, updating");

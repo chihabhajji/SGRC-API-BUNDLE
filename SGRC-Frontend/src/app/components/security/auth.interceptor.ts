@@ -13,11 +13,10 @@ export class AuthInterceptor implements HttpInterceptor {
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>>  {
         let authRequest: any;
-        const vl_token: String = this.shared.token;
         if (this.shared.isLoggedIn()) {
             authRequest = req.clone( {
                 setHeaders: {
-                  'Authorization': `${this.shared.token}`
+                    'Authorization': `${sessionStorage.getItem("token")}`
                 }
             });
             return next.handle(authRequest);

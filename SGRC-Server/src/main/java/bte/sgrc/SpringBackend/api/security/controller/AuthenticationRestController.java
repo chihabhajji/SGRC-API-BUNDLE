@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.mongodb.DuplicateKeyException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -60,31 +62,34 @@ public class AuthenticationRestController {
     @Autowired
     private UserNotificationService userNotificationService;
 
-    @PostMapping(value = "/api/auth")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest)
-            throws Exception {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-        final Authentication authentication = webSecurityConfig.authenticationManagerBean()
-                .authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(),
-                        authenticationRequest.getPassword()));
+    @PostMapping(value = "/api/auth")
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest) throws Exception {
+        // Authenticating 
+        final Authentication authentication = webSecurityConfig.authenticationManagerBean().authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(),authenticationRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         final String token = jwtTokenUtil.generateToken(userDetails);
         final User user = userService.findByEmail(authenticationRequest.getEmail());
-        final Stack<Notification> notifications = userNotificationService.findByUser(user.getId()).getNotification();
+        // Fetching user notifications
+        final Stack<Notification> notifications ;        
+        if( userNotificationService.findByUser(user.getId()).isPresent())
+        {notifications = userNotificationService.findByUser(user.getId()).get().getNotification();}
+        else{notifications = null;}
+        
         user.setPassword(null);
-
-
-
         return ResponseEntity.ok(new CurrentUser(token, user, notifications));
     }
 
     @PostMapping(value = "/api/refresh")
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
+        logger.info("Got a hit");
         String token = request.getHeader("Authorization");
         String username = jwtTokenUtil.getUsernameFromToken(token);
         final User user = userService.findByEmail(username);
-        final Stack<Notification> notifications = userNotificationService.findByUser(user.getId()).getNotification();
+        final Stack<Notification> notifications = userNotificationService.findByUser(user.getId()).get().getNotification();
         if (jwtTokenUtil.canTokenBeRefreshed(token)) {
             String refreshedToken = jwtTokenUtil.refreshToken(token);
             return ResponseEntity.ok(new CurrentUser(refreshedToken, user, notifications));
@@ -131,7 +136,7 @@ public class AuthenticationRestController {
 
     public void validateCreateUser(User user, BindingResult result) {
         if (user.getEmail() == null) {
-            result.addError(new ObjectError("User", "Email no informed"));
+            result.addError(new ObjectError("User", "Email not set"));
         }
         if (user.getName() == null) {
             result.addError(new ObjectError("User", "Name not set"));

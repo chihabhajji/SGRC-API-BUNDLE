@@ -1,5 +1,6 @@
 package bte.sgrc.SpringBackend.api.repository;
 
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +14,7 @@ public interface UserNotificationRepository extends MongoRepository<UserNotifica
     
     Page<UserNotification> findByUserId(Pageable pages, String userId);
    
-    UserNotification findByUserId(String userId);
+    Optional<UserNotification> findByUserId(String userId);
 
 
 }

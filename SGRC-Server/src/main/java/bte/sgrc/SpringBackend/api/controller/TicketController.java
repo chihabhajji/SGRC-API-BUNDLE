@@ -93,8 +93,8 @@ public class TicketController{
             response.setData(ticketPersisted);
             
             for (User admin : userService.findByRole(ProfileEnum.ROLE_ADMIN.name())) {
-                notificationService.notifyUser(admin.getId(), ticket.getId(),
-                        "Ticket :" + ticket.getNumber() + " has been created");
+                notificationService.notifyUser(admin.getId(), ticket.getId(),"Ticket :" + ticket.getNumber() + " has been created");
+                
             }
         } catch(Exception e){
             response.getErrors().add(e.getMessage());

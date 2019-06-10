@@ -23,9 +23,11 @@ export class SharedService {
   }
 
   isLoggedIn(): Boolean {
-    if (this.user == null) {
+    if (!sessionStorage.getItem("token")) {
+      console.log("false");
       return false;
     }
-    return this.user.email !== '';
+    console.log("alt")
+    return true;
   }
 }

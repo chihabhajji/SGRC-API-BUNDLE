@@ -8,8 +8,9 @@ import { UserService } from './services/user/user.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-
+  
   showTemplate: Boolean = false;
+  showBot : Boolean = false;
   public shared: SharedService;
 
   constructor(private userService: UserService) {

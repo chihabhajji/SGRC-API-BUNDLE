@@ -90,7 +90,7 @@ public class UserController{
     
     public void validateCreateUser(User user, BindingResult result){
         if (user.getEmail() == null) {
-            result.addError(new ObjectError("User", "Email no informed"));
+            result.addError(new ObjectError("User", "Email not set"));
         }
         if (user.getName() == null){
             result.addError(new ObjectError("User", "Name not set"));
@@ -109,6 +109,7 @@ public class UserController{
             }
             if (!passwordEnconder.matches(user.getPassword(), userService.findByEmail(user.getEmail()).getPassword())){
                 if (userFromRequest(request).getProfile().equals(ProfileEnum.ROLE_ADMIN)&&(!userFromRequest(request).getEmail().equals(user.getEmail()))){
+                    // Missing Async implementation
                     mailSender.sendMailTemplated(user.getEmail(), "BTE : SGRC Helpdesk - Account updated","Your account has been updated by the system administrator, your new password is now :" + user.getPassword());
                     user.setIsDue(true);
                 }else {

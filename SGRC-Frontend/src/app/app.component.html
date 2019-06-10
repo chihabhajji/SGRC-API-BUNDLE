@@ -7,6 +7,22 @@
   <section class="content">
     <router-outlet></router-outlet>
   </section>
+
+  <div style="z-index: 10000; position: fixed; right: 0px; bottom: 0px;">
+    <div class="box">
+    <div style="position: fixed;right:4px;"
+      (click)="showBot=!showBot"><i class="far fa-times-circle" style="font-size: 48px; color: white;top:4px;"></i>
+      </div>
+    <div>
+        <iframe [hidden]="!showBot" allow="microphone;" width="350" height="430"
+          src="https://console.dialogflow.com/api-client/demo/embedded/daae3891-8423-49ec-a2ae-d86e0d492cb0">
+        </iframe>
+    </div>
+    </div>
+  </div>
+  <div [hidden]="showBot" style="z-index: 10000; position: fixed; right: 0px; bottom: 0px;">
+  <button type="button"  class="btn btn-block btn-info btn-lg" (click)="showBot=!showBot">Need help ?</button>
+  </div>
 </div>
 
 

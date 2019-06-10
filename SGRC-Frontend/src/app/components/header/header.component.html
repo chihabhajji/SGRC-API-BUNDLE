@@ -13,7 +13,8 @@
         <i type="button" size="5x"
           class="far fa-flag btn btn-secondary dropdown-toggle"
           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="label label-warning">{{ shared.user.notifications.length}}</span></i>
+          <span class="label label-warning" *ngIf="!!shared.user.notifications">{{ shared.user.notifications.length}}</span>
+        </i>
           
         <ul class="dropdown-menu dropdown-left-manual" style="overflow-y:scroll; height:200px;" href="#">
           
